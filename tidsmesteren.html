@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Tidsmesteren - L�r klokken</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Baloo+2:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Fredoka',sans-serif;overflow-x:hidden;background:#0a0e27}
+button{font-family:inherit;-webkit-tap-highlight-color:transparent}
+
+@keyframes tm-bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes spin-slow{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes gear-reverse{from{transform:rotate(0deg)}to{transform:rotate(-360deg)}}
+@keyframes float{0%,100%{transform:translateY(0) rotate(0deg)}25%{transform:translateY(-12px) rotate(3deg)}75%{transform:translateY(8px) rotate(-2deg)}}
+@keyframes pulse-glow{0%,100%{filter:drop-shadow(0 0 8px rgba(255,200,50,0.4))}50%{filter:drop-shadow(0 0 20px rgba(255,200,50,0.8))}}
+@keyframes pop-in{0%{transform:scale(0) rotate(-180deg);opacity:0}60%{transform:scale(1.15) rotate(10deg);opacity:1}100%{transform:scale(1) rotate(0deg);opacity:1}}
+@keyframes slide-up{0%{transform:translateY(40px);opacity:0}100%{transform:translateY(0);opacity:1}}
+@keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+@keyframes pendulum{0%,100%{transform:rotate(-15deg)}50%{transform:rotate(15deg)}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+@keyframes wave{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes cuckoo-pop{0%{transform:translateX(-50%) scale(0.5);opacity:0}15%{transform:translateX(-50%) scale(1.1);opacity:1}30%{transform:translateX(-50%) scale(1);opacity:1}80%{transform:translateX(-50%) scale(1);opacity:1}100%{transform:translateX(-50%) scale(0.5);opacity:0}}
+@keyframes ring-bell{0%,100%{transform:rotate(0deg)}10%{transform:rotate(14deg)}20%{transform:rotate(-12deg)}30%{transform:rotate(10deg)}40%{transform:rotate(-8deg)}50%{transform:rotate(0deg)}}
+@keyframes tick-tock{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+@keyframes clock-swing{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg)}}
+@keyframes sand-flow{0%{transform:scaleY(1)}50%{transform:scaleY(0.3)}100%{transform:scaleY(1)}}
+@keyframes sand-fall{0%{opacity:0.7;transform:translateY(-2px)}100%{opacity:0;transform:translateY(6px)}}
+
+.tm-bounce{animation:tm-bounce .6s ease infinite}
+.anim-pop{animation:pop-in 0.6s cubic-bezier(0.34,1.56,0.64,1) both}
+.anim-slide{animation:slide-up 0.5s ease both}
+.anim-glow{animation:pulse-glow 2s ease-in-out infinite}
+
+.hub-bg{background:radial-gradient(ellipse at 20% 20%,rgba(99,102,241,0.4) 0%,transparent 50%),radial-gradient(ellipse at 80% 30%,rgba(236,72,153,0.3) 0%,transparent 50%),radial-gradient(ellipse at 50% 80%,rgba(14,165,233,0.3) 0%,transparent 50%),radial-gradient(ellipse at 10% 90%,rgba(234,179,8,0.2) 0%,transparent 40%),linear-gradient(135deg,#0a0e27 0%,#1a1040 40%,#0d1b3e 70%,#0a0e27 100%)}
+
+.clock-card{position:relative;border-radius:22px;padding:20px 18px;display:flex;align-items:center;gap:16px;cursor:pointer;text-align:left;color:#fff;transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);overflow:hidden;border:2px solid rgba(255,255,255,0.08)}
+.clock-card::before{content:'';position:absolute;inset:0;border-radius:22px;background:linear-gradient(135deg,rgba(255,255,255,0.12) 0%,rgba(255,255,255,0.02) 100%);pointer-events:none}
+.clock-card:hover{transform:scale(1.03) translateY(-2px);border-color:rgba(255,255,255,0.2)}.clock-card:active{transform:scale(0.98)}
+
+.title-text{font-family:'Baloo 2',cursive;font-size:44px;font-weight:800;background:linear-gradient(135deg,#fde68a 0%,#fb923c 25%,#f472b6 50%,#a78bfa 75%,#38bdf8 100%);background-size:200% 200%;animation:shimmer 3s ease-in-out infinite;-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-1px;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3))}
+
+.world-badge{display:inline-flex;align-items:center;gap:6px;border-radius:20px;padding:4px 12px;font-size:13px;font-weight:700;background:rgba(255,255,255,0.15);backdrop-filter:blur(4px)}
+
+.game-btn{width:100%;border-radius:18px;padding:20px 22px;display:flex;align-items:center;gap:16px;cursor:pointer;text-align:left;border:2px solid;transition:all 0.25s;position:relative;overflow:hidden}
+.game-btn:hover{transform:scale(1.02) translateY(-1px)}.game-btn:active{transform:scale(0.98)}
+.game-btn::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.1),transparent);pointer-events:none}
+
+.nav-btn{font-size:16px;font-weight:600;opacity:.7;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:12px;color:#fff;cursor:pointer;padding:10px 18px;transition:all 0.2s}
+.nav-btn:hover{opacity:1;background:rgba(255,255,255,0.1)}
+
+.check-btn{padding:18px 44px;border-radius:16px;color:#fff;font-weight:700;font-size:19px;border:none;cursor:pointer;position:relative;overflow:hidden;transition:all 0.2s}
+.check-btn:hover{transform:scale(1.05);filter:brightness(1.1)}.check-btn:active{transform:scale(0.95)}
+.check-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.2),transparent);pointer-events:none}
+
+.game-header{display:flex;align-items:center;justify-content:space-between;width:100%;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.game-title-badge{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:14px;background:rgba(255,255,255,0.08);font-size:16px;font-weight:700}
+
+.round-dots{display:flex;gap:6px;justify-content:center;margin-bottom:14px}
+.round-dot{width:18px;height:18px;border-radius:50%;transition:all 0.3s;border:2px solid rgba(255,255,255,0.15)}
+
+.fb-bar{width:100%;padding:16px 22px;border-radius:16px;text-align:center;font-weight:700;font-size:19px;transition:all 0.3s;margin-top:8px}
+
+.clock-divider{display:flex;align-items:center;gap:12px;width:100%;margin:12px 0;opacity:0.15}
+.clock-divider-line{flex:1;height:1px;background:linear-gradient(to right,transparent,currentColor,transparent)}
+
+.info-box{border-radius:18px;padding:18px 22px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);text-align:center}
+
+/* ── RESPONSIVE ── */
+@media(min-width:768px){
+  .clock-card{padding:24px 22px;gap:20px}
+  .clock-card span[style*="fontSize:32"]{font-size:38px!important}
+  .game-btn,.game-btn-like{padding:22px 24px}
+  .nav-btn{padding:14px 24px;font-size:17px}
+  .check-btn{padding:22px 52px;font-size:21px}
+  .title-text{font-size:52px!important}
+}
+@media(max-width:480px){
+  .title-text{font-size:34px!important}
+  .check-btn{padding:16px 36px;font-size:17px}
+  .nav-btn{padding:10px 16px;font-size:15px}
+}
+@media(min-width:768px) and (orientation:landscape){
+  .clock-card{flex-direction:row}
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+/* ── AUDIO ── */
+var _AC=window.AudioContext||window.webkitAudioContext,_ac=null;
+function ga(){if(!_ac)_ac=new _AC();return _ac;}
+function sndTick(){try{var c=ga(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sine';o.frequency.value=880;g.gain.setValueAtTime(0.06,c.currentTime);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.04);o.start(c.currentTime);o.stop(c.currentTime+0.05);}catch(e){}}
+function sndTock(){try{var c=ga(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sine';o.frequency.value=660;g.gain.setValueAtTime(0.05,c.currentTime);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.04);o.start(c.currentTime);o.stop(c.currentTime+0.05);}catch(e){}}
+function sndChime(){try{var c=ga();[523,659,784,1047].forEach(function(f,i){var o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;g.gain.setValueAtTime(0.06,c.currentTime+i*0.15);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+i*0.15+0.4);o.start(c.currentTime+i*0.15);o.stop(c.currentTime+i*0.15+0.5);});}catch(e){}}
+function sndWrong(){try{var c=ga(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='triangle';o.frequency.setValueAtTime(350,c.currentTime);o.frequency.exponentialRampToValueAtTime(180,c.currentTime+0.12);g.gain.setValueAtTime(0.08,c.currentTime);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.15);o.start(c.currentTime);o.stop(c.currentTime+0.2);}catch(e){}}
+function sndClock(){try{var c=ga(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sine';o.frequency.setValueAtTime(1200,c.currentTime);o.frequency.exponentialRampToValueAtTime(600,c.currentTime+0.06);g.gain.setValueAtTime(0.07,c.currentTime);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.08);o.start(c.currentTime);o.stop(c.currentTime+0.1);}catch(e){}}
+function sndWin(){try{var c=ga();[440,554,659,880].forEach(function(f,i){var o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;g.gain.setValueAtTime(0.06,c.currentTime+i*0.12);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+i*0.12+0.35);o.start(c.currentTime+i*0.12);o.stop(c.currentTime+i*0.12+0.4);});}catch(e){}}
+var h=React.createElement,useState=React.useState,useCallback=React.useCallback,useRef=React.useRef,useMemo=React.useMemo,useEffect=React.useEffect;
+
+var WORLDS=[
+  {id:0,name:"Tidsfabrikken",icon:"\u2699\uFE0F",accent:"#F59E0B",accentLight:"#fde68a",hours:"whole",bgStyle:"linear-gradient(135deg,#78350f 0%,#b45309 40%,#eab308 100%)",cardBg:"#fffbeb",cardBorder:"#fcd34d",btnBg:"linear-gradient(135deg,#f59e0b,#d97706)",difficulty:1,diffLabel:"Nybegynner",diffDesc:"Bare hele timer \u2014 klokken 1, 2, 3 ...",story:"Dypt inne i fjellet ligger den gamle Tidsfabrikken. Enorme tannhjul holder alle klokkene i verden i gang. Men noe er galt \u2014 de store tannhjulene har stoppet! Kan du f\u00e5 hele fabrikken i gang igjen?",storyIcon:"\uD83C\uDFED",clockType:"\u2699\uFE0F Tannhjulklokke"},
+  {id:1,name:"Klokkebyen",icon:"\uD83C\uDFD8\uFE0F",accent:"#EC4899",accentLight:"#fbcfe8",hours:"half",bgStyle:"linear-gradient(135deg,#9d174d 0%,#e11d48 50%,#f472b6 100%)",cardBg:"#fdf2f8",cardBorder:"#f9a8d4",btnBg:"linear-gradient(135deg,#ec4899,#db2777)",difficulty:2,diffLabel:"Lett",diffDesc:"Hele og halve timer \u2014 3:00, 3:30 ...",story:"Klokkebyen var den koseligste byen i verden. Bakeriet \u00e5pnet presis, bussen kom alltid i tide. Men en morgen v\u00e5knet alle \u2014 og INGEN klokker virket! Bare du kan vekke byen til liv.",storyIcon:"\uD83C\uDF05",clockType:"\uD83D\uDD56 Klokkest\u00e5rn"},
+  {id:2,name:"Tidsreisen",icon:"\uD83D\uDE80",accent:"#3B82F6",accentLight:"#bfdbfe",hours:"quarter",bgStyle:"linear-gradient(135deg,#312e81 0%,#1d4ed8 50%,#22d3ee 100%)",cardBg:"#eff6ff",cardBorder:"#93c5fd",btnBg:"linear-gradient(135deg,#3b82f6,#2563eb)",difficulty:3,diffLabel:"Middels",diffDesc:"Kvarter \u2014 2:00, 2:15, 2:30, 2:45 ...",story:"Professor Tikk har bygget verdens f\u00f8rste tidsmaskin! Men under testflygningen krasjet den. For \u00e5 reparere den m\u00e5 du mestre kvarterene!",storyIcon:"\u231B",clockType:"\u231B Lommeur"},
+  {id:3,name:"Dyrevokteren",icon:"\uD83E\uDD81",accent:"#10B981",accentLight:"#a7f3d0",hours:"five",bgStyle:"linear-gradient(135deg,#064e3b 0%,#059669 50%,#a3e635 100%)",cardBg:"#ecfdf5",cardBorder:"#6ee7b7",btnBg:"linear-gradient(135deg,#10b981,#059669)",difficulty:4,diffLabel:"Utfordrende",diffDesc:"Fem-minutt \u2014 4:05, 4:10, 4:25 ...",story:"Velkommen til Klokkeparken! Hvert dyr har sin rutine. Som dyrevokter m\u00e5 du l\u00e6re alle tidene. Dyrene blir sultne om du er for sen!",storyIcon:"\uD83D\uDC27",clockType:"\uD83D\uDC26 Gj\u00f8kur"},
+  {id:4,name:"Romstasjonen",icon:"\uD83D\uDEF8",accent:"#06B6D4",accentLight:"#a5f3fc",hours:"minute",bgStyle:"linear-gradient(135deg,#0f172a 0%,#334155 50%,#0891b2 100%)",cardBg:"#f1f5f9",cardBorder:"#67e8f9",btnBg:"linear-gradient(135deg,#0891b2,#0e7490)",difficulty:5,diffLabel:"Ekspert",diffDesc:"Hvert minutt + 24-timers klokke",story:"Du er astronaut p\u00e5 romstasjonen Kronos. All kommunikasjon bruker 24-timers klokke, og hvert minutt teller!",storyIcon:"\uD83C\uDF0D",clockType:"\uD83D\uDEF0\uFE0F Digital klokke"}
+];
+var GAMES=[
+  {id:0,name:"Klokkeverkstedet",icon:"\uD83D\uDD27",desc:"Dra viserne til riktig tid",tag:"Kan DU fikse klokken?",accent:"#f59e0b",bgGrad:"linear-gradient(135deg,#fffbeb,#fef3c7)",decoIcon:"\u2699\uFE0F",decoAnim:"spin-slow 6s linear infinite"},
+  {id:1,name:"Klokkematch",icon:"\uD83D\uDD75\uFE0F",desc:"Finn par med samme tid",tag:"Finn de skjulte parene!",accent:"#8b5cf6",bgGrad:"linear-gradient(135deg,#f5f3ff,#ede9fe)",decoIcon:"\u2753",decoAnim:"tm-bounce 2s ease infinite"},
+  {id:2,name:"Min dag",icon:"\uD83C\uDF1E",desc:"Plasser aktiviteter p\u00e5 riktig tid",tag:"Sorter dagen din!",accent:"#f472b6",bgGrad:"linear-gradient(135deg,#fdf2f8,#fce7f3)",decoIcon:"\u23F0",decoAnim:"clock-swing 3s ease-in-out infinite"},
+  {id:3,name:"Hvor lang tid?",icon:"\uD83D\uDE80",desc:"Regn ut hvor lang tid reisen tar",tag:"Klar for en reise?",accent:"#10b981",bgGrad:"linear-gradient(135deg,#ecfdf5,#d1fae5)",decoIcon:"\uD83C\uDF0D",decoAnim:"tm-bounce 3s ease infinite"},
+  {id:4,name:"Tidsjegeren",icon:"\u26A1",desc:"Stopp klokken p\u00e5 riktig tidspunkt!",tag:"Hvor raske er du?",accent:"#ef4444",bgGrad:"linear-gradient(135deg,#fef2f2,#fee2e2)",decoIcon:"\uD83D\uDCA5",decoAnim:"tm-bounce 1s ease infinite"}
+];
+var ACTIVITIES=[{name:"Frokost",icon:"\uD83E\uDD63",hour:7,minute:0},{name:"Skole",icon:"\uD83C\uDF92",hour:8,minute:30},{name:"Lunsj",icon:"\uD83E\uDD6A",hour:11,minute:30},{name:"Gym",icon:"\u26BD",hour:14,minute:0},{name:"Lekser",icon:"\uD83D\uDCDA",hour:15,minute:30},{name:"Middag",icon:"\uD83C\uDF5D",hour:17,minute:0},{name:"Lek",icon:"\uD83C\uDFAE",hour:18,minute:30},{name:"Leggetid",icon:"\uD83D\uDE34",hour:20,minute:0}];
+var ZOO_ACTIVITIES=[
+  {name:"Flaggermusene",icon:"\uD83E\uDD87",hour:2,minute:0,hint:"\uD83C\uDF19 Natt",period:"natt (00\u201306)"},
+  {name:"H\u00f8nene",icon:"\uD83D\uDC14",hour:5,minute:30,hint:"\uD83C\uDF05 Tidlig morgen",period:"tidlig morgen (05\u201308)"},
+  {name:"Elefantene",icon:"\uD83D\uDC18",hour:7,minute:0,hint:"\u2600\uFE0F Morgen",period:"morgen (06\u201310)"},
+  {name:"Pandaene",icon:"\uD83D\uDC3C",hour:8,minute:30,hint:"\u2600\uFE0F Morgen",period:"morgen (06\u201310)"},
+  {name:"Pingvinene",icon:"\uD83D\uDC27",hour:10,minute:30,hint:"\uD83C\uDF24\uFE0F Formiddag",period:"formiddag (10\u201312)"},
+  {name:"Papeg\u00f8yene",icon:"\uD83E\uDD9C",hour:11,minute:0,hint:"\uD83C\uDF24\uFE0F Formiddag",period:"formiddag (10\u201312)"},
+  {name:"L\u00f8vene",icon:"\uD83E\uDD81",hour:12,minute:30,hint:"\u2600\uFE0F Midt p\u00e5 dagen",period:"midt p\u00e5 dagen (12\u201313)"},
+  {name:"Apene",icon:"\uD83D\uDC12",hour:14,minute:0,hint:"\uD83C\uDF25\uFE0F Tidlig ettermiddag",period:"tidlig ettermiddag (13\u201315)"},
+  {name:"Krokodillene",icon:"\uD83D\uDC0A",hour:16,minute:0,hint:"\u26C5 Ettermiddag",period:"ettermiddag (15\u201317)"},
+  {name:"Sjiraffene",icon:"\uD83E\uDD92",hour:17,minute:30,hint:"\uD83C\uDF1F Sen ettermiddag",period:"sen ettermiddag (17\u201318)"},
+  {name:"Uglene",icon:"\uD83E\uDD89",hour:19,minute:0,hint:"\uD83C\uDF06 Kveld",period:"kveld (18\u201322)"},
+  {name:"Flodhestene",icon:"\uD83E\uDD9B",hour:20,minute:30,hint:"\uD83C\uDF06 Kveld",period:"kveld (18\u201322)"},
+  {name:"Ulvene",icon:"\uD83D\uDC3A",hour:23,minute:0,hint:"\uD83C\uDF19 Sen kveld",period:"sen kveld (22\u201324)"}
+];
+var DCOL=["","#22c55e","#84cc16","#eab308","#f97316","#ef4444"];
+var CLOCK_FACTS=[
+  "\uD83D\uDD14 Big Ben i London veier 13,5 tonn og sl\u00e5r 156 slag hver dag!",
+  "\uD83E\uDD89 Gj\u00f8kuret ble oppfunnet i Schwarzwald i Tyskland p\u00e5 1700-tallet!",
+  "\u2600\uFE0F Solur var menneskets f\u00f8rste klokke \u2014 over 3500 \u00e5r gammel!",
+  "\u231B Timerglasset ble brukt av sj\u00f8folk for \u00e5 navigere p\u00e5 havet!",
+  "\uD83C\uDFE0 Verdens st\u00f8rste gj\u00f8kur i Triberg er 15 meter h\u00f8yt!",
+  "\uD83C\uDDF3\uD83C\uDDF4 Bryggen i Bergen har et vakkert klokkespill!",
+  "\u23F0 Den f\u00f8rste mekaniske vekkerklokken ble laget i 1787!",
+  "\uD83C\uDDEE\uD83C\uDDF9 Klokket\u00e5rnet i Venezia har tikket siden 1499!",
+  "\uD83C\uDDFA\uD83C\uDDF8 Klokken p\u00e5 Grand Central i New York er verdt 20 millioner dollar!",
+  "\uD83C\uDDE8\uD83C\uDDFF Praha har en astronomisk klokke fra 1410 \u2014 verdens eldste!",
+  "\u2699\uFE0F Et mekanisk ur har over 130 sm\u00e5 deler som jobber sammen!",
+  "\uD83C\uDDEF\uD83C\uDDF5 Japan har en klokke som drives av blomster!",
+  "\uD83C\uDF19 F\u00f8r klokker fantes, brukte folk stjernebilder til \u00e5 vite tiden!",
+  "\uD83D\uDD14 Kirkeklokker ble f\u00f8rst brukt p\u00e5 600-tallet for \u00e5 kalle folk til b\u00f8nn!"
+];
+
+function genTime(lv){var hh=Math.floor(Math.random()*12)+1;if(lv==="whole")return{h:hh,m:0};if(lv==="half")return{h:hh,m:Math.random()<.5?0:30};if(lv==="quarter")return{h:hh,m:[0,15,30,45][Math.floor(Math.random()*4)]};if(lv==="five")return{h:hh,m:Math.floor(Math.random()*12)*5};return{h:hh,m:Math.floor(Math.random()*60)};}
+function fmtTime(hh,mm,f24){if(f24){var h24=hh+(hh<7?12:0);return String(h24).padStart(2,"0")+":"+String(mm).padStart(2,"0");}return hh+":"+String(mm).padStart(2,"0");}
+function fmtVerbal(hh,mm){if(mm===0)return hh+" null-null";if(mm===15)return"kvart over "+hh;if(mm===30)return"halv "+(hh===12?1:hh+1);if(mm===45)return"kvart p\u00e5 "+(hh===12?1:hh+1);if(mm<30)return mm+" over "+hh;return(60-mm)+" p\u00e5 "+(hh===12?1:hh+1);}
+function arr(n){return Array.from({length:n});}
+function randFact(){return CLOCK_FACTS[Math.floor(Math.random()*CLOCK_FACTS.length)];}
+function dayPeriod(h){if(h<5)return{e:"\uD83C\uDF19",t:"Natt"};if(h<8)return{e:"\uD83C\uDF05",t:"Tidlig morgen"};if(h<10)return{e:"\u2600\uFE0F",t:"Morgen"};if(h<12)return{e:"\uD83C\uDF24\uFE0F",t:"Formiddag"};if(h<13)return{e:"\u2600\uFE0F",t:"Midt p\u00e5 dagen"};if(h<15)return{e:"\uD83C\uDF25\uFE0F",t:"Tidlig ettermiddag"};if(h<17)return{e:"\u26C5",t:"Ettermiddag"};if(h<18)return{e:"\uD83C\uDF1F",t:"Sen ettermiddag"};if(h<22)return{e:"\uD83C\uDF06",t:"Kveld"};return{e:"\uD83C\uDF19",t:"Sen kveld"};}
+
+/* ===== DECO SVGS ===== */
+function GearSVG(p){var sz=p.size||80,col=p.color||"#fff",op=p.opacity||0.05,teeth=12,cx=sz/2,cy=sz/2,outer=sz/2-2,inner=outer*0.72,pts=[];for(var i=0;i<teeth;i++){var a1=(i/teeth)*Math.PI*2,a2=((i+0.35)/teeth)*Math.PI*2,a3=((i+0.5)/teeth)*Math.PI*2,a4=((i+0.85)/teeth)*Math.PI*2;pts.push(outer*Math.cos(a1)+cx+","+(outer*Math.sin(a1)+cy));pts.push(outer*Math.cos(a2)+cx+","+(outer*Math.sin(a2)+cy));pts.push(inner*Math.cos(a3)+cx+","+(inner*Math.sin(a3)+cy));pts.push(inner*Math.cos(a4)+cx+","+(inner*Math.sin(a4)+cy));}return h("svg",{width:sz,height:sz,style:{opacity:op}},h("polygon",{points:pts.join(" "),fill:col}),h("circle",{cx:cx,cy:cy,r:inner*0.35,fill:"none",stroke:col,strokeWidth:2}));}
+
+function CuckooBird(p){if(!p.show)return null;return h("div",{style:{position:"fixed",top:"28%",left:"50%",zIndex:1000,pointerEvents:"none",animation:"cuckoo-pop 2s ease-in-out forwards"}},h("div",{style:{background:"rgba(0,0,0,0.9)",borderRadius:22,padding:"18px 32px",display:"flex",alignItems:"center",gap:14,border:"2px solid "+(p.color||"#fbbf24"),boxShadow:"0 8px 40px rgba(0,0,0,0.5)"}},h("span",{style:{fontSize:44,animation:"ring-bell 0.6s ease-in-out"}},"\uD83D\uDC26"),h("span",{style:{fontSize:24,fontWeight:800,color:p.color||"#fbbf24",fontFamily:"'Baloo 2',cursive"}},"Ku-ku! Riktig!")));}
+function ClockDivider(){return h("div",{className:"clock-divider"},h("div",{className:"clock-divider-line"}),h("span",{style:{fontSize:16,opacity:0.6}},"\u231B"),h("div",{className:"clock-divider-line"}));}
+
+function CuckooHouse(p){var sz=p.size||80,col=p.color||"#fbbf24";return h("div",{style:{display:"flex",flexDirection:"column",alignItems:"center",opacity:p.opacity||0.12}},h("svg",{width:sz,height:sz*1.4,viewBox:"0 0 80 112"},h("polygon",{points:"40,2 10,30 70,30",fill:col,opacity:0.7}),h("rect",{x:15,y:30,width:50,height:55,rx:4,fill:col,opacity:0.5}),h("circle",{cx:40,cy:52,r:18,fill:"none",stroke:col,strokeWidth:2.5}),h("line",{x1:40,y1:52,x2:40,y2:39,stroke:col,strokeWidth:2,strokeLinecap:"round"}),h("line",{x1:40,y1:52,x2:50,y2:52,stroke:col,strokeWidth:1.5,strokeLinecap:"round"}),h("circle",{cx:40,cy:52,r:2,fill:col}),h("rect",{x:33,y:70,width:14,height:10,rx:3,fill:col,opacity:0.6}),h("rect",{x:37,y:85,width:2,height:22,fill:col,opacity:0.4}),h("rect",{x:41,y:85,width:2,height:18,fill:col,opacity:0.4}),h("circle",{cx:38,cy:108,r:4,fill:col,opacity:0.5}),h("circle",{cx:42,cy:104,r:3,fill:col,opacity:0.4})));}
+function ClockTowerSVG(p){var sz=p.size||60,col=p.color||"#fff";return h("svg",{width:sz,height:sz*2.5,viewBox:"0 0 60 150",style:{opacity:p.opacity||0.06}},h("path",{d:"M20 150 L20 75 L14 72 L14 35 L18 32 L18 15 L25 6 L30 2 L35 6 L42 15 L42 32 L46 35 L46 72 L40 75 L40 150 Z",fill:col}),h("circle",{cx:30,cy:50,r:13,fill:"none",stroke:col,strokeWidth:1.5,opacity:0.8}),h("line",{x1:30,y1:50,x2:30,y2:40,stroke:col,strokeWidth:1.5}),h("line",{x1:30,y1:50,x2:38,y2:50,stroke:col,strokeWidth:1}),h("rect",{x:25,y:68,width:10,height:6,rx:1,fill:col,opacity:0.4}));}
+function AlarmClockSVG(p){var sz=p.size||50,col=p.color||"#fff";return h("svg",{width:sz,height:sz,viewBox:"0 0 50 50",style:{opacity:p.opacity||0.1}},h("circle",{cx:8,cy:10,r:6,fill:"none",stroke:col,strokeWidth:1.5}),h("circle",{cx:42,cy:10,r:6,fill:"none",stroke:col,strokeWidth:1.5}),h("circle",{cx:25,cy:28,r:17,fill:"none",stroke:col,strokeWidth:2}),h("line",{x1:25,y1:28,x2:25,y2:16,stroke:col,strokeWidth:2,strokeLinecap:"round"}),h("line",{x1:25,y1:28,x2:34,y2:28,stroke:col,strokeWidth:1.5,strokeLinecap:"round"}),h("circle",{cx:25,cy:28,r:1.5,fill:col}),h("line",{x1:10,y1:46,x2:18,y2:42,stroke:col,strokeWidth:2,strokeLinecap:"round"}),h("line",{x1:40,y1:46,x2:32,y2:42,stroke:col,strokeWidth:2,strokeLinecap:"round"}));}
+function SundialSVG(p){var sz=p.size||50,col=p.color||"#fff";return h("svg",{width:sz,height:sz*0.6,viewBox:"0 0 50 30",style:{opacity:p.opacity||0.1}},h("ellipse",{cx:25,cy:25,rx:23,ry:8,fill:"none",stroke:col,strokeWidth:1.5}),h("path",{d:"M25 25 L25 4 L30 25",fill:col,opacity:0.5}),arr(8).map(function(_,i){var a=(-180+i*22.5)*Math.PI/180;return h("line",{key:i,x1:25+18*Math.cos(a),y1:25+6*Math.sin(a),x2:25+22*Math.cos(a),y2:25+7.5*Math.sin(a),stroke:col,strokeWidth:1,opacity:0.5});}));}
+function PocketWatchSVG(p){var sz=p.size||50,col=p.color||"#fff";return h("svg",{width:sz,height:sz*1.2,viewBox:"0 0 50 60",style:{opacity:p.opacity||0.1}},h("ellipse",{cx:25,cy:8,rx:5,ry:4,fill:"none",stroke:col,strokeWidth:1.5}),h("line",{x1:25,y1:12,x2:25,y2:16,stroke:col,strokeWidth:1.5}),h("circle",{cx:25,cy:36,r:20,fill:"none",stroke:col,strokeWidth:2}),h("circle",{cx:25,cy:36,r:17,fill:"none",stroke:col,strokeWidth:0.8}),h("line",{x1:25,y1:36,x2:25,y2:23,stroke:col,strokeWidth:1.5,strokeLinecap:"round"}),h("line",{x1:25,y1:36,x2:35,y2:36,stroke:col,strokeWidth:1,strokeLinecap:"round"}),h("circle",{cx:25,cy:36,r:1.5,fill:col}));}
+function HourglassSVG(p){var sz=p.size||50,col=p.color||"#fde68a";return h("svg",{width:sz,height:sz*1.4,viewBox:"0 0 40 56",style:{opacity:p.opacity||0.15,animation:"clock-swing 3s ease-in-out infinite",transformOrigin:"center top"}},h("rect",{x:6,y:0,width:28,height:4,rx:2,fill:col}),h("rect",{x:6,y:52,width:28,height:4,rx:2,fill:col}),h("path",{d:"M10 4 L10 20 Q20 30 20 28 Q20 30 30 20 L30 4 Z",fill:col,opacity:0.4}),h("path",{d:"M10 52 L10 36 Q20 26 20 28 Q20 26 30 36 L30 52 Z",fill:col,opacity:0.3}),h("line",{x1:20,y1:25,x2:20,y2:31,stroke:col,strokeWidth:1.5,opacity:0.6,style:{animation:"sand-fall 1s ease-in infinite"}}),h("circle",{cx:20,cy:44,r:6,fill:col,opacity:0.25,style:{animation:"sand-flow 4s ease-in-out infinite"}}));}
+function GrandfatherClockSVG(p){var sz=p.size||50,col=p.color||"#fff";return h("svg",{width:sz,height:sz*2.2,viewBox:"0 0 50 110",style:{opacity:p.opacity||0.08}},h("rect",{x:12,y:0,width:26,height:8,rx:3,fill:col}),h("rect",{x:15,y:8,width:20,height:35,rx:2,fill:col,opacity:0.6}),h("circle",{cx:25,cy:22,r:12,fill:"none",stroke:col,strokeWidth:1.5}),h("line",{x1:25,y1:22,x2:25,y2:14,stroke:col,strokeWidth:1.5,strokeLinecap:"round"}),h("line",{x1:25,y1:22,x2:31,y2:22,stroke:col,strokeWidth:1,strokeLinecap:"round"}),h("rect",{x:17,y:43,width:16,height:55,rx:2,fill:col,opacity:0.5}),h("circle",{cx:25,cy:70,r:6,fill:col,opacity:0.3,style:{animation:"pendulum 2s ease-in-out infinite",transformOrigin:"25px 50px"}}),h("line",{x1:25,y1:50,x2:25,y2:70,stroke:col,strokeWidth:1,opacity:0.4,style:{animation:"pendulum 2s ease-in-out infinite",transformOrigin:"25px 50px"}}),h("rect",{x:10,y:98,width:30,height:12,rx:3,fill:col}));}
+function WristwatchSVG(p){var sz=p.size||40,col=p.color||"#fff";return h("svg",{width:sz,height:sz*1.6,viewBox:"0 0 40 64",style:{opacity:p.opacity||0.1}},h("rect",{x:14,y:0,width:12,height:16,rx:2,fill:col,opacity:0.4}),h("rect",{x:14,y:48,width:12,height:16,rx:2,fill:col,opacity:0.4}),h("rect",{x:8,y:14,width:24,height:36,rx:6,fill:"none",stroke:col,strokeWidth:2}),h("circle",{cx:20,cy:32,r:10,fill:"none",stroke:col,strokeWidth:1.5}),h("line",{x1:20,y1:32,x2:20,y2:25,stroke:col,strokeWidth:1.5,strokeLinecap:"round"}),h("line",{x1:20,y1:32,x2:26,y2:32,stroke:col,strokeWidth:1,strokeLinecap:"round"}),h("circle",{cx:20,cy:32,r:1,fill:col}),h("rect",{x:32,y:26,width:4,height:6,rx:1,fill:col,opacity:0.5}));}
+
+function TickTock(p){var s=useState(false),tick=s[0],setTick=s[1];useEffect(function(){var id=setInterval(function(){setTick(function(v){return!v;});},1000);return function(){clearInterval(id);};},[]);return h("div",{style:{display:"inline-flex",alignItems:"center",gap:6,opacity:0.35,fontSize:13,fontWeight:700,letterSpacing:1}},h("span",{style:{opacity:tick?1:0.3,transition:"opacity 0.15s",color:p.color||"#fbbf24"}},"TICK"),h("span",{style:{animation:"tick-tock 2s ease-in-out infinite",display:"inline-block",fontSize:16}},"\u23F1\uFE0F"),h("span",{style:{opacity:tick?0.3:1,transition:"opacity 0.15s",color:p.color||"#fbbf24"}},"TAKK"));}
+function WorldDeco(p){var w=p.world;if(w.id===0)return h("div",{style:{position:"absolute",top:8,right:8,animation:"spin-slow 20s linear infinite"}},h(GearSVG,{size:50,color:w.accent,opacity:0.15}));if(w.id===1)return h("div",{style:{position:"absolute",top:4,right:4}},h(ClockTowerSVG,{size:24,color:w.accent,opacity:0.12}));if(w.id===2)return h("div",{style:{position:"absolute",top:8,right:8}},h(PocketWatchSVG,{size:36,color:w.accent,opacity:0.12}));if(w.id===3)return h("div",{style:{position:"absolute",top:4,right:4}},h(CuckooHouse,{size:32,color:w.accent,opacity:0.12}));return h("div",{style:{position:"absolute",top:10,right:10}},h(AlarmClockSVG,{size:34,color:w.accent,opacity:0.12}));}
+
+function DecoClock(p){var sz=p.size||60,hh=p.h||3,mm=p.m||0,col=p.color||"#fde68a",op=p.opacity||0.15,r=sz/2-4,cx=sz/2,cy=sz/2,hA=((hh%12)*30+mm*.5-90)*Math.PI/180,mA=(mm*6-90)*Math.PI/180;var ticks=[];for(var n=1;n<=12;n++){var a=(n*30-90)*Math.PI/180;ticks.push(h("line",{key:n,x1:cx+(r-3)*Math.cos(a),y1:cy+(r-3)*Math.sin(a),x2:cx+r*Math.cos(a),y2:cy+r*Math.sin(a),stroke:col,strokeWidth:1.5,strokeLinecap:"round",opacity:0.6}));}return h("svg",{width:sz,height:sz,style:{opacity:op}},h("circle",{cx:cx,cy:cy,r:r,fill:"none",stroke:col,strokeWidth:2}),ticks,h("line",{x1:cx,y1:cy,x2:cx+(r*.45)*Math.cos(hA),y2:cy+(r*.45)*Math.sin(hA),stroke:col,strokeWidth:2.5,strokeLinecap:"round"}),h("line",{x1:cx,y1:cy,x2:cx+(r*.7)*Math.cos(mA),y2:cy+(r*.7)*Math.sin(mA),stroke:col,strokeWidth:1.5,strokeLinecap:"round"}),h("circle",{cx:cx,cy:cy,r:2,fill:col}));}
+
+function FloatingClocks(){var positions=[{x:5,y:8,sz:50,h:3,m:0,del:0,dur:5},{x:82,y:5,sz:40,h:9,m:15,del:1,dur:6},{x:15,y:65,sz:35,h:6,m:30,del:2,dur:7},{x:88,y:55,sz:45,h:12,m:0,del:0.5,dur:5.5},{x:50,y:3,sz:30,h:1,m:45,del:1.5,dur:8},{x:70,y:75,sz:38,h:7,m:20,del:3,dur:6},{x:3,y:40,sz:42,h:10,m:10,del:2.5,dur:7},{x:95,y:35,sz:32,h:4,m:55,del:1,dur:5}];return h("div",{style:{position:"fixed",inset:0,pointerEvents:"none",zIndex:0,overflow:"hidden"}},positions.map(function(c,i){return h("div",{key:i,style:{position:"absolute",left:c.x+"%",top:c.y+"%",animation:"float "+c.dur+"s ease-in-out "+c.del+"s infinite"}},h(DecoClock,{size:c.sz,h:c.h,m:c.m}));}),h("div",{style:{position:"absolute",left:"-5px",bottom:0}},h(ClockTowerSVG,{size:40,color:"#a78bfa",opacity:0.04})),h("div",{style:{position:"absolute",right:"5px",bottom:0,transform:"scaleX(-1)"}},h(ClockTowerSVG,{size:32,color:"#38bdf8",opacity:0.035})),h("div",{style:{position:"absolute",left:"20%",bottom:0}},h(GrandfatherClockSVG,{size:25,color:"#f472b6",opacity:0.03})),h("div",{style:{position:"absolute",right:"25%",top:"15%",animation:"float 8s ease-in-out 2s infinite"}},h(PocketWatchSVG,{size:28,color:"#fde68a",opacity:0.06})),h("div",{style:{position:"absolute",left:"45%",bottom:"5%",animation:"float 7s ease-in-out 1s infinite"}},h(HourglassSVG,{size:24,color:"#a78bfa",opacity:0.06})),h("div",{style:{position:"absolute",right:"10%",bottom:"15%",animation:"float 6s ease-in-out 3s infinite"}},h(WristwatchSVG,{size:22,color:"#38bdf8",opacity:0.05})),h("div",{style:{position:"absolute",left:"-20px",bottom:"10%",animation:"spin-slow 20s linear infinite"}},h(GearSVG,{size:120,color:"#a78bfa",opacity:0.06})),h("div",{style:{position:"absolute",right:"-15px",top:"20%",animation:"gear-reverse 15s linear infinite"}},h(GearSVG,{size:90,color:"#38bdf8",opacity:0.05})),h("div",{style:{position:"absolute",left:"30%",bottom:"-10px",animation:"spin-slow 25s linear infinite"}},h(GearSVG,{size:70,color:"#f472b6",opacity:0.04})),h("div",{style:{position:"absolute",right:"35%",top:"80%"}},h(CuckooHouse,{size:22,color:"#fde68a",opacity:0.04})),h("div",{style:{position:"absolute",left:"60%",top:"10%",animation:"float 9s ease-in-out 4s infinite"}},h(SundialSVG,{size:30,color:"#fb923c",opacity:0.05})));}
+
+function GameBgDeco(p){var w=p.world;return h("div",{style:{position:"fixed",inset:0,pointerEvents:"none",zIndex:0,overflow:"hidden"}},h("div",{style:{position:"absolute",left:"-30px",top:"15%",animation:"spin-slow 25s linear infinite"}},h(GearSVG,{size:100,color:w.accent,opacity:0.04})),h("div",{style:{position:"absolute",right:"-20px",bottom:"10%",animation:"gear-reverse 20s linear infinite"}},h(GearSVG,{size:80,color:w.accent,opacity:0.035})),w.id<=1?h("div",{style:{position:"absolute",right:"2%",bottom:"5%"}},h(ClockTowerSVG,{size:30,color:w.accent,opacity:0.04})):null,w.id===2?h("div",{style:{position:"absolute",left:"5%",bottom:"5%",animation:"float 7s ease-in-out 1s infinite"}},h(HourglassSVG,{size:30,color:w.accent,opacity:0.06})):null,w.id===3?h("div",{style:{position:"absolute",right:"3%",top:"10%"}},h(CuckooHouse,{size:35,color:w.accent,opacity:0.05})):null,w.id===4?h("div",{style:{position:"absolute",left:"8%",top:"8%",animation:"float 5s ease-in-out infinite"}},h(WristwatchSVG,{size:25,color:w.accent,opacity:0.06})):null);}
+
+function TitleClock(){var s=useState(null),time=s[0],setTime=s[1];useEffect(function(){function tick(){var d=new Date();setTime({h:d.getHours()%12||12,m:d.getMinutes(),s:d.getSeconds()});}tick();var id=setInterval(tick,1000);return function(){clearInterval(id);};},[]);if(!time)return null;var sz=182,r=sz/2-10,cx=sz/2,cy=sz/2,hA=((time.h%12)*30+time.m*.5-90)*Math.PI/180,mA=(time.m*6-90)*Math.PI/180,sA=(time.s*6-90)*Math.PI/180;var ticks=[],nums=[];for(var i=0;i<60;i++){var a=(i*6-90)*Math.PI/180,mj=i%5===0;ticks.push(h("line",{key:"t"+i,x1:cx+(r-(mj?13:5))*Math.cos(a),y1:cy+(r-(mj?13:5))*Math.sin(a),x2:cx+(r-1)*Math.cos(a),y2:cy+(r-1)*Math.sin(a),stroke:mj?"rgba(255,220,150,0.9)":"rgba(255,255,255,0.2)",strokeWidth:mj?3:1,strokeLinecap:"round"}));}for(var n=1;n<=12;n++){var na=(n*30-90)*Math.PI/180;nums.push(h("text",{key:"n"+n,x:cx+(r-30)*Math.cos(na),y:cy+(r-30)*Math.sin(na),textAnchor:"middle",dominantBaseline:"central",fontSize:17,fontWeight:"700",fill:"rgba(255,220,150,0.8)",style:{fontFamily:"'Baloo 2',cursive"}},n));}
+return h("div",{className:"anim-glow",style:{position:"relative",display:"flex",flexDirection:"column",alignItems:"center"}},h("div",{style:{width:0,height:0,borderLeft:"52px solid transparent",borderRight:"52px solid transparent",borderBottom:"26px solid rgba(139,92,42,0.3)",marginBottom:-2}}),h("svg",{width:sz,height:sz,style:{filter:"drop-shadow(0 0 20px rgba(251,191,36,0.3))"}},h("defs",null,h("radialGradient",{id:"tcg",cx:"40%",cy:"35%"},h("stop",{offset:"0%",stopColor:"#1e1b4b"}),h("stop",{offset:"100%",stopColor:"#0f0a2e"}))),h("circle",{cx:cx,cy:cy,r:r+6,fill:"none",stroke:"rgba(139,92,42,0.4)",strokeWidth:5}),h("circle",{cx:cx,cy:cy,r:r+1,fill:"none",stroke:"rgba(251,191,36,0.3)",strokeWidth:1.5}),h("circle",{cx:cx,cy:cy,r:r,fill:"url(#tcg)"}),h("circle",{cx:cx,cy:cy,r:r,fill:"none",stroke:"rgba(251,191,36,0.2)",strokeWidth:1}),ticks,nums,h("line",{x1:cx,y1:cy,x2:cx+(r*.45)*Math.cos(hA),y2:cy+(r*.45)*Math.sin(hA),stroke:"#fbbf24",strokeWidth:5.5,strokeLinecap:"round"}),h("line",{x1:cx,y1:cy,x2:cx+(r*.65)*Math.cos(mA),y2:cy+(r*.65)*Math.sin(mA),stroke:"#fde68a",strokeWidth:3,strokeLinecap:"round"}),h("line",{x1:cx,y1:cy,x2:cx+(r*.7)*Math.cos(sA),y2:cy+(r*.7)*Math.sin(sA),stroke:"#f87171",strokeWidth:1.2,strokeLinecap:"round"}),h("circle",{cx:cx,cy:cy,r:5,fill:"#fbbf24"}),h("circle",{cx:cx,cy:cy,r:2.5,fill:"#fde68a"})),h("div",{style:{display:"flex",gap:36,marginTop:-2}},h("div",{style:{width:2.5,height:57,background:"linear-gradient(to bottom,rgba(139,92,42,0.4),transparent)",transformOrigin:"top center",animation:"pendulum 2s ease-in-out infinite",position:"relative"}},h("div",{style:{width:20,height:20,borderRadius:"50%",background:"radial-gradient(circle at 40% 35%,#fde68a,#b45309)",position:"absolute",bottom:-10,left:-9,boxShadow:"0 0 14px rgba(251,191,36,0.3)"}})),h("div",{style:{width:2.5,height:47,background:"linear-gradient(to bottom,rgba(139,92,42,0.4),transparent)",transformOrigin:"top center",animation:"pendulum 2s ease-in-out 0.15s infinite",position:"relative"}},h("div",{style:{width:16,height:16,borderRadius:"50%",background:"radial-gradient(circle at 40% 35%,#fde68a,#92400e)",position:"absolute",bottom:-8,left:-7,boxShadow:"0 0 10px rgba(251,191,36,0.2)"}}))));}
+
+function WorldMiniClock(p){var wd=p.world,sz=60,r=sz/2-4,cx=sz/2,cy=sz/2;var times=[{h:3,m:0},{h:7,m:30},{h:10,m:15},{h:5,m:45},{h:1,m:20}];var t=times[wd.id],hA=((t.h%12)*30+t.m*.5-90)*Math.PI/180,mA=(t.m*6-90)*Math.PI/180;var ticks=[];for(var n=0;n<12;n++){var a=(n*30-90)*Math.PI/180;ticks.push(h("line",{key:n,x1:cx+(r-3)*Math.cos(a),y1:cy+(r-3)*Math.sin(a),x2:cx+r*Math.cos(a),y2:cy+r*Math.sin(a),stroke:wd.accent,strokeWidth:1.5,strokeLinecap:"round",opacity:0.7}));}return h("svg",{width:sz,height:sz,style:{flexShrink:0,filter:"drop-shadow(0 0 6px "+wd.accent+"44)"}},h("circle",{cx:cx,cy:cy,r:r+2,fill:wd.accent+"22",stroke:wd.accent,strokeWidth:2}),h("circle",{cx:cx,cy:cy,r:r-1,fill:"rgba(15,10,40,0.7)"}),ticks,h("line",{x1:cx,y1:cy,x2:cx+(r*.45)*Math.cos(hA),y2:cy+(r*.45)*Math.sin(hA),stroke:wd.accent,strokeWidth:3,strokeLinecap:"round"}),h("line",{x1:cx,y1:cy,x2:cx+(r*.68)*Math.cos(mA),y2:cy+(r*.68)*Math.sin(mA),stroke:wd.accentLight,strokeWidth:2,strokeLinecap:"round"}),h("circle",{cx:cx,cy:cy,r:2.5,fill:wd.accent}));}
+
+/* ===== GAME CLOCK ===== */
+function ClockFace(p){var hv=p.h,mv=p.m,sz=p.size||220,inter=p.interactive,otc=p.onTimeChange,ac=p.accent||"#3B82F6",ah=p.activeHand||"minute";var ref=useRef(null),drag=useRef(false),prev=useRef(null);var hA=((hv%12)*30+mv*.5)-90,mA=(mv*6)-90,r=sz/2-10,cx=sz/2,cy=sz/2;var ga=useCallback(function(e){if(!ref.current)return 0;var rc=ref.current.getBoundingClientRect();var pt=e.touches?e.touches[0]:e;var x=pt.clientX-rc.left-cx,y=pt.clientY-rc.top-cy;var a=Math.atan2(y,x)*(180/Math.PI)+90;if(a<0)a+=360;return a;},[cx,cy]);var od=function(e){if(!inter)return;e.preventDefault();drag.current=true;prev.current=null;if(ref.current&&ref.current.setPointerCapture)ref.current.setPointerCapture(e.pointerId);};var om=useCallback(function(e){if(!drag.current||!inter)return;var angle=ga(e);if(ah==="minute"){var nM=Math.round(angle/6)%60,nH=hv;if(prev.current!==null){var pv=prev.current;if(pv>300&&angle<60){nH=hv%12+1;if(nH>12)nH=1;}else if(pv<60&&angle>300){nH=hv-1;if(nH<1)nH=12;}}prev.current=angle;if(otc)otc(nH,nM);}else{var nH2=Math.round(angle/30)%12;if(nH2===0)nH2=12;if(otc)otc(nH2,mv);}},[inter,hv,mv,ah,ga,otc]);var ou=function(){drag.current=false;prev.current=null;};var hAc=ah==="hour",mAc=ah==="minute";var ticks=[],nums=[];for(var i=0;i<60;i++){var a=(i*6-90)*Math.PI/180,mj=i%5===0;ticks.push(h("line",{key:"t"+i,x1:cx+(r-(mj?Math.round(sz*0.055):Math.round(sz*0.024)))*Math.cos(a),y1:cy+(r-(mj?Math.round(sz*0.055):Math.round(sz*0.024)))*Math.sin(a),x2:cx+(r-2)*Math.cos(a),y2:cy+(r-2)*Math.sin(a),stroke:mj?"rgba(255,220,150,0.9)":"rgba(255,255,255,0.3)",strokeWidth:mj?Math.max(2.5,sz*0.01):1,strokeLinecap:"round"}));}for(var n=1;n<=12;n++){var na=(n*30-90)*Math.PI/180;nums.push(h("text",{key:"n"+n,x:cx+(r-Math.round(sz*0.11))*Math.cos(na),y:cy+(r-Math.round(sz*0.11))*Math.sin(na),textAnchor:"middle",dominantBaseline:"central",fontSize:Math.round(sz*0.077),fontWeight:"700",fill:"#fde68a",style:{fontFamily:"'Baloo 2',cursive"}},n));}return h("svg",{ref:ref,width:sz,height:sz,onPointerDown:inter?od:undefined,onPointerMove:om,onPointerUp:ou,onPointerLeave:ou,style:{touchAction:"none",cursor:inter?"pointer":"default",filter:"drop-shadow(0 4px 20px rgba(0,0,0,0.3))"}},h("defs",null,h("radialGradient",{id:"gcg",cx:"40%",cy:"35%"},h("stop",{offset:"0%",stopColor:"#1e1b4b"}),h("stop",{offset:"100%",stopColor:"#0d0a20"})),h("filter",{id:"gcs"},h("feDropShadow",{dx:"0",dy:"2",stdDeviation:"3",floodOpacity:"0.25"}))),h("circle",{cx:cx,cy:cy,r:r+6,fill:"none",stroke:ac,strokeWidth:3,opacity:0.5}),h("circle",{cx:cx,cy:cy,r:r+3,fill:ac+"22"}),h("circle",{cx:cx,cy:cy,r:r,fill:"url(#gcg)",filter:"url(#gcs)"}),h("circle",{cx:cx,cy:cy,r:r,fill:"none",stroke:ac+"44",strokeWidth:1}),ticks,nums,inter?h("circle",{cx:cx,cy:cy,r:r-2,fill:"none",stroke:mAc?"rgba(253,230,138,0.08)":ac+"11",strokeWidth:1,strokeDasharray:"4 4"}):null,h("line",{x1:cx,y1:cy,x2:cx+(r*.5)*Math.cos(hA*Math.PI/180),y2:cy+(r*.5)*Math.sin(hA*Math.PI/180),stroke:hAc?ac:"#888",strokeWidth:hAc?Math.max(6,sz*0.022):Math.max(5,sz*0.018),strokeLinecap:"round",opacity:hAc?1:.5}),h("line",{x1:cx,y1:cy,x2:cx+(r*.75)*Math.cos(mA*Math.PI/180),y2:cy+(r*.75)*Math.sin(mA*Math.PI/180),stroke:mAc?"#fde68a":"#aaa",strokeWidth:mAc?Math.max(3.5,sz*0.013):Math.max(3,sz*0.011),strokeLinecap:"round",opacity:mAc?1:.5}),h("circle",{cx:cx,cy:cy,r:Math.max(6,sz*0.022),fill:ac}),h("circle",{cx:cx,cy:cy,r:Math.max(3,sz*0.011),fill:"#fde68a"}));}
+
+function MiniClock(p){var hv=p.h,mv=p.m,sz=p.size||90,ac=p.accent||"#3B82F6",r=sz/2-6,cx=sz/2,cy=sz/2;var hA=((hv%12)*30+mv*.5-90)*Math.PI/180,mA=(mv*6-90)*Math.PI/180;var els=[];for(var n=1;n<=12;n++){var a=(n*30-90)*Math.PI/180;els.push(h("line",{key:"l"+n,x1:cx+(r-4)*Math.cos(a),y1:cy+(r-4)*Math.sin(a),x2:cx+(r-1)*Math.cos(a),y2:cy+(r-1)*Math.sin(a),stroke:ac,strokeWidth:1.5,strokeLinecap:"round",opacity:0.6}));els.push(h("text",{key:"t"+n,x:cx+(r-14)*Math.cos(a),y:cy+(r-14)*Math.sin(a),textAnchor:"middle",dominantBaseline:"central",fontSize:sz>80?13:10,fontWeight:"700",fill:"#333",style:{fontFamily:"'Baloo 2',cursive"}},n));}return h("svg",{width:sz,height:sz},h("circle",{cx:cx,cy:cy,r:r+3,fill:ac+"33",stroke:ac,strokeWidth:2}),h("circle",{cx:cx,cy:cy,r:r,fill:"#fefce8"}),els,h("line",{x1:cx,y1:cy,x2:cx+(r*.48)*Math.cos(hA),y2:cy+(r*.48)*Math.sin(hA),stroke:ac,strokeWidth:3.5,strokeLinecap:"round"}),h("line",{x1:cx,y1:cy,x2:cx+(r*.72)*Math.cos(mA),y2:cy+(r*.72)*Math.sin(mA),stroke:"#333",strokeWidth:2,strokeLinecap:"round"}),h("circle",{cx:cx,cy:cy,r:3,fill:ac}));}
+
+/* ===== GAMES ===== */
+function SetClockGame(p){var w=p.world,onS=p.onScore;var s1=useState(function(){return genTime(w.hours);}),tgt=s1[0],setTgt=s1[1];var s2=useState(function(){return Math.floor(Math.random()*12)+1;}),uH=s2[0],sUH=s2[1];var s3=useState(0),uM=s3[0],sUM=s3[1];var s4=useState(null),fb=s4[0],sFb=s4[1];var s5=useState(0),sc=s5[0],sSc=s5[1];var s6=useState(1),rnd=s6[0],sRnd=s6[1];var s7=useState("minute"),aH=s7[0],sAH=s7[1];var sCk=useState(false),cuckoo=sCk[0],setCk=sCk[1];var tot=5,is24=w.id===4;var ts=is24?fmtTime(tgt.h,tgt.m,true):fmtTime(tgt.h,tgt.m);var vs=fmtVerbal(tgt.h,tgt.m);var chk=function(){var ok=uH===tgt.h&&uM===tgt.m;sFb(ok?"correct":"wrong");if(ok){sndChime();sSc(function(s){return s+1;});setCk(true);setTimeout(function(){setCk(false);},2000);}else{sndWrong();}setTimeout(function(){sFb(null);if(rnd<tot){sRnd(function(r){return r+1;});setTgt(genTime(w.hours));sUH(Math.floor(Math.random()*12)+1);sUM(0);sAH("minute");}else{onS(sc+(ok?1:0),tot);}},1400);};
+return h("div",{style:{display:"flex",flexDirection:"column",alignItems:"center",gap:16,width:"100%"}},h(CuckooBird,{show:cuckoo,color:w.accent}),h("div",{style:{textAlign:"center",width:"100%"}},h("div",{className:"round-dots"},arr(tot).map(function(_,i){return h("div",{key:i,className:"round-dot",style:{background:i<rnd-1?"#4ade80":i===rnd-1?w.accent:"transparent",borderColor:i<rnd-1?"#4ade80":i===rnd-1?w.accent:"rgba(255,255,255,0.15)",boxShadow:i===rnd-1?"0 0 10px "+w.accent+"88":"none"}});})),h("p",{style:{fontSize:16,opacity:.55,marginBottom:8}},"Runde "+rnd+" av "+tot)),h("div",{className:"info-box",style:{display:"inline-flex",flexDirection:"column",alignItems:"center",gap:6,padding:"16px 36px",position:"relative",overflow:"hidden"}},h("div",{style:{position:"absolute",top:4,right:6}},h(HourglassSVG,{size:18,color:w.accent,opacity:0.08})),h("p",{style:{fontSize:17,opacity:0.6}},"\uD83D\uDD27 Fiks klokken til:"),h("p",{style:{fontSize:46,fontWeight:800,letterSpacing:2,color:w.accent,textShadow:"0 0 24px "+w.accent+"44",fontFamily:"'Baloo 2',cursive",lineHeight:1}},ts),w.id>=2?h("p",{style:{fontSize:16,opacity:.55,marginTop:4}},"\u00ab"+vs+"\u00bb"):null),h("div",{style:{position:"relative",borderRadius:24,padding:16,transition:"all 0.3s",background:fb==="correct"?"rgba(74,222,128,0.12)":fb==="wrong"?"rgba(248,113,113,0.12)":"rgba(255,255,255,0.03)",boxShadow:fb==="correct"?"0 0 40px rgba(74,222,128,0.2)":fb==="wrong"?"0 0 40px rgba(248,113,113,0.2)":"none"}},h(ClockFace,{h:uH,m:uM,size:422,interactive:!fb,onTimeChange:function(hh,mm){sUH(hh);sUM(mm);},accent:w.accent,activeHand:aH})),!fb?h("p",{style:{fontSize:14,opacity:0.35,marginTop:-4}},"\u261D\uFE0F Dra "+(aH==="minute"?"minutt":"time")+"viseren p\u00e5 klokken"):null,h("div",{style:{display:"flex",gap:12}},h("button",{onClick:function(){sAH("hour");},style:{padding:"14px 24px",borderRadius:14,fontWeight:700,fontSize:16,border:"2px solid "+(aH==="hour"?w.accent:"rgba(255,255,255,0.1)"),cursor:"pointer",background:aH==="hour"?w.accent+"33":"rgba(255,255,255,0.05)",color:aH==="hour"?w.accentLight:"rgba(255,255,255,0.4)",transition:"all 0.2s"}},"\uD83D\uDD50 Timer"),h("button",{onClick:function(){sAH("minute");},style:{padding:"14px 24px",borderRadius:14,fontWeight:700,fontSize:16,border:"2px solid "+(aH==="minute"?"#fde68a":"rgba(255,255,255,0.1)"),cursor:"pointer",background:aH==="minute"?"rgba(253,230,138,0.15)":"rgba(255,255,255,0.05)",color:aH==="minute"?"#fde68a":"rgba(255,255,255,0.4)",transition:"all 0.2s"}},"\uD83D\uDD50 Minutt")),h("div",{className:"info-box",style:{display:"inline-flex",alignItems:"center",gap:10,padding:"10px 22px"}},h("span",{style:{fontSize:16,opacity:0.5}},"Din klokke:"),h("span",{style:{fontSize:24,fontWeight:800,fontFamily:"'Baloo 2',cursive",color:w.accentLight}},fmtTime(uH,uM))),fb==="correct"?h("div",{className:"fb-bar",style:{background:"rgba(74,222,128,0.15)",color:"#86efac",border:"1px solid rgba(74,222,128,0.3)"}},"\u2713 Riktig! \uD83C\uDF89"):null,fb==="wrong"?h("div",{className:"fb-bar",style:{background:"rgba(248,113,113,0.15)",color:"#fca5a5",border:"1px solid rgba(248,113,113,0.3)"}},"\u2717 Rett svar var "+ts):null,!fb?h("button",{onClick:chk,className:"check-btn",style:{background:w.btnBg,boxShadow:"0 4px 20px "+w.accent+"44"}},"Sjekk svar \uD83D\uDD27"):null);}
+
+function MatchGame(p){var w=p.world,onS=p.onScore;var sPhase=useState("intro"),phase=sPhase[0],setPhase=sPhase[1];var sDemo=useState(0),demoStep=sDemo[0],setDemoStep=sDemo[1];var sCk=useState(false),cuckoo=sCk[0],setCk=sCk[1];var cards=useMemo(function(){var ts=[],u={};while(ts.length<3){var t=genTime(w.hours);var k=t.h+"-"+t.m;if(!u[k]){u[k]=true;ts.push(t);}}var i24=w.id===4,dk=[];ts.forEach(function(t,i){dk.push({id:i*2,pid:i,type:"clock",h:t.h,m:t.m});dk.push({id:i*2+1,pid:i,type:"text",disp:i24?fmtTime(t.h,t.m,true):fmtVerbal(t.h,t.m),lbl:i24?"24-timer":"Verbal",h:t.h,m:t.m});});return dk.sort(function(){return Math.random()-.5;});},[w]);var s1=useState([]),fl=s1[0],sFl=s1[1];var s2=useState([]),mt=s2[0],sMt=s2[1];var s3=useState(0),mv=s3[0],sMv=s3[1];
+useEffect(function(){if(phase!=="intro")return;var timers=[];timers.push(setTimeout(function(){setDemoStep(1);},600));timers.push(setTimeout(function(){setDemoStep(2);},1600));timers.push(setTimeout(function(){setDemoStep(3);},2800));timers.push(setTimeout(function(){setDemoStep(4);},4000));return function(){timers.forEach(clearTimeout);};},[phase]);
+var flip=function(id){if(phase!=="play"||fl.length>=2||fl.indexOf(id)>=0||mt.indexOf(id)>=0)return;var nx=fl.concat([id]);sFl(nx);if(nx.length===2){sMv(function(v){return v+1;});var a=null,b=null;cards.forEach(function(c){if(c.id===nx[0])a=c;if(c.id===nx[1])b=c;});if(a.pid===b.pid){sndChime();setCk(true);setTimeout(function(){setCk(false);},2000);setTimeout(function(){var nm=mt.concat([a.id,b.id]);sMt(nm);sFl([]);if(nm.length===cards.length){var st=mv<=4?5:mv<=6?4:mv<=8?3:mv<=11?2:1;setTimeout(function(){onS(st,5);},800);}},700);}else{sndWrong();setTimeout(function(){sFl([]);},1000);}}};
+if(phase==="intro"){return h("div",{className:"anim-slide",style:{display:"flex",flexDirection:"column",alignItems:"center",gap:22,width:"100%",maxWidth:460,margin:"0 auto"}},h("div",{style:{position:"relative"}},h("span",{style:{fontSize:56}},"\uD83D\uDD75\uFE0F"),h("div",{style:{position:"absolute",top:-6,right:-16,animation:"clock-swing 3s ease-in-out infinite"}},h(AlarmClockSVG,{size:24,color:w.accent,opacity:0.3}))),h("h3",{style:{fontSize:28,fontWeight:800,fontFamily:"'Baloo 2',cursive"}},"Klokkematch"),h("div",{style:{width:"100%",borderRadius:22,background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.1)",padding:26}},h("p",{style:{fontSize:18,fontWeight:700,marginBottom:16,color:w.accent,textAlign:"center"}},"Din etterforskning:"),h("div",{style:{display:"flex",flexDirection:"column",gap:16}},[{n:"1",txt:"Trykk p\u00e5 et kort for \u00e5 avsl\u00f8re det \uD83D\uDD0D",step:1},{n:"2",txt:"Avsl\u00f8r ett til \u2014 er det samme tid?",step:2},{n:"3",txt:"L\u00f8s alle 3 mysterier for \u00e5 vinne! \uD83C\uDFC6",step:3}].map(function(s){return h("div",{key:s.n,style:{display:"flex",alignItems:"center",gap:14,opacity:demoStep>=s.step?1:0.2,transition:"all 0.5s",transform:demoStep>=s.step?"translateX(0)":"translateX(-20px)"}},h("div",{style:{width:42,height:42,borderRadius:"50%",background:w.accent+"33",border:"2px solid "+w.accent,display:"flex",alignItems:"center",justifyContent:"center",fontSize:19,fontWeight:800,flexShrink:0}},s.n),h("p",{style:{fontSize:17}},s.txt));}))),h("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,width:230,margin:"0 auto"}},[0,1,2,3].map(function(i){var showFace=(demoStep>=2&&i<2)||(demoStep>=3&&i>=2);var isMatch=demoStep>=4&&i<2;return h("div",{key:i,style:{height:58,borderRadius:12,display:"flex",alignItems:"center",justifyContent:"center",background:isMatch?"rgba(74,222,128,0.25)":showFace?"rgba(255,255,255,0.15)":"rgba(255,255,255,0.06)",border:"2px solid "+(isMatch?"#4ade80":showFace?w.accent:"rgba(255,255,255,0.1)"),transition:"all 0.4s",transform:showFace?"scale(1.05)":"scale(1)",fontSize:showFace?15:22,color:showFace?"#fff":"rgba(255,255,255,0.3)",fontWeight:700}},showFace?(i<2?"\uD83D\uDD50 3:00":"\uD83D\uDD54 5:00"):(isMatch?"\u2705":"\uD83D\uDD75\uFE0F"));})),demoStep>=4?h("p",{style:{fontSize:14,opacity:0.5,textAlign:"center"}},"\u2705 Mysteriet er l\u00f8st! Klokke og tid matcher!"):null,h("button",{onClick:function(){setPhase("play");},className:"check-btn",style:{background:w.btnBg,boxShadow:"0 4px 20px "+w.accent+"44",fontSize:19,opacity:demoStep>=3?1:0.3,transition:"opacity 0.5s",pointerEvents:demoStep>=3?"auto":"none"}},"Start etterforskningen! \uD83D\uDD0D"));}
+return h("div",{style:{display:"flex",flexDirection:"column",alignItems:"center",gap:16,width:"100%"}},h(CuckooBird,{show:cuckoo,color:w.accent}),h("div",{style:{display:"flex",gap:20,fontSize:16,opacity:.7}},h("span",null,"Fors\u00f8k: ",h("b",{style:{color:w.accent}},mv)),h("span",null,"Par: ",h("b",{style:{color:w.accent}},mt.length/2)," / 3")),h("p",{style:{fontSize:15,opacity:0.45}},"Snu to kort \u2014 finn klokke og tid som h\u00f8rer sammen! \uD83D\uDD75\uFE0F"),h("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,width:"100%",maxWidth:500}},cards.map(function(c){var isF=fl.indexOf(c.id)>=0||mt.indexOf(c.id)>=0,isM=mt.indexOf(c.id)>=0;return h("button",{key:c.id,onClick:function(){flip(c.id);},disabled:isM,style:{minHeight:190,borderRadius:22,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",transition:"all 0.35s cubic-bezier(0.34,1.56,0.64,1)",border:"3px solid",cursor:isM?"default":"pointer",background:isM?"rgba(74,222,128,0.15)":isF?"#fefce8":"rgba(255,255,255,0.06)",borderColor:isM?"#4ade80":isF?w.accent:"rgba(255,255,255,0.1)",transform:isM?"scale(0.95)":isF?"scale(1.02)":"scale(1)",opacity:isM?.55:1,boxShadow:isF?"0 6px 24px "+w.accent+"44":"0 3px 12px rgba(0,0,0,0.25)",color:"#333",padding:14}},isF?(c.type==="clock"?h(MiniClock,{h:c.h,m:c.m,size:135,accent:w.accent}):h("div",{style:{display:"flex",flexDirection:"column",alignItems:"center",gap:8,padding:"10px 14px"}},h("span",{style:{fontSize:12,opacity:.4,fontWeight:700,textTransform:"uppercase",letterSpacing:1}},c.lbl),h("span",{style:{fontSize:28,fontWeight:800,textAlign:"center",lineHeight:1.2,color:isM?"#333":w.accent,fontFamily:"'Baloo 2',cursive"}},c.disp),h("span",{style:{fontSize:15,opacity:.4}},fmtTime(c.h,c.m)))):h("div",{style:{display:"flex",flexDirection:"column",alignItems:"center",gap:12,color:"#fff",padding:18}},h("span",{style:{fontSize:56}},"\uD83D\uDD75\uFE0F"),h("span",{style:{fontSize:15,fontWeight:700,opacity:.35}},"Trykk for \u00e5 avsl�re")));})));}
+
+function TimelineGame(p){var w=p.world,onS=p.onScore;var sCk=useState(false),cuckoo=sCk[0],setCk=sCk[1];var isZoo=w.id===3;var SRC=isZoo?ZOO_ACTIVITIES:ACTIVITIES;var acts=useMemo(function(){var c=w.id<=1?4:w.id<=3?7:6;var pool=SRC.slice();pool.sort(function(){return Math.random()-.5;});return pool.slice(0,c);},[w]);var slots=useMemo(function(){var sorted=acts.slice().sort(function(a,b){return(a.hour*60+a.minute)-(b.hour*60+b.minute);});return sorted.map(function(a){var lbl=String(a.hour).padStart(2,"0")+":"+String(a.minute).padStart(2,"0");return{hour:a.hour,minute:a.minute,label:lbl};});},[acts,w]);var s1=useState({}),pl=s1[0],sPl=s1[1];var s2=useState(null),sel=s2[0],sSel=s2[1];var s3=useState(null),fb=s3[0],sFb=s3[1];var hs=function(si){if(sel===null||fb)return;var act=acts[sel],sl=slots[si];if(act.hour===sl.hour&&act.minute===sl.minute){var np=Object.assign({},pl);np[si]=sel;sPl(np);sFb("correct");sndChime();setCk(true);setTimeout(function(){setCk(false);},2000);setTimeout(function(){sFb(null);sSel(null);if(Object.keys(np).length===slots.length)setTimeout(function(){onS(4,5);},500);},700);}else{sFb("wrong");sndWrong();setTimeout(function(){sFb(null);},900);}};var pIds={};Object.keys(pl).forEach(function(k){pIds[pl[k]]=true;});var placedCount=Object.keys(pl).length;
+return h("div",{style:{display:"flex",flexDirection:"column",alignItems:"center",gap:22,width:"100%",maxWidth:580}},h(CuckooBird,{show:cuckoo,color:w.accent}),
+
+/* HEADER */
+h("div",{style:{textAlign:"center",width:"100%"}},h("p",{style:{fontSize:28,fontWeight:800,fontFamily:"'Baloo 2',cursive",marginBottom:4}},isZoo?"Matetid! \uD83E\uDD81":"Min dag \uD83C\uDF1E"),h("p",{style:{fontSize:17,opacity:.55,lineHeight:1.5,maxWidth:420,margin:"0 auto"}},w.id===4?"Bruk 24-timersformat":isZoo?"Dyrene spiser hele d\u00f8gnet! Les hintet og finn riktig tid.":"N\u00e5r p\u00e5 dagen skjer dette? Velg aktivitet, s\u00e5 tidspunkt."),
+
+/* PROGRESS */
+h("div",{style:{display:"flex",gap:6,justifyContent:"center",marginTop:10}},arr(acts.length).map(function(_,i){return h("div",{key:i,style:{width:18,height:18,borderRadius:"50%",background:i<placedCount?"#4ade80":"transparent",border:"3px solid "+(i<placedCount?"#4ade80":"rgba(255,255,255,0.15)"),transition:"all 0.3s",display:"flex",alignItems:"center",justifyContent:"center",fontSize:10,color:"#fff",fontWeight:800}},i<placedCount?"\u2713":"");}))),
+
+/* SECTION LABEL */
+h("div",{style:{width:"100%",display:"flex",alignItems:"center",gap:10,opacity:0.35}},h("div",{style:{flex:1,height:1,background:"rgba(255,255,255,0.2)"}}),h("span",{style:{fontSize:13,fontWeight:700,letterSpacing:2,textTransform:"uppercase",whiteSpace:"nowrap"}},isZoo?"Velg et dyr":"Velg aktivitet"),h("div",{style:{flex:1,height:1,background:"rgba(255,255,255,0.2)"}})),
+
+/* ANIMAL / ACTIVITY CARDS */
+isZoo?h("div",{style:{display:"flex",flexDirection:"column",gap:10,width:"100%"}},acts.map(function(a,i){
+if(pIds[i])return h("div",{key:i,style:{display:"flex",alignItems:"center",gap:14,padding:"12px 18px",borderRadius:20,background:"rgba(74,222,128,0.08)",border:"2px solid rgba(74,222,128,0.18)"}},h("span",{style:{fontSize:40,opacity:0.35,flexShrink:0}},a.icon),h("span",{style:{fontSize:17,opacity:0.3,fontWeight:700,flex:1}},a.name),h("span",{style:{fontSize:22,opacity:0.4}},"\u2705"));
+return h("button",{key:i,onClick:function(){sSel(sel===i?null:i);},style:{display:"flex",alignItems:"center",gap:14,padding:"14px 18px",borderRadius:20,width:"100%",border:"3px solid "+(sel===i?w.accent:"rgba(255,255,255,0.1)"),cursor:"pointer",color:"#fff",background:sel===i?w.accent+"22":"rgba(255,255,255,0.06)",boxShadow:sel===i?"0 0 24px "+w.accent+"44":"0 2px 8px rgba(0,0,0,0.15)",transform:sel===i?"scale(1.02)":"scale(1)",transition:"all 0.25s",textAlign:"left"}},h("span",{style:{fontSize:44,flexShrink:0}},a.icon),h("div",{style:{flex:1,display:"flex",flexDirection:"column",gap:3}},h("span",{style:{fontSize:19,fontWeight:800}},a.name),h("span",{style:{fontSize:16,fontWeight:600,opacity:sel===i?0.9:0.55,color:sel===i?w.accentLight:"rgba(255,255,255,0.6)"}},a.hint)),h("div",{style:{padding:"6px 12px",borderRadius:12,background:sel===i?w.accent+"33":"rgba(255,255,255,0.06)",flexShrink:0,fontSize:13,fontWeight:700,opacity:sel===i?0.9:0.4,whiteSpace:"nowrap"}},a.period));}))
+
+/* REGULAR ACTIVITIES (non-zoo) */
+:h("div",{style:{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(115px, 1fr))",gap:14,width:"100%",justifyItems:"center"}},acts.map(function(a,i){
+if(pIds[i])return h("div",{key:i,style:{width:"100%",height:120,borderRadius:20,background:"rgba(74,222,128,0.08)",border:"2px solid rgba(74,222,128,0.15)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:6}},h("span",{style:{fontSize:38,opacity:0.35}},a.icon),h("span",{style:{fontSize:13,opacity:0.3,fontWeight:700}},"\u2705"));
+return h("button",{key:i,onClick:function(){sSel(sel===i?null:i);},style:{width:"100%",height:120,borderRadius:20,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:8,border:"3px solid "+(sel===i?w.accent:"rgba(255,255,255,0.1)"),cursor:"pointer",color:"#fff",background:sel===i?w.accent+"22":"rgba(255,255,255,0.06)",boxShadow:sel===i?"0 0 24px "+w.accent+"44":"0 2px 8px rgba(0,0,0,0.15)",transform:sel===i?"scale(1.05)":"scale(1)",transition:"all 0.25s"}},h("span",{style:{fontSize:48}},a.icon),h("span",{style:{fontSize:16,fontWeight:700}},a.name));})),
+
+/* SELECTION INDICATOR */
+sel!==null?h("div",{style:{padding:"14px 24px",borderRadius:18,background:w.accent+"22",border:"2px solid "+w.accent+"55",display:"flex",alignItems:"center",gap:14,width:"100%",justifyContent:"center"}},h("span",{style:{fontSize:36}},acts[sel].icon),h("div",{style:{display:"flex",flexDirection:"column",gap:3}},h("p",{style:{fontSize:19,color:w.accent,fontWeight:800}},"\u2193 ",isZoo?"N\u00e5r skal ":"Velg tidspunkt for ",h("b",null,acts[sel].name),isZoo?" mates?":""),isZoo&&acts[sel].hint?h("p",{style:{fontSize:16,opacity:0.65,fontWeight:600}},"Hint: Spiser ",h("b",{style:{color:w.accentLight}},acts[sel].period)):null)):h("p",{style:{fontSize:17,opacity:0.3,textAlign:"center",padding:"10px 0"}},isZoo?"\u2191 Velg et dyr \u00e5 mate f\u00f8rst":"\u2191 Velg en aktivitet f\u00f8rst"),
+
+/* TIMELINE SECTION LABEL */
+h("div",{style:{width:"100%",display:"flex",alignItems:"center",gap:10,opacity:0.35}},h("div",{style:{flex:1,height:1,background:"rgba(255,255,255,0.2)"}}),h("span",{style:{fontSize:13,fontWeight:700,letterSpacing:2,textTransform:"uppercase",whiteSpace:"nowrap"}},"\uD83D\uDD50 Tidslinje"),h("div",{style:{flex:1,height:1,background:"rgba(255,255,255,0.2)"}})),
+
+/* TIMELINE */
+h("div",{style:{width:"100%",borderRadius:24,background:"rgba(255,255,255,0.05)",padding:"22px 18px",border:"1px solid rgba(255,255,255,0.07)",position:"relative",overflow:"hidden"}},h("div",{style:{position:"absolute",top:8,right:10}},h(HourglassSVG,{size:22,color:w.accent,opacity:0.06})),h("div",{style:{display:"flex",flexDirection:"column",gap:14,position:"relative"}},
+
+/* Timeline line */
+h("div",{style:{position:"absolute",left:52,top:16,bottom:16,width:3,background:"rgba(255,255,255,0.06)",borderRadius:2}}),
+
+/* Timeline slots */
+slots.map(function(s,i){var isP=pl[i]!==undefined,pA=isP?acts[pl[i]]:null;var dp=dayPeriod(s.hour);return h("button",{key:i,onClick:function(){hs(i);},disabled:isP||sel===null,style:{display:"flex",alignItems:"center",gap:16,zIndex:10,border:"2px solid "+(isP?"rgba(74,222,128,0.25)":(!isP&&sel!==null)?w.accent+"33":"transparent"),background:isP?"rgba(74,222,128,0.06)":(!isP&&sel!==null)?"rgba(255,255,255,0.04)":"transparent",borderRadius:18,cursor:(!isP&&sel!==null)?"pointer":"default",color:"#fff",padding:"10px 12px",transition:"all 0.25s",width:"100%",textAlign:"left"}},
+
+/* Time column */
+h("div",{style:{width:90,textAlign:"center",flexShrink:0,display:"flex",flexDirection:"column",alignItems:"center",gap:2}},h("span",{style:{fontSize:24,fontWeight:800,fontFamily:"'Baloo 2',cursive",letterSpacing:1,opacity:0.9}},s.label),isZoo?h("span",{style:{fontSize:14,opacity:0.5,fontWeight:600}},dp.e+" "+dp.t):null),
+
+/* Icon drop zone */
+h("div",{style:{width:80,height:80,borderRadius:20,flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",fontSize:40,border:"3px "+(isP?"solid":sel!==null?"dashed":"solid"),background:isP?"rgba(74,222,128,0.15)":sel!==null?w.accent+"12":"rgba(255,255,255,0.03)",borderColor:isP?"#4ade80":sel!==null?(w.accent+"66"):"rgba(255,255,255,0.08)",transition:"all 0.25s",boxShadow:(!isP&&sel!==null)?"0 0 18px "+w.accent+"33":"none"}},isP?h("span",null,pA.icon):h("span",{style:{fontSize:28,opacity:.15}},sel!==null?"\uD83C\uDF7D\uFE0F":"?")),
+
+/* Name label */
+isP?h("span",{style:{fontSize:18,fontWeight:700,opacity:0.7,flex:1}},pA.name):(sel!==null?h("span",{style:{fontSize:16,opacity:0.25,fontWeight:600}},"Trykk her"):null));}))),
+
+/* FEEDBACK */
+fb==="correct"?h("div",{className:"fb-bar",style:{background:"rgba(74,222,128,0.15)",color:"#86efac",border:"1px solid rgba(74,222,128,0.3)",fontSize:20,padding:"14px 24px"}},isZoo?"\u2713 Nam nam! Dyret er m\u00e6tt! \uD83E\uDD6C":"\u2713 Riktig! \uD83C\uDF89"):null,fb==="wrong"?h("div",{className:"fb-bar",style:{background:"rgba(248,113,113,0.15)",color:"#fca5a5",border:"1px solid rgba(248,113,113,0.3)",fontSize:20,padding:"14px 24px"}},isZoo?"\u2717 Feil tid \u2014 dyret er ikke sultent n\u00e5!":"\u2717 Feil \u2014 pr\u00f8v igjen!"):null);}
+
+/* ===== DURATION GAME ===== */
+var DURATION_SCENARIOS=[
+  {icon:"\uD83D\uDE82",name:"Toget",verb:"reiser"},
+  {icon:"\uD83D\uDE80",name:"Raketten",verb:"flyr"},
+  {icon:"\uD83D\uDC2C",name:"Delfinen",verb:"sv\u00f8mmer"},
+  {icon:"\uD83D\uDEB2",name:"Syklisten",verb:"sykler"},
+  {icon:"\uD83E\uDD85",name:"\u00d8rnen",verb:"flyr"},
+  {icon:"\uD83D\uDEF6",name:"B\u00e5ten",verb:"seiler"},
+  {icon:"\uD83D\uDE8C",name:"Bussen",verb:"kj\u00f8rer"},
+  {icon:"\uD83D\uDC34",name:"Hesten",verb:"galopperer"}
+];
+function genDuration(lv){
+  var maxH=lv==="whole"?3:lv==="half"?3:lv==="quarter"?2:2;
+  var hh,mm;
+  if(lv==="whole"){hh=Math.floor(Math.random()*maxH)+1;mm=0;}
+  else if(lv==="half"){hh=Math.floor(Math.random()*maxH);mm=Math.random()<.5?0:30;if(hh===0&&mm===0)mm=30;}
+  else if(lv==="quarter"){hh=Math.floor(Math.random()*maxH);mm=[0,15,30,45][Math.floor(Math.random()*4)];if(hh===0&&mm===0)mm=15;}
+  else{hh=Math.floor(Math.random()*maxH);mm=Math.floor(Math.random()*12)*5;if(hh===0&&mm===0)mm=5;}
+  return{h:hh,m:mm};
+}
+function fmtDuration(hh,mm){
+  if(hh===0)return mm+" min";if(mm===0)return hh+(hh===1?" time":" timer");
+  return hh+(hh===1?" time ":" timer ")+mm+" min";
+}
+function addTime(h1,m1,dh,dm){var m=m1+dm,hh=h1+dh+Math.floor(m/60);m=m%60;if(hh>12)hh-=12;return{h:hh,m:m};}
+function genWrongDurations(correct,lv){
+  var wrongs=[],tries=0;
+  while(wrongs.length<3&&tries<50){
+    tries++;var wh=correct.h,wm=correct.m;
+    var r=Math.random();
+    if(r<0.3){wh=Math.max(0,correct.h+(Math.random()<.5?1:-1));if(wh===correct.h&&wm===correct.m)wm=correct.m+30;}
+    else if(r<0.6){wm=correct.m+(Math.random()<.5?15:-15);if(wm<0){wm+=60;wh=Math.max(0,wh-1);}if(wm>=60){wm-=60;wh++;}}
+    else{wh=correct.h+(Math.random()<.5?1:-1);wm=correct.m+(Math.random()<.5?15:-15);if(wm<0){wm+=60;wh=Math.max(0,wh-1);}if(wm>=60){wm-=60;wh++;}}
+    if(wh<0)wh=0;if(wh===0&&wm===0)wm=15;
+    var dup=false;for(var i=0;i<wrongs.length;i++){if(wrongs[i].h===wh&&wrongs[i].m===wm)dup=true;}
+    if(wh===correct.h&&wm===correct.m)dup=true;
+    if(!dup)wrongs.push({h:wh,m:wm});
+  }
+  while(wrongs.length<3)wrongs.push({h:correct.h+wrongs.length+1,m:0});
+  return wrongs;
+}
+
+function DurationGame(p){
+  var w=p.world,onS=p.onScore;
+  var sCk=useState(false),cuckoo=sCk[0],setCk=sCk[1];
+  var tot=5;
+  var s1=useState(1),rnd=s1[0],sRnd=s1[1];
+  var s2=useState(0),sc=s2[0],sSc=s2[1];
+  var s3=useState(null),fb=s3[0],sFb=s3[1];
+  var s4=useState(null),chosen=s4[0],setChosen=s4[1];
+
+  var puzzle=useMemo(function(){
+    var scn=DURATION_SCENARIOS[Math.floor(Math.random()*DURATION_SCENARIOS.length)];
+    var startH=Math.floor(Math.random()*10)+1;
+    var startM=w.hours==="whole"?0:w.hours==="half"?[0,30][Math.floor(Math.random()*2)]:[0,15,30,45][Math.floor(Math.random()*4)];
+    var dur=genDuration(w.hours);
+    var end=addTime(startH,startM,dur.h,dur.m);
+    var wrongs=genWrongDurations(dur,w.hours);
+    var opts=[dur].concat(wrongs).sort(function(){return Math.random()-.5;});
+    return{scn:scn,startH:startH,startM:startM,endH:end.h,endM:end.m,dur:dur,opts:opts};
+  },[rnd,w]);
+
+  var choose=function(opt){
+    if(fb)return;setChosen(opt);
+    var ok=opt.h===puzzle.dur.h&&opt.m===puzzle.dur.m;
+    sFb(ok?"correct":"wrong");if(ok){sndChime();}else{sndWrong();}
+    if(ok){sSc(function(s){return s+1;});setCk(true);setTimeout(function(){setCk(false);},2000);}
+    setTimeout(function(){
+      sFb(null);setChosen(null);
+      if(rnd<tot){sRnd(function(r){return r+1;});}
+      else{onS(sc+(ok?1:0),tot);}
+    },1500);
+  };
+
+  var travelPct=fb==="correct"?100:0;
+
+  return h("div",{style:{display:"flex",flexDirection:"column",alignItems:"center",gap:20,width:"100%",maxWidth:580}},
+    h(CuckooBird,{show:cuckoo,color:w.accent}),
+
+    /* Header */
+    h("div",{style:{textAlign:"center"}},
+      h("div",{className:"round-dots"},arr(tot).map(function(_,i){return h("div",{key:i,className:"round-dot",style:{background:i<rnd-1?"#4ade80":i===rnd-1?w.accent:"transparent",borderColor:i<rnd-1?"#4ade80":i===rnd-1?w.accent:"rgba(255,255,255,0.15)",boxShadow:i===rnd-1?"0 0 10px "+w.accent+"88":"none"}});})),
+      h("p",{style:{fontSize:16,opacity:.5}},"Runde "+rnd+" av "+tot)
+    ),
+
+    /* Scenario card */
+    h("div",{style:{width:"100%",borderRadius:24,background:"rgba(255,255,255,0.07)",border:"2px solid rgba(255,255,255,0.1)",padding:"28px 24px",textAlign:"center",position:"relative",overflow:"hidden"}},
+
+      /* Travel animation bar */
+      h("div",{style:{position:"absolute",bottom:0,left:0,height:4,background:w.accent,width:travelPct+"%",transition:"width 1s ease-in-out",borderRadius:2}}),
+
+      /* Scenario icon */
+      h("div",{style:{fontSize:72,marginBottom:8,transition:"transform 1s ease",transform:fb==="correct"?"translateX(120px)":"translateX(0)"}},puzzle.scn.icon),
+      h("p",{style:{fontSize:20,fontWeight:700,opacity:0.8,marginBottom:16}},
+        puzzle.scn.name," ",puzzle.scn.verb," fra"
+      ),
+
+      /* Two clocks side by side */
+      h("div",{style:{display:"flex",alignItems:"center",justifyContent:"center",gap:16,flexWrap:"wrap"}},
+        h("div",{style:{display:"flex",flexDirection:"column",alignItems:"center",gap:8}},
+          h("span",{style:{fontSize:14,opacity:0.5,fontWeight:700,textTransform:"uppercase",letterSpacing:1}},"\uD83D\uDFE2 Start"),
+          h(MiniClock,{h:puzzle.startH,m:puzzle.startM,size:120,accent:"#4ade80"}),
+          h("span",{style:{fontSize:24,fontWeight:800,fontFamily:"'Baloo 2',cursive"}},fmtTime(puzzle.startH,puzzle.startM))
+        ),
+        h("span",{style:{fontSize:36,opacity:0.4}}," \u27A1\uFE0F "),
+        h("div",{style:{display:"flex",flexDirection:"column",alignItems:"center",gap:8}},
+          h("span",{style:{fontSize:14,opacity:0.5,fontWeight:700,textTransform:"uppercase",letterSpacing:1}},"\uD83D\uDD34 Slutt"),
+          h(MiniClock,{h:puzzle.endH,m:puzzle.endM,size:120,accent:"#f87171"}),
+          h("span",{style:{fontSize:24,fontWeight:800,fontFamily:"'Baloo 2',cursive"}},fmtTime(puzzle.endH,puzzle.endM))
+        )
+      )
+    ),
+
+    /* Question */
+    h("p",{style:{fontSize:22,fontWeight:800,fontFamily:"'Baloo 2',cursive",textAlign:"center"}},"\uD83D\uDE80 Hvor lang tid tok reisen?"),
+
+    /* Answer options */
+    h("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,width:"100%"}},
+      puzzle.opts.map(function(opt,i){
+        var isCorrect=opt.h===puzzle.dur.h&&opt.m===puzzle.dur.m;
+        var isChosen=chosen&&chosen.h===opt.h&&chosen.m===opt.m;
+        var showResult=fb&&(isChosen||isCorrect);
+        var bg=showResult?(isCorrect?"rgba(74,222,128,0.25)":"rgba(248,113,113,0.2)"):"rgba(255,255,255,0.06)";
+        var bdr=showResult?(isCorrect?"#4ade80":"#f87171"):"rgba(255,255,255,0.12)";
+        return h("button",{key:i,onClick:function(){choose(opt);},disabled:!!fb,style:{
+          padding:"20px 16px",borderRadius:20,border:"3px solid "+bdr,background:bg,
+          cursor:fb?"default":"pointer",color:"#fff",display:"flex",flexDirection:"column",
+          alignItems:"center",gap:6,transition:"all 0.3s",
+          transform:isChosen?"scale(1.05)":"scale(1)",
+          boxShadow:(!fb)?"0 3px 12px rgba(0,0,0,0.2)":"none"
+        }},
+          h("span",{style:{fontSize:28,fontWeight:800,fontFamily:"'Baloo 2',cursive",color:showResult?(isCorrect?"#4ade80":"#fca5a5"):w.accentLight}},fmtDuration(opt.h,opt.m)),
+          showResult?h("span",{style:{fontSize:20}},isCorrect?"\u2705":"\u274C"):null
+        );
+      })
+    ),
+
+    /* Feedback */
+    fb==="correct"?h("div",{className:"fb-bar",style:{background:"rgba(74,222,128,0.15)",color:"#86efac",border:"1px solid rgba(74,222,128,0.3)",fontSize:20,padding:"14px 24px"}},"\u2713 Riktig! "+puzzle.scn.name+" brukte "+fmtDuration(puzzle.dur.h,puzzle.dur.m)+" \uD83C\uDF89"):null,
+    fb==="wrong"?h("div",{className:"fb-bar",style:{background:"rgba(248,113,113,0.15)",color:"#fca5a5",border:"1px solid rgba(248,113,113,0.3)",fontSize:20,padding:"14px 24px"}},"\u2717 Svaret var "+fmtDuration(puzzle.dur.h,puzzle.dur.m)):null
+  );
+}
+
+/* ===== TIME CATCHER GAME ===== */
+function TimeCatcherGame(p){
+  var w=p.world,onS=p.onScore;
+  var sCk=useState(false),cuckoo=sCk[0],setCk=sCk[1];
+  var tot=5;
+  var s1=useState(1),rnd=s1[0],sRnd=s1[1];
+  var s2=useState(0),sc=s2[0],sSc=s2[1];
+  var s3=useState(null),fb=s3[0],sFb=s3[1];
+  var s4=useState("ready"),phase=s4[0],setPhase=s4[1];
+  var s5=useState(0),totalMin=s5[0],setTotalMin=s5[1];
+  var s6=useState(3),countdown=s6[0],setCd=s6[1];
+  var animRef=useRef(null);
+  var speedRef=useRef(1);
+  var caughtTimeRef=useRef({h:12,m:0});
+
+  var target=useMemo(function(){return genTime(w.hours);},[rnd,w]);
+  var targetLabel=w.id===4?fmtTime(target.h,target.m,true):fmtTime(target.h,target.m);
+
+  /* Speed = clock-minutes per real second. Slower for easy, faster for hard */
+  var speed=w.id<=0?3:w.id<=1?4:w.id<=2?5.5:w.id<=3?7.5:10;
+  speedRef.current=speed;
+
+  /* Tolerance in minutes based on world difficulty */
+  var tolerance=w.id<=0?45:w.id<=1?30:w.id<=2?20:w.id<=3?12:7;
+
+  /* Countdown before spin */
+  useEffect(function(){
+    if(phase!=="ready")return;
+    setCd(3);
+    var t1=setTimeout(function(){setCd(2);},1000);
+    var t2=setTimeout(function(){setCd(1);},2000);
+    var t3=setTimeout(function(){setCd(0);setPhase("spinning");},3000);
+    return function(){clearTimeout(t1);clearTimeout(t2);clearTimeout(t3);};
+  },[phase,rnd]);
+
+  /* Spin animation - track total elapsed minutes for smooth hour+minute hands */
+  useEffect(function(){
+    if(phase!=="spinning")return;
+    var start=null;
+    /* Start 20-80 clock-minutes before target so player doesn't wait long */
+    var tgtTotal=(target.h%12)*60+target.m;
+    var lead=20+Math.random()*60;
+    var startMin=tgtTotal-lead;
+    if(startMin<0)startMin+=720;
+    function tick(ts){
+      if(!start)start=ts;
+      var elapsed=(ts-start)/1000;
+      var mins=startMin+elapsed*speedRef.current;
+      setTotalMin(mins);
+      animRef.current=requestAnimationFrame(tick);
+    }
+    animRef.current=requestAnimationFrame(tick);
+    return function(){if(animRef.current)cancelAnimationFrame(animRef.current);};
+  },[phase,rnd]);
+
+  /* Derive smooth h and m from totalMin - use fractional minutes for ClockFace */
+  var fracM=((totalMin%60)+60)%60;
+  var fracH=Math.floor(((totalMin%720)+720)%720/60);if(fracH===0)fracH=12;
+  /* Display values (rounded for text) */
+  var displayM=Math.floor(fracM)%60;
+  var displayH=fracH;
+
+  var catchTime=function(){
+    if(phase!=="spinning")return;
+    setPhase("caught");
+    if(animRef.current)cancelAnimationFrame(animRef.current);
+    caughtTimeRef.current={h:displayH,m:displayM};
+
+    /* Check accuracy in total minutes */
+    var tgtMin=((target.h%12)*60+target.m);
+    var curMin=((displayH%12)*60+displayM);
+    var diff=Math.abs(tgtMin-curMin);
+    if(diff>360)diff=720-diff;
+
+    var ok=diff<=tolerance;
+
+    sFb(ok?"correct":"wrong");if(ok){sndChime();}else{sndWrong();}
+    if(ok){sSc(function(s){return s+1;});setCk(true);setTimeout(function(){setCk(false);},2000);}
+    setTimeout(function(){
+      sFb(null);setPhase("ready");
+      if(rnd<tot){sRnd(function(r){return r+1;});}
+      else{onS(sc+(ok?1:0),tot);}
+    },2000);
+  };
+
+  var showH=phase==="caught"?caughtTimeRef.current.h:phase==="spinning"?fracH:12;
+  var showM=phase==="caught"?caughtTimeRef.current.m:phase==="spinning"?fracM:0;
+  var caughtLabel=fmtTime(caughtTimeRef.current.h,caughtTimeRef.current.m);
+
+  /* Tolerance hint text */
+  var tolTxt=tolerance>=45?"hele og halve timer":tolerance>=30?"kvarter":tolerance>=20?"10 minutter":tolerance>=12?"ca. 10 min":"n\u00f8yaktig!";
+
+  /* Ring pulsing animation */
+  var pulseStyle=phase==="spinning"?{animation:"tm-bounce 0.8s ease infinite"}:{};
+
+  return h("div",{style:{display:"flex",flexDirection:"column",alignItems:"center",gap:20,width:"100%",maxWidth:580}},
+    h(CuckooBird,{show:cuckoo,color:w.accent}),
+
+    /* Header */
+    h("div",{style:{textAlign:"center"}},
+      h("div",{className:"round-dots"},arr(tot).map(function(_,i){return h("div",{key:i,className:"round-dot",style:{background:i<rnd-1?"#4ade80":i===rnd-1?w.accent:"transparent",borderColor:i<rnd-1?"#4ade80":i===rnd-1?w.accent:"rgba(255,255,255,0.15)",boxShadow:i===rnd-1?"0 0 10px "+w.accent+"88":"none"}});})),
+      h("p",{style:{fontSize:16,opacity:.5}},"Runde "+rnd+" av "+tot)
+    ),
+
+    /* Target display */
+    h("div",{style:{padding:"18px 36px",borderRadius:20,background:w.accent+"22",border:"2px solid "+w.accent+"44",textAlign:"center"}},
+      h("p",{style:{fontSize:17,opacity:0.6,marginBottom:4}},"\u26A1 Fang denne tiden:"),
+      h("p",{style:{fontSize:52,fontWeight:800,fontFamily:"'Baloo 2',cursive",color:w.accent,textShadow:"0 0 30px "+w.accent+"66",lineHeight:1}},targetLabel),
+      w.id>=2?h("p",{style:{fontSize:17,opacity:.5,marginTop:4}},"\u00ab"+fmtVerbal(target.h,target.m)+"\u00bb"):null,
+      h("p",{style:{fontSize:13,opacity:0.35,marginTop:6}},"\u2139\uFE0F Treff innenfor "+tolTxt)
+    ),
+
+    /* Spinning clock area */
+    h("div",{style:{position:"relative",display:"flex",alignItems:"center",justifyContent:"center"}},
+
+      /* Outer ring */
+      h("div",{style:Object.assign({position:"absolute",width:320,height:320,borderRadius:"50%",border:"4px solid "+(phase==="spinning"?w.accent+"66":"rgba(255,255,255,0.08)"),transition:"border-color 0.5s"},pulseStyle)}),
+
+      /* Clock */
+      h(ClockFace,{h:showH,m:showM,size:300,interactive:false,accent:fb==="correct"?"#4ade80":fb==="wrong"?"#f87171":w.accent}),
+
+      /* Countdown overlay */
+      phase==="ready"&&countdown>0?h("div",{style:{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(0,0,0,0.5)",borderRadius:"50%",zIndex:20}},
+        h("span",{style:{fontSize:96,fontWeight:800,fontFamily:"'Baloo 2',cursive",color:w.accent,textShadow:"0 0 40px "+w.accent,animation:"pop-in 0.5s ease"}},countdown)
+      ):null,
+
+      /* GO text */
+      phase==="ready"&&countdown===0?h("div",{style:{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",background:"rgba(0,0,0,0.4)",borderRadius:"50%",zIndex:20}},
+        h("span",{style:{fontSize:56,fontWeight:800,fontFamily:"'Baloo 2',cursive",color:"#4ade80",textShadow:"0 0 40px #4ade80"}},"\uD83C\uDFC3 G\u00c5!")
+      ):null
+    ),
+
+    /* Current time display while spinning */
+    phase==="spinning"?h("div",{style:{fontSize:28,fontWeight:800,fontFamily:"'Baloo 2',cursive",opacity:0.6,letterSpacing:1}},fmtTime(displayH,displayM)):null,
+
+    /* Catch button */
+    phase==="spinning"?h("button",{onClick:catchTime,style:{
+      padding:"22px 56px",borderRadius:50,fontSize:26,fontWeight:800,
+      fontFamily:"'Baloo 2',cursive",color:"#fff",border:"none",cursor:"pointer",
+      background:w.btnBg,boxShadow:"0 6px 30px "+w.accent+"66, 0 0 60px "+w.accent+"33",
+      animation:"tm-bounce 1.2s ease infinite",transition:"transform 0.1s",
+      letterSpacing:1
+    }},"\u26A1 STOPP!"):null,
+
+    /* Result feedback */
+    fb==="correct"?h("div",{className:"fb-bar",style:{background:"rgba(74,222,128,0.15)",color:"#86efac",border:"1px solid rgba(74,222,128,0.3)",fontSize:20,padding:"14px 24px"}},"\u2713 Perfekt fangst! Du traff "+targetLabel+"! \u26A1"):null,
+    fb==="wrong"?h("div",{className:"fb-bar",style:{background:"rgba(248,113,113,0.15)",color:"#fca5a5",border:"1px solid rgba(248,113,113,0.3)",fontSize:20,padding:"14px 24px"}},"\u2717 Du stoppet p\u00e5 "+caughtLabel+" \u2014 m\u00e5let var "+targetLabel):null,
+
+    /* Instructions */
+    phase==="ready"&&countdown>0?h("p",{style:{fontSize:17,opacity:0.4,textAlign:"center"}},"\u26A1 Gj\u00f8r deg klar \u2014 klokken begynner \u00e5 spinne!"):null
+  );
+}
+
+function ResultScreen(p){sndWin();var sc=p.score,tot=p.total,w=p.world,ob=p.onBack,st=Math.round((sc/tot)*5);var fact=useMemo(function(){return randFact();},[]);var clockEmojis=["\uD83D\uDD50","\uD83D\uDD51","\uD83D\uDD52","\uD83D\uDD53","\uD83D\uDD54","\uD83D\uDD55","\uD83D\uDD56","\uD83D\uDD57","\uD83D\uDD58","\uD83D\uDD59","\uD83D\uDD5A","\uD83D\uDD5B"];return h("div",{style:{display:"flex",flexDirection:"column",alignItems:"center",gap:20,textAlign:"center",position:"relative"}},h("div",{style:{position:"absolute",top:-10,left:-10,opacity:0.08}},h(GearSVG,{size:60,color:w.accent,opacity:1})),h("div",{style:{position:"absolute",top:-10,right:-10,opacity:0.08,animation:"gear-reverse 15s linear infinite"}},h(GearSVG,{size:50,color:w.accent,opacity:1})),st>=4?h("div",{style:{display:"flex",gap:4,marginBottom:-8}},clockEmojis.slice(0,6).map(function(e,i){return h("span",{key:i,className:"anim-pop",style:{fontSize:22,animationDelay:i*0.08+"s"}},e);})):null,h("div",{style:{fontSize:64,animation:st>=4?"tm-bounce 0.6s ease infinite":"none"}},st>=4?"\uD83C\uDFC6":st>=2?"\u2B50":"\uD83D\uDCAA"),h("p",{style:{fontSize:32,fontWeight:800,fontFamily:"'Baloo 2',cursive"}},st>=4?"Fantastisk!":st>=2?"Bra jobba!":"\u00d8v litt mer!"),h("div",{style:{display:"flex",gap:8,fontSize:36}},arr(5).map(function(_,i){return h("span",{key:i,className:"anim-pop",style:{animationDelay:i*0.1+"s",opacity:i<st?1:.15}},i<st?"\u2B50":"\u2606");})),h("p",{style:{opacity:.7,fontSize:20}},sc+" av "+tot+" poeng"),h(ClockDivider),h("div",{style:{padding:"18px 24px",borderRadius:20,background:"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.08)",maxWidth:400,position:"relative",overflow:"hidden"}},h("div",{style:{position:"absolute",top:6,right:6}},h(PocketWatchSVG,{size:28,color:w.accent,opacity:0.08})),h("div",{style:{position:"absolute",bottom:4,left:6,animation:"spin-slow 30s linear infinite"}},h(GearSVG,{size:30,color:w.accent,opacity:0.05})),h("p",{style:{fontSize:12,opacity:0.4,marginBottom:10,textTransform:"uppercase",letterSpacing:2,fontWeight:700,display:"flex",alignItems:"center",justifyContent:"center",gap:6}},"\u231B Visste du at ... \u231B"),h("p",{style:{fontSize:16,lineHeight:1.7,opacity:0.85}},fact)),h("button",{onClick:ob,className:"check-btn",style:{background:w.btnBg,boxShadow:"0 4px 20px "+w.accent+"44",marginTop:4}},"Tilbake \uD83D\uDD50"));}
+
+/* ===== SCREENS ===== */
+function HubScreen(p){var oW=p.onSelectWorld,wS=p.worldStars;var s=useState(null),time=s[0],setTime=s[1];useEffect(function(){function tick(){var d=new Date();setTime({h:d.getHours()%12||12,m:d.getMinutes()});}tick();var id=setInterval(tick,60000);return function(){clearInterval(id);};},[]);
+return h("div",{className:"anim-slide",style:{display:"flex",flexDirection:"column",alignItems:"center",paddingTop:12}},h(TitleClock),h("h1",{className:"title-text",style:{marginTop:8,marginBottom:0}},"Tidsmesteren"),h("p",{style:{fontSize:16,opacity:.5,marginBottom:6,letterSpacing:1}},"L\u00e6r klokken gjennom fem verdener"),time?h("div",{style:{display:"inline-flex",alignItems:"center",gap:10,padding:"10px 22px",borderRadius:20,marginBottom:22,background:"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.08)"}},h("span",{style:{fontSize:15,opacity:.5}},"Klokken er n\u00e5"),h("span",{style:{fontSize:22,fontWeight:800,color:"#fbbf24",fontFamily:"'Baloo 2',cursive"}},fmtTime(time.h,time.m)),h("span",{style:{fontSize:16,animation:"blink 1s infinite"}},"\u23F1\uFE0F")):null,h("div",{style:{width:"100%",display:"flex",flexDirection:"column",gap:14}},WORLDS.map(function(wd,idx){var ws=wS(wd.id);return h("button",{key:wd.id,className:"clock-card anim-slide",style:{animationDelay:(idx*0.08)+"s",background:"linear-gradient(135deg,"+wd.accent+"18,"+wd.accent+"08)"},onClick:function(){sndClock();oW(wd.id);}},h(WorldMiniClock,{world:wd}),h("div",{style:{flex:1,minWidth:0}},h("div",{style:{display:"flex",alignItems:"center",gap:8,marginBottom:5,flexWrap:"wrap"}},h("span",{style:{fontWeight:800,fontSize:20,fontFamily:"'Baloo 2',cursive"}},wd.name),h("span",{className:"world-badge",style:{background:DCOL[wd.difficulty]+"33",color:DCOL[wd.difficulty],border:"1px solid "+DCOL[wd.difficulty]+"44"}},h("span",null,wd.icon),wd.diffLabel)),h("p",{style:{fontSize:14,opacity:.6,fontWeight:600}},wd.diffDesc),ws>0?h("div",{style:{display:"flex",gap:2,marginTop:6}},arr(ws).map(function(_,i){return h("span",{key:i,style:{fontSize:14}},i%2===0?"\u2B50":"\uD83C\uDF1F");})):null),h("span",{style:{fontSize:32,opacity:.3}},"\u203A"));})),h(ClockDivider),h("div",{style:{display:"flex",alignItems:"center",gap:6,opacity:.25,fontSize:14}},["\uD83D\uDD50","\uD83D\uDD51","\uD83D\uDD52","\uD83D\uDD53","\uD83D\uDD54","\uD83D\uDD55","\uD83D\uDD56","\uD83D\uDD57","\uD83D\uDD58","\uD83D\uDD59","\uD83D\uDD5A","\uD83D\uDD5B"].map(function(e,i){return h("span",{key:i,style:{animation:"wave 2s ease-in-out "+(i*0.1)+"s infinite"}},e);})),h("p",{style:{fontSize:12,opacity:.15,marginTop:8}},"Tick-takk, tick-takk ... \u23F0"),h("a",{href:"/",style:{display:"inline-block",fontSize:13,color:"rgba(255,255,255,0.25)",textDecoration:"none",marginTop:8,transition:"color 0.2s",fontWeight:600},onMouseOver:function(e){e.target.style.color="rgba(255,255,255,0.6)";},onMouseOut:function(e){e.target.style.color="rgba(255,255,255,0.25)";}},"← Tilbake til Kodebasen"),h("p",{style:{fontSize:10,opacity:.15,marginTop:8,marginBottom:16,letterSpacing:0.3,lineHeight:1.8}},"Laget av Jan Erling Saue med Claude (Anthropic) generativ AI \u00b7 \u00a9 2026",h("br"),h("span",{style:{fontSize:9,opacity:.7}},"Fri \u00e5 bruke til undervisning og oppl\u00e6ring \u2014 ikke til salg eller kommersiell bruk.")));}
+
+function WorldScreen(p){var w=p.world,oG=p.onSelectGame,tH=p.onBack,stars=p.stars;var fact=useMemo(function(){return randFact();},[]);return h("div",{className:"anim-slide",style:{display:"flex",flexDirection:"column",alignItems:"center"}},h("button",{onClick:tH,className:"nav-btn",style:{alignSelf:"flex-start",marginBottom:14}},"\u2190 Alle verdener"),h("div",{style:{width:"100%",borderRadius:22,background:"rgba(0,0,0,0.25)",backdropFilter:"blur(8px)",border:"1px solid rgba(255,255,255,0.08)",padding:28,marginBottom:18,textAlign:"center",position:"relative",overflow:"hidden"}},h("div",{style:{position:"absolute",top:-10,right:-10,opacity:0.08,animation:"spin-slow 30s linear infinite"}},h(GearSVG,{size:80,color:w.accent})),h("div",{style:{position:"absolute",bottom:-10,left:-10,opacity:0.06,animation:"gear-reverse 25s linear infinite"}},h(GearSVG,{size:60,color:w.accent})),h("div",{style:{position:"absolute",top:10,left:10}},h(WorldDeco,{world:w})),h("span",{style:{fontSize:60,display:"block",marginBottom:10}},w.storyIcon),h("h2",{style:{fontSize:30,fontWeight:800,marginBottom:10,fontFamily:"'Baloo 2',cursive"}},w.icon+" "+w.name),h("div",{style:{display:"inline-flex",alignItems:"center",gap:8,borderRadius:20,padding:"8px 18px",marginBottom:14,background:w.accent+"22",border:"2px solid "+w.accent+"44"}},h("div",{style:{display:"flex",gap:4}},arr(5).map(function(_,i){return h("div",{key:i,style:{width:10,height:10,borderRadius:"50%",background:i<w.difficulty?w.accent:"rgba(255,255,255,0.15)",boxShadow:i<w.difficulty?"0 0 6px "+w.accent+"66":"none"}});})),h("span",{style:{fontWeight:800,fontSize:15}},w.diffLabel),h("span",{style:{fontSize:13,opacity:.6}},"\u2014 "+w.diffDesc)),h("p",{style:{fontSize:16,lineHeight:1.7,opacity:.85,maxWidth:440,margin:"10px auto 0"}},w.story),h(ClockDivider,{color:w.accent}),h("div",{style:{display:"flex",alignItems:"center",justifyContent:"center",gap:10,marginTop:4}},h("span",{style:{fontSize:13,opacity:0.35,fontWeight:700}},w.clockType),h("span",{style:{opacity:0.2}},"\u2022"),h("span",{style:{fontSize:13,opacity:0.35,fontStyle:"italic"}},fact))),h("p",{style:{fontSize:13,fontWeight:700,textTransform:"uppercase",letterSpacing:3,opacity:.3,marginBottom:12}},"\uD83D\uDD50 Velg et spill \uD83D\uDD50"),h("div",{style:{width:"100%",display:"flex",flexDirection:"column",gap:14}},GAMES.map(function(g,idx){var k=w.id+"-"+g.id,s=stars[k]||0;var isZooTimeline=(g.id===2&&w.id===3);var gIcon=isZooTimeline?"\uD83E\uDD81":g.icon;var gName=isZooTimeline?"Matetid":g.name;var gDesc=isZooTimeline?"Mat dyrene til riktig tid p\u00e5 dagen!":g.desc;var gTag=isZooTimeline?"Dyrene er sultne!":g.tag;var gAccent=g.accent;return h("button",{key:g.id,className:"anim-slide",style:{animationDelay:(idx*0.1)+"s",display:"flex",alignItems:"center",gap:16,width:"100%",padding:"18px 20px",borderRadius:22,border:"3px solid "+gAccent+"44",cursor:"pointer",color:"#1f2937",background:g.bgGrad,boxShadow:"0 6px 24px "+gAccent+"22",transition:"all 0.3s",position:"relative",overflow:"hidden",textAlign:"left"},onClick:function(){sndTick();oG(g.id);}},
+
+/* Animated background deco */
+h("div",{style:{position:"absolute",top:-8,right:-8,fontSize:44,opacity:0.08,animation:g.decoAnim}},g.decoIcon),
+h("div",{style:{position:"absolute",bottom:-6,left:"40%",fontSize:28,opacity:0.05,animation:g.decoAnim,animationDelay:"0.5s"}},g.decoIcon),
+
+/* Main icon with colored circle bg */
+h("div",{style:{width:68,height:68,borderRadius:20,background:gAccent+"22",border:"2px solid "+gAccent+"44",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,position:"relative"}},
+  h("span",{style:{fontSize:38}},gIcon),
+  s>=4?h("div",{style:{position:"absolute",top:-6,right:-6,width:22,height:22,borderRadius:"50%",background:"#fbbf24",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,boxShadow:"0 2px 8px rgba(251,191,36,0.4)"}},"\u2B50"):null
+),
+
+/* Text content */
+h("div",{style:{flex:1,minWidth:0}},
+  h("p",{style:{fontWeight:800,fontSize:20,fontFamily:"'Baloo 2',cursive",color:"#1f2937",lineHeight:1.2}},gName),
+  h("p",{style:{fontSize:14,opacity:.55,marginTop:2}},gDesc),
+  h("p",{style:{fontSize:13,fontWeight:700,color:gAccent,marginTop:4,fontStyle:"italic"}},gTag)
+),
+
+/* Stars + arrow */
+h("div",{style:{display:"flex",flexDirection:"column",alignItems:"center",gap:6,flexShrink:0}},
+  h("div",{style:{display:"flex",gap:2}},arr(5).map(function(_,i){return h("span",{key:i,style:{fontSize:16,opacity:i<s?1:.15}},i<s?"\u2B50":"\u2606");})),
+  h("div",{style:{width:32,height:32,borderRadius:"50%",background:gAccent+"22",display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,color:gAccent,fontWeight:800}},"\u25B6")
+)
+);})));}
+
+/* ===== APP ===== */
+function App(){var s1=useState("hub"),scr=s1[0],sScr=s1[1];var s2=useState(null),wId=s2[0],sWId=s2[1];var s3=useState(null),gId=s3[0],sGId=s3[1];var s4=useState(null),res=s4[0],sRes=s4[1];var s5=useState({}),stars=s5[0],sSt=s5[1];var w=wId!==null?WORLDS[wId]:null;var oW=function(id){sWId(id);sScr("world");};var oG=function(id){sGId(id);sRes(null);sScr("game");};var hS=function(sc,tot){var s=Math.round((sc/tot)*5);var k=wId+"-"+gId;sSt(function(pv){var n=Object.assign({},pv);n[k]=Math.max(n[k]||0,s);return n;});sRes({score:sc,total:tot});sScr("result");};var tW=function(){sScr("world");sGId(null);sRes(null);};var tH=function(){sScr("hub");sWId(null);};var wS=function(id){return[0,1,2].reduce(function(s,g){return s+(stars[id+"-"+g]||0);},0);};var bg=w?w.bgStyle:"";
+return h("div",{style:{fontFamily:"'Fredoka',sans-serif",minHeight:"100vh",background:bg||"transparent",color:"#fff",transition:"background 0.7s ease"}},scr==="hub"?h(FloatingClocks):null,(scr==="game"||scr==="result")&&w?h(GameBgDeco,{world:w}):null,h("div",{className:scr==="hub"?"hub-bg":"",style:{minHeight:"100vh",position:"relative",zIndex:1}},h("div",{style:{maxWidth:680,margin:"0 auto",padding:"20px 16px"}},scr==="hub"?h(HubScreen,{onSelectWorld:oW,worldStars:wS}):null,scr==="world"&&w?h(WorldScreen,{world:w,onSelectGame:oG,onBack:tH,stars:stars}):null,scr==="game"&&w?h("div",{className:"anim-slide",style:{display:"flex",flexDirection:"column",alignItems:"center",position:"relative"}},h("div",{className:"game-header"},h("button",{onClick:tW,className:"nav-btn"},"\u2190 "+w.name),h(TickTock,{color:w.accent}),h("div",{className:"game-title-badge"},h("span",null,(gId===2&&w.id===3)?"\uD83E\uDD81":GAMES[gId]?GAMES[gId].icon:""),h("span",null,(gId===2&&w.id===3)?"Matetid":GAMES[gId]?GAMES[gId].name:""))),gId===0?h(SetClockGame,{world:w,onScore:hS}):null,gId===1?h(MatchGame,{world:w,onScore:hS}):null,gId===2?h(TimelineGame,{world:w,onScore:hS}):null,gId===3?h(DurationGame,{world:w,onScore:hS}):null,gId===4?h(TimeCatcherGame,{world:w,onScore:hS}):null):null,scr==="result"&&w&&res?h("div",{className:"anim-pop"},h(ResultScreen,{score:res.score,total:res.total,world:w,onBack:tW})):null)));}
+ReactDOM.render(h(App),document.getElementById("root"));
+</script>
+</body>
+</html>
