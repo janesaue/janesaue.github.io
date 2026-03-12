@@ -3,7 +3,7 @@ export async function onRequest(context) {
   const url = new URL(request.url);
 
   // Ikke sjekk passord på innloggingssiden
-  if (url.pathname === "/login") {
+  if (url.pathname === "/login" || url.pathname === "/api/login") {
     return next();
   }
 
