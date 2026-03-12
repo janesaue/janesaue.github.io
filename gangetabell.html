@@ -1,0 +1,1939 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gangeraketten 🚀</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0d0d2b; --card:#1a1a3e; --card2:#141432;
+  --a1:#ff6b6b; --a2:#ffd93d; --a3:#6bcb77; --a4:#4d96ff;
+  --txt:#fff; --sub:#a0a8d0;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;overflow-x:hidden}
+.stars{position:fixed;inset:0;pointer-events:none;z-index:0}
+.star{position:absolute;border-radius:50%;background:#fff;animation:twinkle var(--d) ease-in-out infinite alternate}
+@keyframes twinkle{from{opacity:.1;transform:scale(.8)}to{opacity:.9;transform:scale(1.2)}}
+.wrap{position:relative;z-index:1;max-width:720px;margin:0 auto;padding:20px;min-height:100vh;display:flex;flex-direction:column;align-items:center}
+h1{font-family:'Fredoka One',cursive;font-size:clamp(2rem,6vw,3.2rem);text-align:center;background:linear-gradient(135deg,var(--a2),var(--a1),var(--a4));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px;filter:drop-shadow(0 0 18px rgba(255,211,61,.4))}
+.sub{color:var(--sub);text-align:center;font-size:.95rem;margin-bottom:22px;font-weight:600}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-9px)}40%{transform:translateX(9px)}60%{transform:translateX(-7px)}80%{transform:translateX(7px)}}
+@keyframes pulse{from{box-shadow:0 0 8px rgba(255,211,61,.2)}to{box-shadow:0 0 24px rgba(255,211,61,.8)}}
+@keyframes spin{from{transform:rotate(-180deg) scale(0)}to{transform:rotate(0) scale(1)}}
+@keyframes bounce{0%,100%{transform:translateY(0)}40%{transform:translateY(-18px)}60%{transform:translateY(-9px)}}
+
+/* ── MODE CARDS ── */
+.mode-row{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-bottom:26px;width:100%}
+.mcard{flex:1;min-width:180px;max-width:220px;background:var(--card);border:2px solid rgba(255,255,255,.08);border-radius:22px;padding:24px 16px;text-align:center;cursor:pointer;transition:all .25s cubic-bezier(.34,1.56,.64,1);position:relative;overflow:hidden}
+.mcard:hover{transform:translateY(-5px) scale(1.03);border-color:rgba(255,255,255,.25)}
+.mcard.sel{border-color:var(--a2);box-shadow:0 0 28px rgba(255,211,61,.3)}
+.mcard-icon{font-size:2.6rem;margin-bottom:8px;display:block}
+.mcard-title{font-family:'Fredoka One',cursive;font-size:1.25rem;margin-bottom:5px}
+.mcard-desc{color:var(--sub);font-size:.88rem;font-weight:600;line-height:1.4}
+.mcard-badge{position:absolute;top:10px;right:10px;background:linear-gradient(135deg,var(--a1),#ff9f43);color:#fff;font-size:.72rem;font-weight:800;padding:3px 9px;border-radius:20px}
+
+/* ── TABLE / STEP SELECTOR ── */
+.btn-grid{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin-bottom:18px}
+.tbtn{font-family:'Fredoka One',cursive;font-size:1.15rem;width:54px;height:54px;border:none;border-radius:13px;cursor:pointer;transition:all .2s cubic-bezier(.34,1.56,.64,1)}
+.tbtn:hover{transform:scale(1.15) rotate(-3deg)}
+.tbtn:nth-child(1){background:#ff6b6b;color:#fff}.tbtn:nth-child(2){background:#ff9f43;color:#fff}
+.tbtn:nth-child(3){background:#ffd93d;color:#333}.tbtn:nth-child(4){background:#6bcb77;color:#fff}
+.tbtn:nth-child(5){background:#4d96ff;color:#fff}.tbtn:nth-child(6){background:#9b59b6;color:#fff}
+.tbtn:nth-child(7){background:#e74c3c;color:#fff}.tbtn:nth-child(8){background:#1abc9c;color:#fff}
+.tbtn:nth-child(9){background:#e67e22;color:#fff}.tbtn:nth-child(10){background:#3498db;color:#fff}
+.mix-btn{width:auto!important;padding:0 18px!important;background:linear-gradient(135deg,var(--a1),var(--a4));color:#fff;font-size:.95rem!important}
+
+/* ── SHARED CARD BASE ── */
+.card{background:var(--card);border-radius:26px;padding:30px 24px;width:100%;max-width:520px;border:2px solid rgba(255,255,255,.07);box-shadow:0 18px 55px rgba(0,0,0,.5);animation:fadeUp .4s ease}
+.sbar{display:flex;justify-content:space-between;margin-bottom:18px;font-weight:800;font-size:.95rem;gap:5px}
+.si{background:rgba(255,255,255,.07);padding:8px 14px;border-radius:18px}
+.si span{color:var(--a2);font-family:'Fredoka One',cursive;font-size:1.1rem}
+.pbar{width:100%;height:10px;background:rgba(255,255,255,.08);border-radius:10px;margin-top:14px;overflow:hidden}
+.pfill{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--a4),var(--a3));transition:width .4s ease}
+.mascot{font-size:2.8rem;margin-bottom:6px;display:block;animation:float 3s ease-in-out infinite}
+
+/* ── CLASSIC ── */
+.question{font-family:'Fredoka One',cursive;font-size:clamp(2.3rem,9vw,3.7rem);margin:10px 0;letter-spacing:2px}
+.question .hl{color:var(--a2);font-size:1.2em}
+.ainput{font-family:'Fredoka One',cursive;font-size:2.3rem;text-align:center;width:150px;padding:11px;background:rgba(255,255,255,.09);border:3px solid rgba(255,255,255,.18);border-radius:17px;color:#fff;outline:none;transition:all .2s;margin:9px auto;display:block}
+.ainput:focus{border-color:var(--a4);background:rgba(77,150,255,.13);box-shadow:0 0 18px rgba(77,150,255,.28)}
+.ainput.wrong{border-color:var(--a1);animation:shake .4s ease;background:rgba(255,107,107,.13)}
+.ainput.correct{border-color:var(--a3);background:rgba(107,203,119,.13)}
+.sbtn{font-family:'Fredoka One',cursive;font-size:1.25rem;padding:11px 34px;background:linear-gradient(135deg,var(--a3),#38b24a);border:none;border-radius:50px;color:#fff;cursor:pointer;transition:all .2s cubic-bezier(.34,1.56,.64,1);box-shadow:0 7px 18px rgba(107,203,119,.38);margin-top:6px}
+.sbtn:hover{transform:scale(1.08)}.sbtn:active{transform:scale(.95)}
+.feedback{font-size:1.05rem;font-weight:800;height:30px;margin:7px 0}
+.feedback.correct{color:var(--a3)}.feedback.wrong{color:var(--a1)}
+
+/* ── ROCKET ── */
+.timer-wrap{width:100%;height:15px;background:rgba(255,255,255,.07);border-radius:10px;overflow:hidden;margin-bottom:11px;position:relative}
+.tbar{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--a3),var(--a2),var(--a1));transition:width .08s linear}
+.tlabel{position:absolute;right:9px;top:50%;transform:translateY(-50%);font-size:.8rem;font-weight:800;color:rgba(255,255,255,.65)}
+.launch-scene{position:relative;width:100%;height:118px;margin:5px 0 11px;border-radius:15px;overflow:hidden;background:linear-gradient(180deg,rgba(13,13,43,0) 0%,rgba(10,10,30,.55) 70%,#06061a 100%)}
+.l-ground{position:absolute;bottom:0;left:0;right:0;height:24px;background:linear-gradient(180deg,#1e3a5f,#0d2040);border-radius:0 0 15px 15px}
+.l-ground::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#4d96ff55,#4d96ffcc,#4d96ff55,transparent)}
+.l-pad{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);width:56px;height:6px;background:var(--a4);border-radius:3px;box-shadow:0 0 13px rgba(77,150,255,.65)}
+.l-pad::before,.l-pad::after{content:'';position:absolute;bottom:0;width:4px;height:12px;background:var(--a4);border-radius:2px}
+.l-pad::before{left:7px}.l-pad::after{right:7px}
+.l-rocket{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);font-size:2.2rem;line-height:1}
+.l-rocket.shaking{animation:rShk .12s ease infinite}
+.l-rocket.igniting{filter:drop-shadow(0 0 13px rgba(255,130,0,.85))}
+.l-rocket.launched{transition:bottom .65s cubic-bezier(.3,0,.1,1),opacity .5s ease}
+@keyframes rShk{0%,100%{transform:translateX(-50%) rotate(-2.5deg)}50%{transform:translateX(-50%) rotate(2.5deg)}}
+.l-flame{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);width:13px;height:0;background:linear-gradient(180deg,#ffd93d,#ff9f43,#ff6b6b,transparent);border-radius:0 0 50% 50%;opacity:0;transition:height .28s,opacity .28s}
+.l-flame.on{height:30px;opacity:1;animation:flk .09s ease infinite alternate}
+@keyframes flk{from{transform:translateX(-50%) scaleX(.75)}to{transform:translateX(-50%) scaleX(1.25)}}
+.rq-question{font-family:'Fredoka One',cursive;font-size:clamp(1.9rem,7.5vw,2.9rem);margin:7px 0 13px;letter-spacing:2px}
+.choice-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px}
+.cbtn{font-family:'Fredoka One',cursive;font-size:1.5rem;padding:14px 6px;border:3px solid transparent;border-radius:17px;cursor:pointer;transition:all .17s cubic-bezier(.34,1.56,.64,1);color:#fff}
+.cbtn:hover:not(:disabled){transform:scale(1.09);box-shadow:0 7px 20px rgba(0,0,0,.4)}
+.cbtn:active:not(:disabled){transform:scale(.93)}.cbtn:disabled{cursor:default}
+.cbtn.c0{background:linear-gradient(135deg,#e74c3c,#c0392b)}.cbtn.c1{background:linear-gradient(135deg,#e67e22,#d35400)}
+.cbtn.c2{background:linear-gradient(135deg,#f1c40f,#d4a017);color:#1a1a1a}.cbtn.c3{background:linear-gradient(135deg,#27ae60,#1e8449)}
+.cbtn.c4{background:linear-gradient(135deg,#2980b9,#1a5276)}.cbtn.c5{background:linear-gradient(135deg,#8e44ad,#6c3483)}
+.cbtn.ok{background:linear-gradient(135deg,var(--a3),#27ae60)!important;border-color:#6bcb77;transform:scale(1.11)!important;box-shadow:0 0 24px rgba(107,203,119,.72)!important}
+.cbtn.no{opacity:.3;transform:scale(.9)!important}
+.to-msg{font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--a1);min-height:30px;margin:6px 0 3px;animation:fadeUp .3s ease}
+
+/* ══════════════════════════════════════
+   SKIP COUNTING MODE
+══════════════════════════════════════ */
+
+/* Step selector */
+.skip-selector-screen{width:100%;max-width:560px;text-align:center;animation:fadeUp .4s ease}
+.skip-sel-title{font-family:'Fredoka One',cursive;font-size:1.9rem;margin-bottom:6px;background:linear-gradient(135deg,var(--a2),var(--a3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.skip-sel-sub{color:var(--sub);font-weight:700;font-size:.95rem;margin-bottom:20px}
+.step-grid{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:16px}
+.stbtn{font-family:'Fredoka One',cursive;font-size:1.1rem;width:60px;height:60px;border:none;border-radius:50%;cursor:pointer;transition:all .22s cubic-bezier(.34,1.56,.64,1);position:relative;overflow:hidden;color:#fff}
+.stbtn:hover{transform:scale(1.18) rotate(-4deg);box-shadow:0 0 20px rgba(255,255,255,.25)}
+.stbtn:nth-child(1){background:radial-gradient(circle at 35% 35%,#ff8a80,#c0392b)}
+.stbtn:nth-child(2){background:radial-gradient(circle at 35% 35%,#ffab40,#e65100)}
+.stbtn:nth-child(3){background:radial-gradient(circle at 35% 35%,#ffee58,#f9a825);color:#333}
+.stbtn:nth-child(4){background:radial-gradient(circle at 35% 35%,#66bb6a,#1b5e20)}
+.stbtn:nth-child(5){background:radial-gradient(circle at 35% 35%,#42a5f5,#0d47a1)}
+.stbtn:nth-child(6){background:radial-gradient(circle at 35% 35%,#ab47bc,#4a148c)}
+.stbtn:nth-child(7){background:radial-gradient(circle at 35% 35%,#26c6da,#006064)}
+.stbtn:nth-child(8){background:radial-gradient(circle at 35% 35%,#8d6e63,#3e2723)}
+.stbtn:nth-child(9){background:radial-gradient(circle at 35% 35%,#78909c,#263238)}
+.stbtn.mix-step{width:auto;padding:0 22px;border-radius:30px;background:linear-gradient(135deg,var(--a1),var(--a4));font-size:.95rem}
+.back-lnk{color:var(--sub);font-size:.85rem;font-weight:700;cursor:pointer;margin-top:8px;display:inline-block;transition:color .2s}
+.back-lnk:hover{color:#fff}
+
+/* Tutorial screen */
+.skip-tutorial{width:100%;max-width:560px;background:var(--card);border-radius:26px;padding:32px 24px;text-align:center;border:2px solid rgba(255,255,255,.08);box-shadow:0 18px 55px rgba(0,0,0,.5);animation:fadeUp .4s ease}
+.tut-title{font-family:'Fredoka One',cursive;font-size:1.8rem;margin-bottom:6px;color:var(--a2)}
+.tut-sub{color:var(--sub);font-size:.95rem;font-weight:700;margin-bottom:22px}
+.tut-seq{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;margin:18px 0 28px;min-height:90px}
+.tut-num{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:1.3rem;color:#fff;opacity:0;transform:scale(0);transition:all .35s cubic-bezier(.34,1.56,.64,1)}
+.tut-num.show{opacity:1;transform:scale(1)}
+.tut-arrow{font-size:.9rem;color:var(--sub);font-weight:800;opacity:0;transition:opacity .2s}
+.tut-arrow.show{opacity:1}
+.tut-step-label{font-family:'Fredoka One',cursive;font-size:.82rem;display:block;color:var(--a3);margin-top:3px}
+.tut-go-btn{font-family:'Fredoka One',cursive;font-size:1.25rem;padding:13px 38px;background:linear-gradient(135deg,var(--a3),#38b24a);border:none;border-radius:50px;color:#fff;cursor:pointer;transition:all .2s cubic-bezier(.34,1.56,.64,1);box-shadow:0 7px 20px rgba(107,203,119,.4);margin-top:8px;opacity:0;pointer-events:none}
+.tut-go-btn.ready{opacity:1;pointer-events:all;animation:fadeUp .4s ease}
+.tut-go-btn:hover{transform:scale(1.08)}
+
+/* Skip game card */
+.skip-card{background:var(--card);border-radius:26px;padding:28px 24px 24px;width:100%;max-width:680px;border:2px solid rgba(255,255,255,.07);box-shadow:0 18px 55px rgba(0,0,0,.5);animation:fadeUp .4s ease}
+.skip-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:6px}
+.skip-step-badge{font-family:'Fredoka One',cursive;font-size:1rem;background:linear-gradient(135deg,var(--a4),#7b2fff);padding:6px 14px;border-radius:20px;box-shadow:0 4px 14px rgba(77,150,255,.35)}
+.alien-row{display:flex;align-items:center;justify-content:center;gap:10px;margin:10px 0 4px}
+.alien{font-size:2.8rem;animation:float 2.8s ease-in-out infinite;display:block}
+.alien.happy{animation:bounce .5s ease}
+.alien.sad{animation:shake .4s ease}
+.skip-q-text{font-family:'Fredoka One',cursive;font-size:1.15rem;color:var(--sub);text-align:center;margin-bottom:10px}
+
+/* Sequence trail */
+.seq-trail{display:flex;align-items:center;justify-content:center;gap:8px;margin:16px 0 20px;position:relative;flex-wrap:nowrap;padding:20px 16px;background:rgba(255,255,255,.03);border-radius:20px;border:1px solid rgba(255,255,255,.06);min-height:120px}
+.planet{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:1.35rem;color:#fff;position:relative;flex-shrink:0;transition:all .3s ease;box-shadow:0 4px 16px rgba(0,0,0,.35)}
+.planet.p0{background:radial-gradient(circle at 38% 38%,#ff8a80,#c0392b)}
+.planet.p1{background:radial-gradient(circle at 38% 38%,#ffab40,#e65100)}
+.planet.p2{background:radial-gradient(circle at 38% 38%,#ffee58,#f9a825);color:#333}
+.planet.p3{background:radial-gradient(circle at 38% 38%,#66bb6a,#2e7d32)}
+.planet.p4{background:radial-gradient(circle at 38% 38%,#42a5f5,#1565c0)}
+.planet.p5{background:radial-gradient(circle at 38% 38%,#ce93d8,#6a1b9a)}
+.planet.blank{
+  background:rgba(255,255,255,.04)!important;
+  border:3px dashed rgba(255,211,61,.65);
+  color:var(--a2);font-size:2rem;
+  animation:pulse 1s ease infinite alternate;
+  width:88px;height:88px;
+}
+.planet.blank.correct-fill{
+  background:radial-gradient(circle at 38% 38%,#66bb6a,#2e7d32)!important;
+  border:3px solid var(--a3)!important;color:#fff!important;
+  animation:pop .4s cubic-bezier(.34,1.56,.64,1)!important;
+  width:88px;height:88px;
+}
+.planet.blank.wrong-reveal{
+  background:radial-gradient(circle at 38% 38%,#ff6b6b,#c0392b)!important;
+  border:3px solid var(--a1)!important;color:#fff!important;
+  width:88px;height:88px;
+}
+.trail-conn{font-size:.9rem;font-weight:800;color:rgba(160,168,208,.5);flex-shrink:0;text-align:center;line-height:1.3;transition:color .4s;white-space:nowrap}
+.trail-conn.lit{color:var(--a3);text-shadow:0 0 10px rgba(107,203,119,.7)}
+
+/* after-answer step explanation */
+.step-explain{
+  text-align:center;font-size:.93rem;font-weight:800;color:var(--sub);
+  min-height:26px;margin-bottom:6px;transition:all .3s;
+}
+.step-explain .correct{color:var(--a3)}
+.step-explain .wrong{color:var(--a1)}
+
+/* Skip choices */
+.skip-choice-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:4px}
+.scbtn{
+  font-family:'Fredoka One',cursive;font-size:1.7rem;
+  height:72px;border:3px solid transparent;border-radius:20px;
+  cursor:pointer;transition:all .18s cubic-bezier(.34,1.56,.64,1);color:#fff;
+  position:relative;overflow:hidden;
+}
+.scbtn::before{content:'';position:absolute;inset:0;background:rgba(255,255,255,0);transition:background .15s}
+.scbtn:hover:not(:disabled)::before{background:rgba(255,255,255,.12)}
+.scbtn:hover:not(:disabled){transform:scale(1.09);box-shadow:0 8px 22px rgba(0,0,0,.4)}
+.scbtn:active:not(:disabled){transform:scale(.93)}.scbtn:disabled{cursor:default}
+.scbtn.sa{background:linear-gradient(145deg,#ff8a80,#c0392b)}
+.scbtn.sb{background:linear-gradient(145deg,#42a5f5,#1565c0)}
+.scbtn.sc{background:linear-gradient(145deg,#ab47bc,#4a148c)}
+.scbtn.ok{
+  background:linear-gradient(145deg,#66bb6a,#2e7d32)!important;
+  border-color:var(--a3);transform:scale(1.12)!important;
+  box-shadow:0 0 26px rgba(107,203,119,.7)!important;
+}
+.scbtn.no{opacity:.28;transform:scale(.88)!important}
+.skip-fb{font-family:'Fredoka One',cursive;font-size:1.05rem;min-height:30px;margin:8px 0 3px;text-align:center;animation:fadeUp .25s ease}
+.skip-fb.ok{color:var(--a3)}.skip-fb.no{color:var(--a1)}
+
+/* ── RESULT ── */
+.result-card{background:var(--card);border-radius:26px;padding:36px 28px;width:100%;max-width:500px;text-align:center;border:2px solid rgba(255,255,255,.07);animation:fadeUp .4s ease}
+.rt{font-family:'Fredoka One',cursive;font-size:2.2rem;background:linear-gradient(135deg,var(--a2),var(--a1));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin:10px 0}
+.rs{font-family:'Fredoka One',cursive;font-size:4.8rem;color:var(--a3);display:block;margin:6px 0}
+.stars-e{font-size:2.1rem;margin:6px 0}
+.trophy-row{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin:10px 0}
+.ti{background:rgba(255,255,255,.06);padding:9px 16px;border-radius:13px;font-weight:800;font-size:.92rem;color:var(--sub)}
+.ti span{color:var(--a2);font-family:'Fredoka One',cursive;font-size:1.05rem;margin-left:4px}
+.rbtn{font-family:'Fredoka One',cursive;font-size:1.15rem;padding:13px 30px;background:linear-gradient(135deg,var(--a1),#ff9f43);border:none;border-radius:50px;color:#fff;cursor:pointer;transition:all .2s cubic-bezier(.34,1.56,.64,1);margin:5px;box-shadow:0 7px 20px rgba(255,107,107,.32)}
+.rbtn:hover{transform:scale(1.08)}
+
+/* ── CELEBRATION ── */
+.celeb{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.87);animation:fadeUp .28s ease}
+.ce-emoji{font-size:5rem;animation:spin .5s cubic-bezier(.34,1.56,.64,1);display:block;text-align:center;margin-bottom:14px}
+.ce-text{font-family:'Fredoka One',cursive;font-size:clamp(1.7rem,6.5vw,3.3rem);text-align:center;background:linear-gradient(135deg,var(--a2),var(--a1));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px;animation:pop .5s cubic-bezier(.34,1.56,.64,1)}
+.ce-sub{color:var(--sub);font-size:1.05rem;font-weight:700;margin-bottom:26px;text-align:center;padding:0 18px}
+.nxt-btn{font-family:'Fredoka One',cursive;font-size:1.25rem;padding:13px 34px;background:linear-gradient(135deg,var(--a4),#7b2fff);border:none;border-radius:50px;color:#fff;cursor:pointer;transition:all .2s cubic-bezier(.34,1.56,.64,1);box-shadow:0 7px 22px rgba(77,150,255,.48)}
+.nxt-btn:hover{transform:scale(1.08)}
+
+/* confetti */
+.cf{position:fixed;top:-20px;animation:cfFall linear forwards;z-index:101;border-radius:2px}
+@keyframes cfFall{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
+
+/* ══════════════════════════════════════
+   ROMGRUPPER MODE
+══════════════════════════════════════ */
+.grp-card{background:var(--card);border-radius:26px;padding:28px 24px 24px;width:100%;max-width:660px;border:2px solid rgba(255,255,255,.07);box-shadow:0 18px 55px rgba(0,0,0,.5);animation:fadeUp .4s ease}
+.grp-qbadge{display:inline-block;font-family:'Fredoka One',cursive;font-size:.95rem;padding:7px 18px;border-radius:20px;margin-bottom:14px;letter-spacing:.3px}
+.grp-qbadge.typeA{background:linear-gradient(135deg,#ff9f43,#e67e22);color:#fff}
+.grp-qbadge.typeB{background:linear-gradient(135deg,#9b59b6,#6c3483);color:#fff}
+.grp-equation{font-family:'Fredoka One',cursive;font-size:clamp(1.8rem,6vw,2.8rem);text-align:center;margin:6px 0 12px;letter-spacing:1px}
+.grp-equation .ghl{color:var(--a2)}
+.grp-instruction{color:var(--sub);font-size:.97rem;font-weight:700;text-align:center;margin-bottom:16px}
+
+/* Big array display (type A) */
+.big-array-wrap{display:flex;justify-content:center;margin:4px 0 20px}
+.big-array{display:inline-flex;flex-direction:column;gap:12px;padding:22px 28px;background:rgba(255,255,255,.04);border-radius:18px;border:1px solid rgba(255,255,255,.08)}
+.array-row{display:flex;gap:10px;align-items:center}
+.row-label{font-family:'Fredoka One',cursive;font-size:.82rem;color:rgba(160,168,208,.55);width:18px;text-align:right;flex-shrink:0;margin-right:6px}
+.array-cell{font-size:2.1rem;line-height:1;width:38px;text-align:center;transition:all .22s ease;display:inline-block}
+.array-cell.dim{opacity:.12;filter:grayscale(1)}
+.array-cell.glow{filter:drop-shadow(0 0 10px rgba(255,211,61,.95));transform:scale(1.25)}
+
+/* Number buttons 2×2 (type A) */
+.grp-num-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px}
+.gnbtn{font-family:'Fredoka One',cursive;font-size:2.2rem;height:78px;border:3px solid transparent;border-radius:18px;cursor:pointer;transition:all .18s cubic-bezier(.34,1.56,.64,1);color:#fff}
+.gnbtn:hover:not(:disabled){transform:scale(1.07);box-shadow:0 8px 22px rgba(0,0,0,.4)}
+.gnbtn:active:not(:disabled){transform:scale(.93)}.gnbtn:disabled{cursor:default}
+.gnbtn.g0{background:linear-gradient(145deg,#e74c3c,#c0392b)}
+.gnbtn.g1{background:linear-gradient(145deg,#2980b9,#1a5276)}
+.gnbtn.g2{background:linear-gradient(145deg,#27ae60,#1e8449)}
+.gnbtn.g3{background:linear-gradient(145deg,#8e44ad,#6c3483)}
+.gnbtn.ok{background:linear-gradient(145deg,var(--a3),#27ae60)!important;border-color:#6bcb77;transform:scale(1.1)!important;box-shadow:0 0 26px rgba(107,203,119,.72)!important}
+.gnbtn.no{opacity:.28;transform:scale(.88)!important}
+
+/* Array choice cards 2×2 (type B) */
+.array-choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:10px}
+.acard{background:rgba(255,255,255,.05);border:2px solid rgba(255,255,255,.12);border-radius:18px;padding:18px 14px 14px;cursor:pointer;transition:all .2s cubic-bezier(.34,1.56,.64,1);display:flex;flex-direction:column;align-items:center;gap:10px;min-height:130px;justify-content:center}
+.acard:hover:not(.adisabled){transform:scale(1.06);border-color:rgba(255,255,255,.32);background:rgba(255,255,255,.1)}
+.acard.ok{border-color:var(--a3)!important;background:rgba(107,203,119,.15)!important;transform:scale(1.07)!important;box-shadow:0 0 22px rgba(107,203,119,.55)!important}
+.acard.no{opacity:.26;transform:scale(.88)!important}
+.acard.adisabled{cursor:default}
+.mini-array{display:inline-flex;flex-direction:column;gap:5px}
+.mini-row{display:flex;gap:5px}
+.mini-cell{font-size:1.45rem;line-height:1;width:26px;text-align:center}
+.acard-label{font-family:'Fredoka One',cursive;font-size:.92rem;color:var(--sub);letter-spacing:.5px}
+
+/* Commutative hint + feedback */
+.commute-hint{font-size:.93rem;font-weight:800;color:rgba(255,211,61,.85);text-align:center;margin-top:10px;min-height:24px;animation:fadeUp .4s ease;line-height:1.4;padding:0 4px}
+.grp-fb{font-family:'Fredoka One',cursive;font-size:1.05rem;text-align:center;min-height:28px;margin:6px 0 2px;animation:fadeUp .25s ease}
+.grp-fb.ok{color:var(--a3)}.grp-fb.no{color:var(--a1)}
+
+/* ── MODE INFO PANEL ── */
+.mode-info-panel{
+  width:100%;max-width:680px;
+  background:linear-gradient(135deg,rgba(77,150,255,.1),rgba(123,47,255,.1));
+  border:1.5px solid rgba(77,150,255,.25);
+  border-radius:20px;padding:18px 22px 16px;
+  margin-bottom:20px;
+  animation:fadeUp .3s ease;
+  display:flex;gap:16px;align-items:flex-start;
+}
+.mip-icon{font-size:2.4rem;flex-shrink:0;margin-top:2px;animation:float 3s ease-in-out infinite}
+.mip-body{flex:1}
+.mip-title{font-family:'Fredoka One',cursive;font-size:1.2rem;margin-bottom:4px;color:#fff}
+.mip-desc{color:var(--sub);font-size:.93rem;font-weight:600;line-height:1.5;margin-bottom:10px}
+.mip-next{
+  display:inline-flex;align-items:center;gap:7px;
+  background:rgba(255,211,61,.15);border:1.5px solid rgba(255,211,61,.4);
+  border-radius:30px;padding:6px 14px;
+  font-family:'Fredoka One',cursive;font-size:.95rem;color:var(--a2);
+}
+.mip-next::before{content:'👇';font-size:1rem}
+
+/* ── SELECTOR HEADINGS ── */
+.sel-heading{
+  width:100%;text-align:center;
+  font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--sub);
+  margin-bottom:12px;letter-spacing:.3px;
+}
+.sel-heading strong{color:#fff}
+
+/* ══════════════════════════════
+   PLANETVEIEN MODE
+══════════════════════════════ */
+/* Outer card */
+.planet-card{
+  width:100%;max-width:680px;
+  background:linear-gradient(170deg,#0b0b2a 0%,#0f0f35 60%,#060618 100%);
+  border:2px solid rgba(255,255,255,.08);
+  border-radius:28px;
+  padding:20px 16px 24px;
+  box-shadow:0 22px 60px rgba(0,0,0,.7);
+  animation:fadeUp .4s ease;
+  position:relative;overflow:hidden;
+}
+.planet-card::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 40% at 20% 10%,rgba(77,150,255,.06) 0%,transparent 70%),
+             radial-gradient(ellipse 40% 30% at 80% 80%,rgba(155,89,182,.06) 0%,transparent 70%);
+  pointer-events:none;
+}
+
+/* Header bar */
+.pv-header{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.pv-sbar{display:flex;gap:6px;flex:1;flex-wrap:wrap}
+.pv-si{background:rgba(255,255,255,.07);padding:7px 12px;border-radius:16px;font-weight:800;font-size:.9rem;white-space:nowrap}
+.pv-si span{color:var(--a2);font-family:'Fredoka One',cursive;font-size:1.05rem;margin-left:3px}
+
+/* Target indicator — big glowing pill at top */
+.pv-target{
+  width:100%;text-align:center;
+  margin-bottom:10px;
+  padding:10px 16px;
+  background:rgba(255,255,255,.04);
+  border:1.5px solid rgba(255,255,255,.1);
+  border-radius:18px;
+  display:flex;align-items:center;justify-content:center;gap:12px;
+  font-family:'Fredoka One',cursive;
+}
+.pv-target-label{color:var(--sub);font-size:.9rem}
+.pv-target-num{
+  font-size:2.4rem;
+  background:linear-gradient(135deg,var(--a2),var(--a1));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 0 12px rgba(255,211,61,.5));
+  animation:pvPulse 1.4s ease-in-out infinite;
+}
+.pv-target-mult{color:var(--sub);font-size:1rem;opacity:.7}
+@keyframes pvPulse{0%,100%{filter:drop-shadow(0 0 8px rgba(255,211,61,.4))} 50%{filter:drop-shadow(0 0 22px rgba(255,211,61,.9))}}
+
+/* Progress dots row */
+.pv-progress-row{
+  display:flex;justify-content:center;gap:5px;margin-bottom:14px;flex-wrap:wrap;
+}
+.pv-dot{
+  width:26px;height:26px;border-radius:50%;
+  border:2px solid rgba(255,255,255,.15);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Fredoka One',cursive;font-size:.7rem;
+  color:rgba(255,255,255,.3);
+  transition:all .35s cubic-bezier(.34,1.56,.64,1);
+  position:relative;
+}
+.pv-dot.done{
+  background:linear-gradient(135deg,var(--a3),#27ae60);
+  border-color:var(--a3);color:#fff;
+  box-shadow:0 0 10px rgba(107,203,119,.6);
+  transform:scale(1.15);
+}
+.pv-dot.active{
+  background:rgba(255,211,61,.15);
+  border-color:var(--a2);color:var(--a2);
+  animation:dotPulse .9s ease infinite alternate;
+}
+@keyframes dotPulse{from{box-shadow:0 0 4px rgba(255,211,61,.3)}to{box-shadow:0 0 14px rgba(255,211,61,.8)}}
+
+/* Planet arena */
+.pv-arena{
+  position:relative;
+  width:100%;
+  min-height:520px;
+  margin:0 auto;
+  border-radius:20px;
+  overflow:hidden;
+}
+
+/* Next-to-tap planet gets a golden glow pulse */
+.pv-planet.next-target{
+  box-shadow:0 0 0 4px rgba(255,211,61,.7),0 0 28px rgba(255,211,61,.6)!important;
+  animation:pvNextPulse 1s ease-in-out infinite!important;
+  z-index:20!important;
+  position:relative;
+}
+@keyframes pvNextPulse{
+  0%,100%{box-shadow:0 0 0 4px rgba(255,211,61,.5),0 0 20px rgba(255,211,61,.4);transform:scale(1)}
+  50%{box-shadow:0 0 0 7px rgba(255,211,61,.9),0 0 40px rgba(255,211,61,.7);transform:scale(1.08)}
+}
+
+/* Hint toggle area */
+.pv-hint-row{
+  display:flex;align-items:center;gap:10px;margin-top:10px;
+}
+.pv-hint-btn{
+  font-family:'Fredoka One',cursive;font-size:.88rem;
+  background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.15);
+  border-radius:20px;padding:5px 14px;color:var(--sub);cursor:pointer;
+  transition:all .2s;
+}
+.pv-hint-btn:hover{background:rgba(255,255,255,.13);color:#fff}
+.pv-hint-btn.active{background:rgba(255,211,61,.15);border-color:rgba(255,211,61,.5);color:var(--a2)}
+.pv-eq-strip{
+  overflow:hidden;max-height:0;
+  transition:max-height .4s ease,opacity .4s ease;
+  opacity:0;
+  text-align:center;
+  font-family:'Fredoka One',cursive;
+  color:rgba(255,255,255,.35);
+  font-size:.88rem;letter-spacing:.5px;
+  line-height:1.8;
+  padding:0 4px;
+}
+.pv-eq-strip.visible{
+  max-height:80px;opacity:1;
+  padding:8px 4px 2px;
+}
+.pv-eq-strip .eq-done{color:var(--a3)}
+.pv-eq-strip .eq-cur{color:var(--a2);font-size:1rem}
+/* Subtle nebula bg in arena */
+.pv-arena::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 55% 35% at 15% 20%,rgba(100,60,180,.12) 0%,transparent 70%),
+    radial-gradient(ellipse 45% 30% at 85% 75%,rgba(60,100,220,.1) 0%,transparent 70%),
+    radial-gradient(ellipse 30% 25% at 50% 50%,rgba(180,80,60,.07) 0%,transparent 70%);
+  pointer-events:none;z-index:0;
+}
+
+/* ── Planet outer wrapper: this is the positioning anchor ── */
+/* JS sets: position:absolute; left:x%; top:y%; width:92px; height:92px;
+   transform:translate(-50%,-50%); z-index:2; overflow:visible; */
+/* The float animation lives on the outer wrapper via JS inline style */
+
+/* Individual planet button — fills the wrapper exactly */
+.pv-planet{
+  width:92px;height:92px;
+  border-radius:50%;
+  border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Fredoka One',cursive;
+  font-size:1.9rem;
+  color:#fff;
+  text-shadow:0 2px 6px rgba(0,0,0,.7);
+  transition:transform .2s cubic-bezier(.34,1.56,.64,1),opacity .2s,box-shadow .2s;
+  overflow:visible;
+  outline:none;
+  position:relative;
+}
+.pv-planet:hover:not(:disabled):not(.used){
+  transform:scale(1.18);
+  z-index:10;
+  position:relative;
+}
+.pv-planet:active:not(:disabled):not(.used){
+  transform:scale(.92);
+}
+@keyframes pvFloat{
+  0%{transform:translateY(0px)}
+  100%{transform:translateY(-10px)}
+}
+@keyframes pvOuterFloat{
+  0%{transform:translate(-50%,-50%) translateY(0px)}
+  100%{transform:translate(-50%,-50%) translateY(-11px)}
+}
+
+/* Planet type visuals */
+.pv-planet.mercury{background:radial-gradient(circle at 35% 30%,#c8c0b0,#8a8070);box-shadow:0 0 20px rgba(200,190,160,.35),inset -12px -8px 18px rgba(0,0,0,.45)}
+.pv-planet.venus{background:radial-gradient(circle at 38% 32%,#ffe9a0,#e8b460,#c87820);box-shadow:0 0 25px rgba(240,180,80,.4),inset -10px -8px 20px rgba(0,0,0,.3)}
+.pv-planet.earth{background:radial-gradient(circle at 35% 28%,#6cb8f8,#2a7fd4,#1a5a9a);box-shadow:0 0 28px rgba(70,150,255,.45),inset -12px -8px 22px rgba(0,0,0,.35)}
+.pv-planet.earth::after{content:'';position:absolute;width:55%;height:30%;background:rgba(80,200,80,.45);border-radius:50% 30% 50% 30%;top:22%;left:20%;transform:rotate(-15deg)}
+.pv-planet.mars{background:radial-gradient(circle at 38% 30%,#f08060,#c04428,#8a2010);box-shadow:0 0 24px rgba(220,80,40,.45),inset -12px -8px 20px rgba(0,0,0,.4)}
+.pv-planet.mars::after{content:'';position:absolute;width:35%;height:20%;background:rgba(160,60,40,.6);border-radius:50%;bottom:28%;right:18%}
+.pv-planet.jupiter{background:linear-gradient(180deg,#c8883c 0%,#e8c090 18%,#c07840 34%,#f0d8a0 50%,#b87030 66%,#e0b870 82%,#c88040 100%);box-shadow:0 0 30px rgba(220,160,60,.45),inset -14px -10px 24px rgba(0,0,0,.35)}
+.pv-planet.jupiter::before{content:'';position:absolute;width:70%;height:22%;background:rgba(160,80,40,.5);border-radius:50%;bottom:18%;left:15%;filter:blur(2px)}
+.pv-planet.saturn{background:radial-gradient(circle at 38% 32%,#f8e8a8,#d4b860,#a88030);box-shadow:0 0 28px rgba(220,190,80,.4),inset -12px -8px 20px rgba(0,0,0,.3)}
+/* Saturn ring pseudo-element using outline box – rendered via wrapper */
+.pv-planet.saturn-wrap{overflow:visible!important}
+.pv-planet-ring{
+  position:absolute;
+  width:140px;height:28px;
+  border:8px solid rgba(210,170,80,.55);
+  border-radius:50%;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%) rotateX(72deg);
+  pointer-events:none!important;  /* never block planet clicks */
+  z-index:1;
+  filter:drop-shadow(0 0 6px rgba(210,170,80,.4));
+}
+.pv-planet.uranus{background:radial-gradient(circle at 38% 32%,#a8f0f0,#50c8d8,#208090);box-shadow:0 0 28px rgba(80,200,220,.45),inset -12px -8px 20px rgba(0,0,0,.3)}
+.pv-planet.neptune{background:radial-gradient(circle at 38% 32%,#6080f8,#2840c8,#102080);box-shadow:0 0 28px rgba(60,80,230,.5),inset -14px -10px 22px rgba(0,0,0,.4)}
+.pv-planet.neptune::after{content:'';position:absolute;width:40%;height:15%;background:rgba(120,150,255,.4);border-radius:50%;top:28%;left:15%;filter:blur(1px)}
+.pv-planet.moon{background:radial-gradient(circle at 38% 32%,#d8d8d0,#a0a098,#686860);box-shadow:0 0 18px rgba(180,180,170,.3),inset -10px -8px 18px rgba(0,0,0,.5)}
+.pv-planet.moon::after{content:'';position:absolute;width:22%;height:22%;background:rgba(0,0,0,.2);border-radius:50%;top:20%;right:22%;box-shadow:inset 2px 2px 4px rgba(0,0,0,.3)}
+.pv-planet.sun{background:radial-gradient(circle at 38% 35%,#ffffc0,#ffcc00,#ff8800);box-shadow:0 0 35px rgba(255,200,0,.7),0 0 60px rgba(255,160,0,.3),inset -10px -8px 20px rgba(200,80,0,.3);animation:sunPulse 2s ease-in-out infinite alternate}
+@keyframes sunPulse{from{box-shadow:0 0 30px rgba(255,200,0,.6),0 0 55px rgba(255,160,0,.25)} to{box-shadow:0 0 50px rgba(255,210,0,.9),0 0 80px rgba(255,180,0,.4)}}
+
+/* Used (correctly tapped) planet — outer gets pointer-events:none via JS */
+.pv-planet.used{
+  opacity:.18;cursor:default;transform:scale(.75);
+  filter:grayscale(.9);animation:none;
+  pointer-events:none;
+}
+/* Wrong tap flash */
+.pv-planet.wrong-flash{animation:pvWrong .4s ease!important}
+@keyframes pvWrong{0%,100%{transform:scale(1)} 25%{transform:translateX(-9px) scale(1.05)} 75%{transform:translateX(9px) scale(1.05)}}
+/* Collect burst */
+.pv-planet.collect{animation:pvCollect .48s cubic-bezier(.34,1.56,.64,1) forwards!important}
+@keyframes pvCollect{0%{transform:scale(1);opacity:1} 45%{transform:scale(1.5);opacity:1} 100%{transform:scale(.6);opacity:0}}
+
+/* Number label */
+.pv-planet-num{position:relative;z-index:3;pointer-events:none;line-height:1;drop-shadow:0 2px 4px rgba(0,0,0,.5)}
+
+/* Feedback banner */
+.pv-feedback{
+  text-align:center;font-family:'Fredoka One',cursive;font-size:1.25rem;
+  min-height:38px;margin-top:12px;
+  transition:all .2s;
+}
+.pv-feedback.ok{color:var(--a3);animation:fadeUp .25s ease}
+.pv-feedback.err{color:var(--a1);animation:shake .3s ease}
+
+/* Combo chip */
+.pv-combo{
+  display:inline-block;
+  background:linear-gradient(135deg,var(--a1),#ff9f43);
+  color:#fff;border-radius:20px;
+  padding:3px 12px;font-size:.88rem;font-weight:800;
+  margin-left:8px;vertical-align:middle;
+  animation:pop .3s cubic-bezier(.34,1.56,.64,1);
+}
+
+/* Trail / path connector visual */
+.pv-trail-wrap{
+  position:absolute;inset:0;pointer-events:none;z-index:1;
+}
+.pv-trail-wrap svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.pv-trail-line{
+  stroke:rgba(107,203,119,.5);
+  stroke-width:2.5;
+  stroke-dasharray:6 5;
+  fill:none;
+  stroke-linecap:round;
+  filter:drop-shadow(0 0 4px rgba(107,203,119,.6));
+}
+
+/* ── RETUR TIL JORDBANE ── */
+.jordbane-btn{
+  display:block;margin:14px auto 0;
+  font-family:'Fredoka One',cursive;font-size:.88rem;
+  background:transparent;
+  border:1.5px solid rgba(255,255,255,.15);
+  border-radius:30px;padding:6px 18px;
+  color:rgba(255,255,255,.38);cursor:pointer;
+  transition:all .2s;letter-spacing:.3px;
+}
+.jordbane-btn:hover{border-color:rgba(77,150,255,.55);color:var(--a4);background:rgba(77,150,255,.08)}
+.jordbane-btn::before{content:'🌍 '}
+/* Remove number input spinners */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+input[type=number]{-moz-appearance:textfield}
+
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="stars" id="stars"></div>
+<div class="wrap">
+  <h1>🚀 Gangeraketten</h1>
+  <p class="sub" id="mainSub">Mestre gangetabellen — en planet om gangen!</p>
+
+  <!-- ═══ HOME ═══ -->
+  <div id="homeScreen">
+    <div class="mode-row">
+      <div class="mcard" id="mc-classic" onclick="selMode('classic')">
+        <span class="mcard-icon">✏️</span>
+        <div class="mcard-title">Klassisk</div>
+        <div class="mcard-desc">Skriv inn svaret. 10 spørsmål.</div>
+      </div>
+      <div class="mcard" id="mc-rocket" onclick="selMode('rocket')">
+        <span class="mcard-badge">NYTT 🔥</span>
+        <span class="mcard-icon">🚀</span>
+        <div class="mcard-title">Rakett-modus</div>
+        <div class="mcard-desc">Trykk riktig svar FØR raketten tar av!</div>
+      </div>
+      <div class="mcard" id="mc-skip" onclick="selMode('skip')">
+        <span class="mcard-badge">NYTT ⭐</span>
+        <span class="mcard-icon">🌌</span>
+        <div class="mcard-title">Telletur!</div>
+        <div class="mcard-desc">Hopp mellom planeter – tell i hopp gjennom galaksen!</div>
+      </div>
+      <div class="mcard" id="mc-groups" onclick="selMode('groups')">
+        <span class="mcard-badge">NYTT 🧠</span>
+        <span class="mcard-icon">🌠</span>
+        <div class="mcard-title">Romgrupper!</div>
+        <div class="mcard-desc">Se grupper av romobjekter og forstå ganging fra grunnen av!</div>
+      </div>
+      <div class="mcard" id="mc-planets" onclick="selMode('planets')">
+        <span class="mcard-badge">NYTT 🪐</span>
+        <span class="mcard-icon">🪐</span>
+        <div class="mcard-title">Planetveien!</div>
+        <div class="mcard-desc">Trykk planetene i riktig rekkefølge og finn veien gjennom solsystemet!</div>
+      </div>
+    </div>
+    <!-- Mode info panel (shown after selection) -->
+    <div class="mode-info-panel hidden" id="modeInfoPanel">
+      <span class="mip-icon" id="mipIcon">✏️</span>
+      <div class="mip-body">
+        <div class="mip-title" id="mipTitle"></div>
+        <div class="mip-desc" id="mipDesc"></div>
+        <div class="mip-next" id="mipNext"></div>
+      </div>
+    </div>
+
+    <!-- Classic / Rocket / Groups / Planets table selector -->
+    <div class="btn-grid hidden" id="tableSelector">
+      <div class="sel-heading" id="tableSelHeading" style="width:100%">Velg <strong>tabell</strong> for å starte:</div>
+    </div>
+    <!-- Skip step selector -->
+    <div class="skip-selector-screen hidden" id="skipSelectorScreen">
+      <div class="skip-sel-title">🌌 Galaktisk Telletur</div>
+      <div class="skip-sel-sub">Velg hva du vil telle med:</div>
+      <div class="step-grid" id="stepGrid"></div>
+    </div>
+    <!-- Shared return button shown with any selector -->
+    <div class="hidden" id="homeReturnWrap" style="text-align:center;margin-top:4px">
+      <button class="jordbane-btn" onclick="clearModeSelection()" style="margin:0 auto">Retur til Jordbane</button>
+    </div>
+    <!-- Disclaimer -->
+    <div style="margin-top:26px;width:100%;max-width:520px;text-align:center;border-top:1px solid rgba(255,255,255,.06);padding-top:16px">
+      <p style="font-size:.75rem;color:rgba(160,168,208,.45);line-height:1.8;font-weight:600">
+        🛸 Laget av <span style="color:rgba(160,168,208,.75)">Jan Erling Saue</span> med <span style="color:rgba(160,168,208,.75)">Claude Sonnet 4.6 (Anthropic)</span> generativ AI &nbsp;·&nbsp; © 2026<br>
+        Fri å bruke til undervisning og opplæring &mdash; ikke til salg eller kommersiell bruk.<br>
+        <span style="font-size:.68rem;opacity:.75">Godkjent for oppdrag i hele Melkeveien 🌌</span>
+      </p>
+    </div>
+  </div>
+  <div class="skip-tutorial hidden" id="skipTutorial">
+    <div class="tut-title" id="tutTitle">Teller med 3 om gangen!</div>
+    <div class="tut-sub" id="tutSub">Se mønsteret – hvert hopp legger til det samme tall</div>
+    <div class="tut-seq" id="tutSeq"></div>
+    <button class="tut-go-btn" id="tutGoBtn" onclick="beginSkipGame()">🚀 Let's go!</button>
+  </div>
+
+  <!-- ═══ CLASSIC CARD ═══ -->
+  <div class="card hidden" id="gameCard">
+    <div class="sbar">
+      <div class="si">⭐ <span id="scoreD">0</span></div>
+      <div class="si">❓ <span id="qnumD">1</span>/10</div>
+      <div class="si">🔥 <span id="streakD">0</span></div>
+    </div>
+    <span class="mascot" id="mascot">🚀</span>
+    <div class="question" id="question"></div>
+    <div class="feedback" id="feedback"></div>
+    <input class="ainput" id="answerInput" type="number" min="0" max="200" placeholder="?" autocomplete="off" inputmode="numeric" pattern="[0-9]*"/>
+    <br>
+    <button class="sbtn" onclick="checkAnswer()">Sjekk! 🎯</button>
+    <div class="pbar"><div class="pfill" id="pFill" style="width:10%"></div></div>
+    <button class="jordbane-btn" onclick="goHome()">Retur til Jordbane</button>
+  </div>
+
+  <!-- ═══ ROCKET CARD ═══ -->
+  <div class="card hidden" id="rocketCard">
+    <div class="sbar">
+      <div class="si">⭐ <span id="rScoreD">0</span></div>
+      <div class="si">❓ <span id="rQnumD">1</span>/10</div>
+      <div class="si">🔥 <span id="rStreakD">0</span></div>
+      <div class="si">⚡ <span id="rBonusD">0</span></div>
+    </div>
+    <div class="timer-wrap"><div class="tbar" id="tBar" style="width:100%"></div><div class="tlabel" id="tLabel">8s</div></div>
+    <div class="launch-scene">
+      <div class="l-flame" id="lFlame"></div>
+      <div class="l-rocket" id="lRocket">🚀</div>
+      <div class="l-pad"></div>
+      <div class="l-ground"></div>
+    </div>
+    <div class="rq-question" id="rQuestion"></div>
+    <div class="to-msg hidden" id="toMsg"></div>
+    <div class="choice-grid" id="choiceGrid"></div>
+    <div class="pbar" style="margin-top:12px"><div class="pfill" id="rPFill" style="width:10%"></div></div>
+    <button class="jordbane-btn" onclick="goHome()">Retur til Jordbane</button>
+  </div>
+
+  <!-- ═══ SKIP CARD ═══ -->
+  <div class="skip-card hidden" id="skipCard">
+    <div class="skip-header">
+      <div class="sbar" style="margin:0;flex:1;gap:5px">
+        <div class="si">⭐ <span id="skScoreD">0</span></div>
+        <div class="si">❓ <span id="skQnumD">1</span>/10</div>
+        <div class="si">🔥 <span id="skStreakD">0</span></div>
+      </div>
+      <div class="skip-step-badge" id="skipStepBadge">+2</div>
+    </div>
+    <div class="pbar"><div class="pfill" id="skPFill" style="width:10%"></div></div>
+    <div class="alien-row">
+      <span class="alien" id="alienMascot">👽</span>
+    </div>
+    <div class="skip-q-text" id="skipQText">Hva er <strong>❓</strong>?</div>
+    <div class="seq-trail" id="seqTrail"></div>
+    <div class="step-explain" id="stepExplain"></div>
+    <div class="skip-choice-grid" id="skipChoiceGrid"></div>
+    <div class="skip-fb hidden" id="skipFb"></div>
+    <button class="jordbane-btn" onclick="goHome()">Retur til Jordbane</button>
+  </div>
+
+  <!-- ═══ ROMGRUPPER CARD ═══ -->
+  <div class="grp-card hidden" id="grpCard">
+    <div class="sbar">
+      <div class="si">⭐ <span id="grpScoreD">0</span></div>
+      <div class="si">❓ <span id="grpQnumD">1</span>/10</div>
+      <div class="si">🔥 <span id="grpStreakD">0</span></div>
+    </div>
+    <div class="pbar"><div class="pfill" id="grpPFill" style="width:10%"></div></div>
+    <div style="text-align:center;margin:14px 0 2px">
+      <span class="grp-qbadge typeA" id="grpQBadge">Tell opp! 🔢</span>
+    </div>
+    <div class="grp-equation" id="grpEquation"></div>
+    <div class="grp-instruction" id="grpInstruction"></div>
+    <div class="big-array-wrap" id="bigArrayWrap">
+      <div class="big-array" id="bigArray"></div>
+    </div>
+    <div class="grp-num-grid" id="grpNumGrid"></div>
+    <div class="array-choice-grid hidden" id="arrayChoiceGrid"></div>
+    <div class="commute-hint" id="commuteHint"></div>
+    <div class="grp-fb hidden" id="grpFb"></div>
+    <button class="jordbane-btn" onclick="goHome()">Retur til Jordbane</button>
+  </div>
+
+  <!-- ═══ PLANETVEIEN CARD ═══ -->
+  <div class="planet-card hidden" id="planetCard">
+    <div class="pv-header">
+      <div class="pv-sbar">
+        <div class="pv-si">⭐<span id="pvScoreD">0</span></div>
+        <div class="pv-si">🪐<span id="pvQnumD">1</span>/10</div>
+        <div class="pv-si">🔥<span id="pvStreakD">0</span></div>
+      </div>
+    </div>
+    <div class="pv-target" id="pvTarget">
+      <span class="pv-target-label">Finn:</span>
+      <span class="pv-target-num" id="pvTargetNum">3</span>
+      <span class="pv-target-mult" id="pvTargetMult"></span>
+    </div>
+    <div class="pv-progress-row" id="pvProgressRow"></div>
+    <div class="pv-arena" id="pvArena">
+      <div class="pv-trail-wrap"><svg id="pvTrailSvg"></svg></div>
+    </div>
+    <div class="pv-feedback" id="pvFeedback"></div>
+    <div class="pv-hint-row">
+      <button class="pv-hint-btn" id="pvHintBtn" onclick="togglePvHint()">🔥 Gjør det vanskelig!</button>
+    </div>
+    <div class="pv-eq-strip" id="pvEqStrip"></div>
+    <button class="jordbane-btn" onclick="goHome()">Retur til Jordbane</button>
+  </div>
+
+  <!-- ═══ RESULT ═══ -->
+  <div class="result-card hidden" id="resultCard">
+    <span class="mascot" style="font-size:3.8rem" id="resMascot">🏆</span>
+    <div class="rt" id="resTitle">Bra jobba!</div>
+    <span class="rs" id="resScore">8/10</span>
+    <div class="stars-e" id="starsE">⭐⭐⭐⭐⭐</div>
+    <div class="trophy-row" id="trophyRow"></div>
+    <p style="color:var(--sub);font-weight:700;margin:8px 0 18px" id="resMsg"></p>
+    <button class="rbtn" onclick="retryGame()">🔄 Prøv igjen!</button>
+    <button class="rbtn" style="background:linear-gradient(135deg,var(--a4),#7b2fff);box-shadow:0 7px 22px rgba(77,150,255,.38)" onclick="goHome()">🏠 Velg modus</button>
+  </div>
+</div>
+
+<!-- Celebration -->
+<div class="celeb hidden" id="celeb">
+  <span class="ce-emoji" id="ceEmoji">🌟</span>
+  <div class="ce-text" id="ceText">Fantastisk!</div>
+  <div class="ce-sub" id="ceSub"></div>
+  <button class="nxt-btn" onclick="nextQ()">Neste spørsmål 🚀</button>
+</div>
+
+<script>
+// ─── STARS ───
+const starsEl=document.getElementById('stars');
+for(let i=0;i<80;i++){const s=document.createElement('div');s.className='star';const sz=Math.random()*3+1;s.style.cssText=`width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;--d:${(Math.random()*3+1).toFixed(1)}s;animation-delay:${(Math.random()*3).toFixed(1)}s`;starsEl.appendChild(s);}
+
+// ─── CONSTANTS ───
+const mascots=['🚀','🛸','🌟','⭐','🪐','👾','🌈','🦄'];
+const aliens=['👽','👾','🤖','👻','🦾','🐙'];
+const cEmojis=['🎉','🌟','🔥','💥','⚡','🏆','✨','🎊','💫','🌈'];
+const cMsgs=[
+  ['Perfekt! Du er en mattehjerne!','Galaksen er din!'],
+  ['Woohooo! Riktig!','Du er jo en rakett!'],
+  ['Kjempebra! ⚡','Ingen stopper deg nå!'],
+  ['JA! Det er riktig!','Stjernene lyser for deg!'],
+  ['Utrolig bra! 🔥','Du tar av som et romskip!'],
+  ['Topp! Nøyaktig riktig!','Galaktisk mattehelt!'],
+  ['Jaaaaaa!!! 💥','Klar for neste planet?'],
+  ['Strålende svar! ✨','Du er i fyr og flamme!'],
+];
+const wMsgs=['Nesten! Prøv en gang til!','Hmm, tenk litt mer...','Ikke helt, men du klarer det!','Prøv igjen – du er nær!'];
+const planetColors=['p0','p1','p2','p3','p4','p5'];
+
+// ─── STATE ───
+let mode='classic',tbl=1,qs=[],curQ=0,score=0,streak=0,bonus=0,curAns=0,answered=false;
+let timerInt=null,timerStart=0;
+const RTTIME=8000;
+
+// Skip state
+let skipStep=2,skipSeq=[],skQType='next'; // 'next' or 'missing'
+let skBlankIdx=0, skWindowStart=0;
+
+// ─── MODE INFO DATA ───
+const modeInfo={
+  classic:{
+    icon:'✏️',
+    title:'Klassisk modus',
+    desc:'Skriv inn svaret på gangestykket og trykk "Sjekk". Du får 10 spørsmål per runde. Perfekt for å øve på en bestemt tabell til du kan den utenat – uten stress og tidspress!',
+    next:'Velg hvilken tabell du vil øve på'
+  },
+  rocket:{
+    icon:'🚀',
+    title:'Rakett-modus',
+    desc:'Raketten varmer opp motoren og teller ned! Du har bare 8 sekunder på å trykke riktig svar blant 6 valgmuligheter. Jo raskere du svarer, jo flere lynpoeng ⚡ får du. Klar for takeoff?',
+    next:'Velg tabell – raketten starter!'
+  },
+  skip:{
+    icon:'🌌',
+    title:'Telletur gjennom galaksen',
+    desc:'Planeter i verdensrommet er nummerert i et mønster – men ett tall mangler! Se rekken nøye, finn mønsteret og trykk riktig svar. Du trener på å telle i hopp, noe som gjør ganging mye lettere.',
+    next:'Velg hva du vil telle med (f.eks. 3 = telle med 3 om gangen)'
+  },
+  groups:{
+    icon:'🌠',
+    title:'Romgrupper',
+    desc:'Her ser du faktisk HVA ganging betyr! Enten teller du opp stjerner og raketter i en rutenett-formasjon, eller du finner hvilken formasjon som passer til gangestykket. Skjønner du mønsteret forstår du ganging for alltid!',
+    next:'Velg tabell – hvilke tall vil du utforske?'
+  },
+  planets:{
+    icon:'🪐',
+    title:'Planetveien',
+    desc:'Planeter med tall flyr rundt i verdensrommet – men bare noen tilhører gangetabellen din! Trykk riktig planet i riktig rekkefølge, fra lavest til høyest. Samle alle 10 multippelene og fullfør planetveien!',
+    next:'Velg tabell – hvilke planeter vil du samle?'
+  }
+};
+
+// ─── BUILD SELECTORS ───
+(function(){
+  const ts=document.getElementById('tableSelector');
+  for(let i=1;i<=10;i++){const b=document.createElement('button');b.className='tbtn';b.textContent=i;b.onclick=()=>startGame(i);ts.appendChild(b);}
+  const m=document.createElement('button');m.className='tbtn mix-btn';m.textContent='🌀 Miks!';m.onclick=()=>startGame('mix');ts.appendChild(m);
+
+  const sg=document.getElementById('stepGrid');
+  for(let i=2;i<=10;i++){const b=document.createElement('button');b.className='stbtn';b.textContent=i;b.onclick=()=>startSkipMode(i);sg.appendChild(b);}
+  const smix=document.createElement('button');smix.className='stbtn mix-step';smix.textContent='🌀 Miks!';smix.onclick=()=>startSkipMode('mix');sg.appendChild(smix);
+
+  // Nothing shown until user taps a mode card
+  // mainSub is a permanent tagline
+})();
+
+// ─── MODE SELECTION ───
+function selMode(m){
+  mode=m;
+  ['classic','rocket','skip','groups','planets'].forEach(x=>{const el=document.getElementById('mc-'+x);if(el)el.classList.toggle('sel',x===m);});
+  const tsSel=document.getElementById('tableSelector');
+  const skSel=document.getElementById('skipSelectorScreen');
+  const panel=document.getElementById('modeInfoPanel');
+  const retWrap=document.getElementById('homeReturnWrap');
+
+  // Populate and show info panel
+  const info=modeInfo[m];
+  document.getElementById('mipIcon').textContent=info.icon;
+  document.getElementById('mipTitle').textContent=info.title;
+  document.getElementById('mipDesc').textContent=info.desc;
+  document.getElementById('mipNext').textContent=info.next;
+  panel.classList.remove('hidden');
+  panel.style.animation='none';
+  panel.offsetHeight;
+  panel.style.animation='fadeUp .35s ease';
+
+  // Show the right selector + return button
+  if(m==='skip'){
+    tsSel.classList.add('hidden');
+    skSel.classList.remove('hidden');
+  } else {
+    tsSel.classList.remove('hidden');
+    skSel.classList.add('hidden');
+  }
+  retWrap.classList.remove('hidden');
+}
+
+// ─── QUESTION GENERATION ───
+function genQs(table){
+  if(table==='mix') return Array.from({length:10},()=>({a:Math.floor(Math.random()*10)+1,b:Math.floor(Math.random()*10)+1}));
+  return[1,2,3,4,5,6,7,8,9,10].sort(()=>Math.random()-.5).map(n=>({a:table,b:n}));
+}
+function genChoices(correct){
+  const set=new Set([correct]);
+  const off=[-1,1,-2,2,-3,3,-4,4,-5,5,-7,7,-10,10,-11,11,-12,12,-15,15].sort(()=>Math.random()-.5);
+  for(const d of off){const v=correct+d;if(v>0&&!set.has(v))set.add(v);if(set.size>=6)break;}
+  while(set.size<6){const v=Math.floor(Math.random()*90)+2;if(!set.has(v))set.add(v);}
+  return[...set].sort(()=>Math.random()-.5);
+}
+
+// ─── START CLASSIC / ROCKET ───
+function startGame(table){
+  tbl=table;qs=genQs(table);curQ=0;score=0;streak=0;bonus=0;answered=false;
+  if(mode==='groups'){startGroupsMode(table);return;}
+  if(mode==='planets'){startPlanetsMode(table);return;}
+  document.getElementById('homeScreen').classList.add('hidden');
+  document.getElementById('resultCard').classList.add('hidden');
+  if(mode==='rocket'){
+    document.getElementById('gameCard').classList.add('hidden');
+    document.getElementById('skipCard').classList.add('hidden');
+    document.getElementById('skipTutorial').classList.add('hidden');
+    document.getElementById('rocketCard').classList.remove('hidden');
+    showRQ();
+  } else {
+    document.getElementById('rocketCard').classList.add('hidden');
+    document.getElementById('skipCard').classList.add('hidden');
+    document.getElementById('skipTutorial').classList.add('hidden');
+    document.getElementById('gameCard').classList.remove('hidden');
+    showQ();
+  }
+}
+
+// ══════════════════════════════
+//  CLASSIC
+// ══════════════════════════════
+function showQ(){
+  answered=false;
+  const q=qs[curQ];curAns=q.a*q.b;
+  document.getElementById('question').innerHTML=`${q.a} × ${q.b} = <span class="hl">?</span>`;
+  document.getElementById('mascot').textContent=mascots[Math.floor(Math.random()*mascots.length)];
+  document.getElementById('qnumD').textContent=curQ+1;
+  document.getElementById('scoreD').textContent=score;
+  document.getElementById('streakD').textContent=streak>1?streak+' 🔥':streak;
+  document.getElementById('pFill').style.width=((curQ+1)/10*100)+'%';
+  document.getElementById('feedback').textContent='';document.getElementById('feedback').className='feedback';
+  const inp=document.getElementById('answerInput');inp.value='';inp.className='ainput';inp.focus();
+}
+function checkAnswer(){
+  if(answered)return;
+  const inp=document.getElementById('answerInput');const val=parseInt(inp.value);
+  if(isNaN(val)){inp.focus();return;}
+  if(val===curAns){
+    answered=true;score++;streak++;inp.className='ainput correct';
+    const m=cMsgs[Math.floor(Math.random()*cMsgs.length)];
+    showCeleb(cEmojis[Math.floor(Math.random()*cEmojis.length)],m[0],streak>2?`🔥 ${streak} på rad!`:m[1]);
+    spawnConf();
+  } else {
+    streak=0;inp.className='ainput wrong';
+    const fb=document.getElementById('feedback');fb.textContent=wMsgs[Math.floor(Math.random()*wMsgs.length)];fb.className='feedback wrong';
+    document.getElementById('streakD').textContent='0';
+    setTimeout(()=>{inp.className='ainput';inp.value='';inp.focus();},650);
+  }
+}
+
+// ══════════════════════════════
+//  ROCKET
+// ══════════════════════════════
+function showRQ(){
+  answered=false;stopTimer();resetRocket();
+  const q=qs[curQ];curAns=q.a*q.b;
+  document.getElementById('rQuestion').innerHTML=`${q.a} × ${q.b} = <span style="color:var(--a2)">?</span>`;
+  document.getElementById('rQnumD').textContent=curQ+1;
+  document.getElementById('rScoreD').textContent=score;
+  document.getElementById('rStreakD').textContent=streak>1?streak+' 🔥':streak;
+  document.getElementById('rBonusD').textContent=bonus;
+  document.getElementById('rPFill').style.width=((curQ+1)/10*100)+'%';
+  document.getElementById('toMsg').classList.add('hidden');
+  const choices=genChoices(curAns);
+  const grid=document.getElementById('choiceGrid');grid.innerHTML='';
+  choices.forEach((v,i)=>{const b=document.createElement('button');b.className=`cbtn c${i}`;b.textContent=v;b.dataset.val=v;b.onclick=()=>handleRChoice(b,v);grid.appendChild(b);});
+  startTimer();
+}
+function resetRocket(){
+  const r=document.getElementById('lRocket'),f=document.getElementById('lFlame');
+  r.style.cssText='bottom:28px;opacity:1;transition:bottom .1s linear;left:50%;transform:translateX(-50%);font-size:2.2rem;line-height:1;position:absolute;';
+  r.classList.remove('shaking','igniting','launched');f.className='l-flame';
+  document.getElementById('tBar').style.cssText='width:100%;background:linear-gradient(90deg,var(--a3),var(--a2),var(--a1));height:100%;border-radius:10px;transition:width .08s linear;';
+  document.getElementById('tLabel').textContent='8s';
+}
+function startTimer(){
+  timerStart=Date.now();
+  const r=document.getElementById('lRocket'),f=document.getElementById('lFlame'),bar=document.getElementById('tBar'),lbl=document.getElementById('tLabel');
+  timerInt=setInterval(()=>{
+    const el=Date.now()-timerStart,pct=Math.max(0,1-el/RTTIME);
+    bar.style.width=(pct*100)+'%';lbl.textContent=Math.ceil(pct*8)+'s';
+    r.style.bottom=(28+(1-pct)*72)+'px';
+    if(pct<0.5)bar.style.background='linear-gradient(90deg,#ff6b6b,#e74c3c)';
+    if(pct<0.32&&!answered){r.classList.add('shaking','igniting');f.classList.add('on');}
+    if(el>=RTTIME&&!answered){clearInterval(timerInt);timerInt=null;rocketTimeout();}
+  },80);
+}
+function stopTimer(){if(timerInt){clearInterval(timerInt);timerInt=null;}}
+function rocketTimeout(){
+  answered=true;streak=0;
+  const r=document.getElementById('lRocket'),f=document.getElementById('lFlame');
+  r.classList.add('launched','igniting');r.style.transition='bottom .7s cubic-bezier(.3,0,.1,1),opacity .5s ease';r.style.bottom='320px';r.style.opacity='0';f.classList.add('on');
+  revealRChoices(null);
+  const msg=document.getElementById('toMsg');msg.classList.remove('hidden');const q=qs[curQ];
+  msg.textContent=`⏰ Tid ute! ${q.a} × ${q.b} = ${curAns}`;
+  document.getElementById('rStreakD').textContent='0';
+  setTimeout(rNextQ,2300);
+}
+function handleRChoice(btn,val){
+  if(answered)return;answered=true;stopTimer();
+  const el=Date.now()-timerStart,pct=Math.max(0,1-el/RTTIME);
+  if(val===curAns){
+    score++;streak++;
+    let bp,sl;
+    if(pct>.7){bp=3;sl='⚡ +3 lynpoeng!';}else if(pct>.4){bp=2;sl='💨 +2 hurtigpoeng!';}else{bp=1;sl='👍 +1 poeng!';}
+    bonus+=bp;revealRChoices(btn);
+    const r=document.getElementById('lRocket'),f=document.getElementById('lFlame');
+    f.classList.add('on');r.classList.add('launched','igniting');
+    r.style.transition='bottom .75s cubic-bezier(.5,0,.15,1),opacity .5s ease .35s';r.style.bottom='360px';r.style.opacity='0';
+    spawnConf();
+    const m=cMsgs[Math.floor(Math.random()*cMsgs.length)];
+    showCeleb(cEmojis[Math.floor(Math.random()*cEmojis.length)],m[0],sl+(streak>2?`  🔥 ${streak} på rad!`:''));
+    document.getElementById('rScoreD').textContent=score;document.getElementById('rStreakD').textContent=streak>1?streak+' 🔥':streak;document.getElementById('rBonusD').textContent=bonus;
+  } else {
+    streak=0;revealRChoices(btn);
+    const msg=document.getElementById('toMsg');msg.classList.remove('hidden');const q=qs[curQ];
+    msg.textContent=`❌ ${q.a} × ${q.b} = ${curAns}`;document.getElementById('rStreakD').textContent='0';
+    setTimeout(rNextQ,1900);
+  }
+}
+function revealRChoices(sel){
+  document.querySelectorAll('.cbtn').forEach(b=>{
+    b.disabled=true;
+    if(parseInt(b.dataset.val)===curAns)b.classList.add('ok');else b.classList.add('no');
+  });
+}
+function rNextQ(){document.getElementById('celeb').classList.add('hidden');curQ++;if(curQ>=10)showResult(true);else showRQ();}
+
+// ══════════════════════════════
+//  SKIP COUNTING
+// ══════════════════════════════
+function startSkipMode(step){
+  skipStep=step;score=0;streak=0;bonus=0;curQ=0;answered=false;
+  if(step==='mix') skipStep=pickRandomStep();
+  skipSeq=buildSkipSeq(skipStep,0,20);
+  showSkipTutorial();
+}
+function pickRandomStep(){return Math.floor(Math.random()*9)+2;}
+function buildSkipSeq(step,startVal,count){
+  // Start from 0 or a small multiple of step for variety
+  const arr=[];for(let i=1;i<=count;i++)arr.push(startVal+i*step);return arr;
+}
+
+function showSkipTutorial(){
+  hideAllCards();
+  document.getElementById('skipTutorial').classList.remove('hidden');
+  const realStep=typeof skipStep==='number'?skipStep:2;
+  document.getElementById('tutTitle').textContent=`Teller med ${realStep} om gangen!`;
+  document.getElementById('tutSub').textContent='Se mønsteret – hvert hopp legger til '+realStep;
+  buildTutorialAnim(realStep);
+  document.getElementById('tutGoBtn').classList.remove('ready');
+}
+function buildTutorialAnim(step){
+  const seq=document.getElementById('tutSeq');seq.innerHTML='';
+  const nums=Array.from({length:5},(_,i)=>(i+1)*step);
+  const pCols=['p0','p1','p2','p3','p4'];
+  nums.forEach((n,i)=>{
+    const div=document.createElement('div');div.className=`tut-num ${pCols[i]}`;
+    div.innerHTML=`${n}<span class="tut-step-label"></span>`;seq.appendChild(div);
+    if(i<nums.length-1){
+      const arr=document.createElement('div');arr.className='tut-arrow';
+      arr.innerHTML=`+${step}<br>→`;seq.appendChild(arr);
+    }
+    setTimeout(()=>{div.classList.add('show');if(i>0){// light up step label on prev
+      const prevLabels=seq.querySelectorAll('.tut-step-label');
+      if(prevLabels[i-1])prevLabels[i-1].textContent=`+${step}`;
+    }},300+i*420);
+    if(i>0){const arrows=seq.querySelectorAll('.tut-arrow');setTimeout(()=>{if(arrows[i-1])arrows[i-1].classList.add('show');},300+(i-.5)*420);}
+  });
+  setTimeout(()=>{document.getElementById('tutGoBtn').classList.add('ready');},300+5*420+300);
+}
+
+function beginSkipGame(){
+  hideAllCards();
+  document.getElementById('skipCard').classList.remove('hidden');
+  showSkipQ();
+}
+
+function showSkipQ(){
+  answered=false;
+  // Build sequence for this question
+  // Use curQ as starting index in sequence (so sequence advances each question)
+  // But allow mix mode to change step sometimes
+  if(arguments[0]==='newstep'){// called when mix changes step mid-game
+    skipSeq=buildSkipSeq(skipStep,0,20);
+  }
+  const realStep=skipStep;
+  const startIdx=curQ; // shift window with each question
+  const windowSize=5;
+  const window=skipSeq.slice(startIdx,startIdx+windowSize);
+
+  // Decide question type: 40% missing-in-middle, 60% what's-next (last)
+  let blankPos;
+  if(Math.random()<0.42 && window.length===5) blankPos=1+Math.floor(Math.random()*3); // pos 1-3
+  else blankPos=window.length-1; // last
+  curAns=window[blankPos];
+  skBlankIdx=blankPos;
+
+  // Generate 3 choices
+  const choices=genSkipChoices(curAns,realStep);
+
+  // Update score bar
+  document.getElementById('skScoreD').textContent=score;
+  document.getElementById('skQnumD').textContent=curQ+1;
+  document.getElementById('skStreakD').textContent=streak>1?streak+' 🔥':streak;
+  document.getElementById('skPFill').style.width=((curQ+1)/10*100)+'%';
+  document.getElementById('skipStepBadge').textContent='+'+realStep;
+
+  // Update question text
+  const qtext=blankPos===window.length-1?'Hva er neste tall?':'Hva er det <strong>manglende</strong> tallet?';
+  document.getElementById('skipQText').innerHTML=qtext;
+
+  // Update alien
+  document.getElementById('alienMascot').textContent=aliens[Math.floor(Math.random()*aliens.length)];
+  const al=document.getElementById('alienMascot');
+  al.className='alien';
+
+  // Render trail
+  renderTrail(window,blankPos,planetColors,realStep);
+
+  // Step explain (clear)
+  document.getElementById('stepExplain').innerHTML='';
+
+  // Render choices
+  const grid=document.getElementById('skipChoiceGrid');grid.innerHTML='';
+  const cls=['sa','sb','sc'];
+  choices.forEach((v,i)=>{
+    const b=document.createElement('button');b.className=`scbtn ${cls[i]}`;b.textContent=v;b.dataset.val=v;
+    b.onclick=()=>handleSkipChoice(b,v,window,blankPos,realStep);grid.appendChild(b);
+  });
+
+  // Clear fb
+  const fb=document.getElementById('skipFb');fb.classList.add('hidden');fb.className='skip-fb hidden';
+}
+
+function renderTrail(window,blankPos,pColors,step){
+  const trail=document.getElementById('seqTrail');trail.innerHTML='';
+  window.forEach((num,i)=>{
+    // connector
+    if(i>0){
+      const conn=document.createElement('div');conn.className='trail-conn';conn.dataset.idx=i;
+      conn.innerHTML=`+${step}`;trail.appendChild(conn);
+    }
+    const planet=document.createElement('div');
+    const col=pColors[i % pColors.length];
+    planet.className=`planet ${col}`;
+    planet.dataset.idx=i;
+    if(i===blankPos){
+      planet.classList.add('blank');planet.textContent='?';
+    } else {
+      planet.textContent=num;
+      // Scale font down for larger numbers so they fit inside the circle
+      const digits=String(num).length;
+      const fs=digits>=3?'1rem':digits===2?'1.2rem':'1.4rem';
+      planet.style.fontSize=fs;
+    }
+    trail.appendChild(planet);
+  });
+}
+
+function genSkipChoices(correct,step){
+  const set=new Set([correct]);
+  const opts=[correct+step,correct-step,correct+step*2,correct-step*2,correct+1,correct-1,correct+2,correct-2,correct+3,correct-3,correct+step*3,correct-step*3].filter(v=>v>0).sort(()=>Math.random()-.5);
+  for(const v of opts){if(!set.has(v)&&v>0)set.add(v);if(set.size>=3)break;}
+  while(set.size<3){const v=Math.floor(Math.random()*correct*1.5)+1;if(!set.has(v))set.add(v);}
+  return[...set].sort(()=>Math.random()-.5);
+}
+
+function handleSkipChoice(btn,val,window,blankPos,step){
+  if(answered)return;answered=true;
+  document.querySelectorAll('.scbtn').forEach(b=>b.disabled=true);
+
+  if(val===curAns){
+    score++;streak++;
+    btn.classList.add('ok');
+    // Fill the blank planet
+    const planets=document.querySelectorAll('.planet');
+    const blankPlanet=document.querySelector('.planet.blank');
+    if(blankPlanet){
+      blankPlanet.classList.add('correct-fill');blankPlanet.textContent=val;blankPlanet.classList.remove('blank');
+      const digits=String(val).length;
+      blankPlanet.style.fontSize=digits>=3?'1rem':digits===2?'1.2rem':'1.4rem';
+    }
+    // Light up connectors
+    setTimeout(()=>{
+      document.querySelectorAll('.trail-conn').forEach(c=>c.classList.add('lit'));
+    },200);
+    // Alien happy
+    const al=document.getElementById('alienMascot');al.classList.add('happy');
+    spawnConf();
+    // Update score
+    document.getElementById('skScoreD').textContent=score;
+    document.getElementById('skStreakD').textContent=streak>1?streak+' 🔥':streak;
+    // Show step explanation
+    const expl=document.getElementById('stepExplain');
+    expl.innerHTML=`<span class="correct">✓ Riktig! Hvert hopp er +${step}</span>`;
+    setTimeout(()=>{
+      const m=cMsgs[Math.floor(Math.random()*cMsgs.length)];
+      showCeleb(cEmojis[Math.floor(Math.random()*cEmojis.length)],m[0],streak>2?`🔥 ${streak} på rad!`:m[1]);
+    },600);
+  } else {
+    streak=0;btn.classList.add('no');
+    // Reveal correct
+    document.querySelectorAll('.scbtn').forEach(b=>{if(parseInt(b.dataset.val)===curAns)b.classList.add('ok');});
+    // Reveal on trail
+    const blankPlanetW=document.querySelector('.planet.blank');
+    if(blankPlanetW){blankPlanetW.classList.add('wrong-reveal');blankPlanetW.textContent=curAns;blankPlanetW.classList.remove('blank');
+      const digits=String(curAns).length;
+      blankPlanetW.style.fontSize=digits>=3?'1rem':digits===2?'1.2rem':'1.4rem';
+    }
+    // Alien sad
+    const al=document.getElementById('alienMascot');al.classList.add('sad');
+    document.getElementById('skStreakD').textContent='0';
+    // Show step explanation
+    const expl=document.getElementById('stepExplain');
+    expl.innerHTML=`<span class="wrong">Riktig: ${curAns} – hvert hopp er +${step}</span>`;
+    const fb=document.getElementById('skipFb');
+    fb.textContent=wMsgs[Math.floor(Math.random()*wMsgs.length)];fb.className='skip-fb no';fb.classList.remove('hidden');
+    setTimeout(skNextQ,2000);
+  }
+}
+
+function skNextQ(){
+  document.getElementById('celeb').classList.add('hidden');
+  curQ++;
+  if(curQ>=10){showResult(false,'skip');}
+  else {
+    // In mix mode, sometimes change step
+    if(mode==='skip'&&skipStep==='mix'&&curQ%3===0){
+      skipStep=pickRandomStep();
+      skipSeq=buildSkipSeq(skipStep,0,20);
+    }
+    showSkipQ();
+  }
+}
+
+// ══════════════════════════════
+//  SHARED
+// ══════════════════════════════
+function showCeleb(emoji,text,sub){
+  document.getElementById('ceEmoji').textContent=emoji;
+  document.getElementById('ceText').textContent=text;
+  document.getElementById('ceSub').textContent=sub;
+  document.getElementById('celeb').classList.remove('hidden');
+}
+function nextQ(){
+  document.getElementById('celeb').classList.add('hidden');
+  if(mode==='rocket'){rNextQ();return;}
+  if(mode==='skip'){skNextQ();return;}
+  if(mode==='groups'){grpNextQ();return;}
+  if(mode==='planets'){pvNextRound();return;}
+  curQ++;if(curQ>=10)showResult(false);else showQ();
+}
+
+function showResult(isRocket,modeOverride){
+  stopTimer();hideAllCards();
+  const card=document.getElementById('resultCard');card.classList.remove('hidden');
+  const pct=score/10;
+  let emoji,title,msg;
+  if(pct===1){emoji='🏆';title='Perfekt! 100%!';msg='Du er en ekte galaktisk mattegeni!';}
+  else if(pct>=0.8){emoji='🌟';title='Kjempebra!';msg='Nesten perfekt – et lite tak igjen!';}
+  else if(pct>=0.6){emoji='🚀';title='Bra jobba!';msg='God fremgang! Galaksen venter!';}
+  else if(pct>=0.4){emoji='💪';title='Øving gjør mester!';msg='Fortsett – du er på vei opp!';}
+  else{emoji='🌱';title='Ikke gi opp!';msg='Alle starter et sted. Prøv igjen!';}
+  document.getElementById('resMascot').textContent=emoji;
+  document.getElementById('resTitle').textContent=title;
+  document.getElementById('resScore').textContent=score+'/10';
+  document.getElementById('resMsg').textContent=msg;
+  const stars=Math.round(pct*5);
+  document.getElementById('starsE').textContent='⭐'.repeat(stars)+'☆'.repeat(5-stars);
+  const tr=document.getElementById('trophyRow');tr.innerHTML='';
+  if(isRocket)tr.innerHTML=`<div class="ti">⚡ Hurtigpoeng<span>${bonus}</span></div><div class="ti">🔥 Streak<span>${streak}</span></div><div class="ti">🎯 Total<span>${score*10+bonus*5}</span></div>`;
+  const m=modeOverride||mode;
+  if(m==='skip')tr.innerHTML=`<div class="ti">📐 Telte med<span>+${typeof skipStep==='number'?skipStep:'miks'}</span></div><div class="ti">🔥 Streak<span>${streak}</span></div>`;
+  if(m==='groups')tr.innerHTML=`<div class="ti">🌠 Grupper<span>${score*10}</span></div><div class="ti">🔥 Streak<span>${streak}</span></div><div class="ti">🧠 Tabell<span>${tbl==='mix'?'miks':tbl}</span></div>`;
+  if(m==='planets')tr.innerHTML=`<div class="ti">🪐 Runder<span>${score}</span></div><div class="ti">🔥 Streak<span>${streak}</span></div><div class="ti">✨ Tabell<span>${tbl==='mix'?'miks':'×'+tbl}</span></div>`;
+  spawnConf(pct>=0.7);
+}
+
+function retryGame(){
+  if(mode==='skip')startSkipMode(skipStep);
+  else if(mode==='groups')startGroupsMode(tbl);
+  else if(mode==='planets')startPlanetsMode(tbl);
+  else startGame(tbl);
+}
+function clearModeSelection(){
+  // Deselect all mode cards, hide info panel and selectors
+  ['classic','rocket','skip','groups','planets'].forEach(x=>{
+    const el=document.getElementById('mc-'+x);if(el)el.classList.remove('sel');
+  });
+  document.getElementById('modeInfoPanel').classList.add('hidden');
+  document.getElementById('tableSelector').classList.add('hidden');
+  document.getElementById('skipSelectorScreen').classList.add('hidden');
+  document.getElementById('homeReturnWrap').classList.add('hidden');
+}
+
+function goHome(){
+  stopTimer();hideAllCards();
+  document.getElementById('homeScreen').classList.remove('hidden');
+  clearModeSelection();
+}
+function hideAllCards(){
+  ['gameCard','rocketCard','skipCard','skipTutorial','grpCard','planetCard','resultCard','homeScreen'].forEach(id=>document.getElementById(id).classList.add('hidden'));
+}
+
+function spawnConf(lots=false){
+  const cols=['#ff6b6b','#ffd93d','#6bcb77','#4d96ff','#ff9f43','#9b59b6','#fff'];
+  const n=lots?90:45;
+  for(let i=0;i<n;i++)setTimeout(()=>{
+    const el=document.createElement('div');el.className='cf';const sz=Math.floor(Math.random()*10+6);
+    el.style.cssText=`left:${Math.random()*100}vw;background:${cols[Math.floor(Math.random()*cols.length)]};animation-duration:${(Math.random()*2+1.5).toFixed(1)}s;animation-delay:${(Math.random()*.5).toFixed(2)}s;border-radius:${Math.random()>.5?'50%':'2px'};width:${sz}px;height:${sz}px;`;
+    document.body.appendChild(el);setTimeout(()=>el.remove(),4500);
+  },i*28);
+}
+
+// ══════════════════════════════
+//  ROMGRUPPER
+// ══════════════════════════════
+const spaceEmojis=['⭐','🚀','👾','🛸','🪐','☄️','💫','🌙','🤖','🌟','🛰️','🌠'];
+let grpTable=1;
+
+function startGroupsMode(table){
+  grpTable=table;score=0;streak=0;curQ=0;answered=false;
+  hideAllCards();
+  document.getElementById('grpCard').classList.remove('hidden');
+  showGroupsQ();
+}
+
+function genGroupsQuestion(table){
+  let a,b;
+  if(table==='mix'){
+    a=Math.floor(Math.random()*7)+2;
+    const maxB=Math.min(Math.floor(40/a),7);
+    b=Math.floor(Math.random()*(maxB-1))+2;
+  } else {
+    a=table;
+    const maxB=Math.min(Math.floor(40/Math.max(a,1)),8);
+    const minB=2;
+    b=Math.floor(Math.random()*(Math.max(maxB-minB,1)+1))+minB;
+  }
+  return {a:Math.max(1,a),b:Math.max(1,b)};
+}
+
+function showGroupsQ(){
+  answered=false;
+  const q=genGroupsQuestion(grpTable);
+  const a=q.a,b=q.b;
+  curAns=a*b;
+
+  document.getElementById('grpScoreD').textContent=score;
+  document.getElementById('grpQnumD').textContent=curQ+1;
+  document.getElementById('grpStreakD').textContent=streak>1?streak+' 🔥':streak;
+  document.getElementById('grpPFill').style.width=((curQ+1)/10*100)+'%';
+  document.getElementById('commuteHint').textContent='';
+  const fb=document.getElementById('grpFb');fb.classList.add('hidden');fb.className='grp-fb hidden';
+
+  const emoji=spaceEmojis[Math.floor(Math.random()*spaceEmojis.length)];
+  // Alternate types: A=count array, B=find array. A slightly more common.
+  const qtype=Math.random()<0.55?'A':'B';
+  if(qtype==='A') showGroupsTypeA(a,b,emoji);
+  else showGroupsTypeB(a,b,emoji);
+}
+
+function showGroupsTypeA(a,b,emoji){
+  document.getElementById('grpQBadge').textContent='Tell opp! 🔢';
+  document.getElementById('grpQBadge').className='grp-qbadge typeA';
+  document.getElementById('grpEquation').innerHTML=`<span class="ghl">${a}</span> grupper med <span class="ghl">${b}</span> ${emoji}`;
+  document.getElementById('grpInstruction').textContent='Trykk på riktig totalt antall!';
+  document.getElementById('bigArrayWrap').classList.remove('hidden');
+  document.getElementById('grpNumGrid').classList.remove('hidden');
+  document.getElementById('arrayChoiceGrid').classList.add('hidden');
+  buildBigArray(a,b,emoji);
+  buildNumChoices(a*b);
+}
+
+function showGroupsTypeB(a,b,emoji){
+  document.getElementById('grpQBadge').textContent='Finn gruppen! 🔍';
+  document.getElementById('grpQBadge').className='grp-qbadge typeB';
+  document.getElementById('grpEquation').innerHTML=`${a} × ${b} = <span class="ghl">?</span>`;
+  document.getElementById('grpInstruction').textContent='Trykk på oppsett som matcher regnesykket!';
+  document.getElementById('bigArrayWrap').classList.add('hidden');
+  document.getElementById('grpNumGrid').classList.add('hidden');
+  document.getElementById('arrayChoiceGrid').classList.remove('hidden');
+  buildArrayChoices(a,b,emoji);
+}
+
+function buildBigArray(rows,cols,emoji){
+  const container=document.getElementById('bigArray');container.innerHTML='';
+  for(let r=0;r<rows;r++){
+    const rowDiv=document.createElement('div');rowDiv.className='array-row';rowDiv.dataset.row=r;
+    const lbl=document.createElement('span');lbl.className='row-label';lbl.textContent=(r+1)+'.';rowDiv.appendChild(lbl);
+    for(let c=0;c<cols;c++){
+      const cell=document.createElement('span');cell.className='array-cell';cell.textContent=emoji;rowDiv.appendChild(cell);
+    }
+    container.appendChild(rowDiv);
+  }
+}
+
+function buildNumChoices(correct){
+  const grid=document.getElementById('grpNumGrid');grid.innerHTML='';
+  const choices=genNumDistractors(correct);
+  ['g0','g1','g2','g3'].forEach((cls,i)=>{
+    const b=document.createElement('button');b.className=`gnbtn ${cls}`;b.textContent=choices[i];b.dataset.val=choices[i];
+    b.onclick=()=>handleGrpNum(b,choices[i]);grid.appendChild(b);
+  });
+}
+
+function genNumDistractors(correct){
+  const set=new Set([correct]);
+  const candidates=[correct-1,correct+1,correct-2,correct+2,correct-3,correct+3,
+    correct+4,correct-4,correct+5,correct-5,correct+6,correct-6,
+    Math.floor(correct*1.5),Math.ceil(correct*.75),correct+10,correct-10].filter(v=>v>0&&v!==correct);
+  candidates.sort(()=>Math.random()-.5);
+  for(const v of candidates){if(!set.has(v))set.add(v);if(set.size>=4)break;}
+  while(set.size<4){const v=Math.floor(Math.random()*60)+2;if(!set.has(v))set.add(v);}
+  return [...set].sort(()=>Math.random()-.5);
+}
+
+function buildArrayChoices(a,b,emoji){
+  const grid=document.getElementById('arrayChoiceGrid');grid.innerHTML='';
+  const distractors=genArrayDistractors(a,b);
+  const options=[{a,b,correct:true},...distractors].sort(()=>Math.random()-.5);
+  options.forEach(opt=>{
+    const card=document.createElement('div');card.className='acard';
+    const mini=buildMiniArray(opt.a,opt.b,emoji);card.appendChild(mini);
+    const lbl=document.createElement('div');lbl.className='acard-label';
+    lbl.textContent=`${opt.a} rader × ${opt.b}`;card.appendChild(lbl);
+    card.onclick=()=>handleGrpArray(card,opt.a,opt.b,a,b);
+    grid.appendChild(card);
+  });
+}
+
+function genArrayDistractors(a,b){
+  const correctProd=a*b;
+  const used=new Set([`${a},${b}`,`${b},${a}`]);
+  const opts=[];
+  const candidates=[
+    [a,b+1],[a,b-1],[a+1,b],[a-1,b],[a+1,b+1],[a-1,b-1],
+    [a,b+2],[a+2,b],[a-1,b+1],[a+1,b-1],[a+2,b+1],[a,b+3]
+  ].filter(([x,y])=>x>=1&&y>=1&&x*y!==correctProd&&x*y>0).sort(()=>Math.random()-.5);
+  for(const [x,y] of candidates){
+    const k=`${x},${y}`;
+    if(!used.has(k)){opts.push({a:x,b:y,correct:false});used.add(k);}
+    if(opts.length>=3)break;
+  }
+  while(opts.length<3){
+    const x=Math.floor(Math.random()*4)+2,y=Math.floor(Math.random()*4)+2;
+    const k=`${x},${y}`;
+    if(!used.has(k)&&x*y!==correctProd){opts.push({a:x,b:y,correct:false});used.add(k);}
+  }
+  return opts.slice(0,3);
+}
+
+function buildMiniArray(rows,cols,emoji){
+  const wrap=document.createElement('div');wrap.className='mini-array';
+  const maxR=Math.min(rows,6),maxC=Math.min(cols,7);
+  for(let r=0;r<maxR;r++){
+    const row=document.createElement('div');row.className='mini-row';
+    for(let c=0;c<maxC;c++){const cell=document.createElement('span');cell.className='mini-cell';cell.textContent=emoji;row.appendChild(cell);}
+    wrap.appendChild(row);
+  }
+  return wrap;
+}
+
+function handleGrpNum(btn,val){
+  if(answered)return;answered=true;
+  document.querySelectorAll('.gnbtn').forEach(b=>b.disabled=true);
+  if(val===curAns){
+    score++;streak++;btn.classList.add('ok');
+    document.getElementById('grpScoreD').textContent=score;
+    document.getElementById('grpStreakD').textContent=streak>1?streak+' 🔥':streak;
+    flashRows(()=>{
+      maybeShowCommuteHint();
+      const m=cMsgs[Math.floor(Math.random()*cMsgs.length)];
+      showCeleb(cEmojis[Math.floor(Math.random()*cEmojis.length)],m[0],streak>2?`🔥 ${streak} på rad!`:m[1]);
+    });
+    spawnConf();
+  } else {
+    streak=0;btn.classList.add('no');
+    document.querySelectorAll('.gnbtn').forEach(b=>{if(parseInt(b.dataset.val)===curAns)b.classList.add('ok');});
+    document.getElementById('grpStreakD').textContent='0';
+    const fb=document.getElementById('grpFb');
+    fb.textContent=wMsgs[Math.floor(Math.random()*wMsgs.length)];fb.className='grp-fb no';fb.classList.remove('hidden');
+    flashRows(null);
+    setTimeout(grpNextQ,2200);
+  }
+}
+
+function handleGrpArray(card,selA,selB,correctA,correctB){
+  if(answered)return;answered=true;
+  document.querySelectorAll('.acard').forEach(c=>c.classList.add('adisabled'));
+  const isCorrect=(selA===correctA&&selB===correctB)||(selA===correctB&&selB===correctA&&correctA!==correctB);
+  if(isCorrect){
+    score++;streak++;card.classList.add('ok');
+    document.getElementById('grpScoreD').textContent=score;
+    document.getElementById('grpStreakD').textContent=streak>1?streak+' 🔥':streak;
+    if(selA!==correctA){
+      // Swapped! Teach commutativity
+      document.getElementById('commuteHint').textContent=`🔄 ${correctA}×${correctB} = ${correctB}×${correctA} = ${curAns} – rekkefølgen spiller ingen rolle!`;
+    } else {
+      maybeShowCommuteHint();
+    }
+    setTimeout(()=>{
+      const m=cMsgs[Math.floor(Math.random()*cMsgs.length)];
+      showCeleb(cEmojis[Math.floor(Math.random()*cEmojis.length)],m[0],streak>2?`🔥 ${streak} på rad!`:m[1]);
+      spawnConf();
+    },380);
+  } else {
+    streak=0;card.classList.add('no');
+    document.querySelectorAll('.acard').forEach(c=>{
+      const lbl=c.querySelector('.acard-label');
+      if(lbl&&lbl.textContent===`${correctA} rader × ${correctB}`)c.classList.add('ok');
+    });
+    document.getElementById('grpStreakD').textContent='0';
+    const fb=document.getElementById('grpFb');
+    fb.textContent=`❌ Riktig: ${correctA} rader med ${correctB}`;fb.className='grp-fb no';fb.classList.remove('hidden');
+    setTimeout(grpNextQ,2200);
+  }
+}
+
+function flashRows(onDone){
+  const rows=[...document.getElementById('bigArray').querySelectorAll('.array-row')];
+  if(!rows.length){if(onDone)setTimeout(onDone,100);return;}
+  // First dim all
+  rows.forEach(r=>r.querySelectorAll('.array-cell').forEach(c=>c.classList.add('dim')));
+  rows.forEach((row,i)=>{
+    setTimeout(()=>{
+      row.querySelectorAll('.array-cell').forEach(c=>{c.classList.remove('dim');c.classList.add('glow');});
+      setTimeout(()=>row.querySelectorAll('.array-cell').forEach(c=>c.classList.remove('glow')),300);
+      if(i===rows.length-1&&onDone)setTimeout(onDone,380);
+    },i*240);
+  });
+}
+
+function maybeShowCommuteHint(){
+  if(curQ%3===1){
+    const a=Math.floor(Math.random()*4)+2,b=a+Math.floor(Math.random()*3)+1;
+    document.getElementById('commuteHint').textContent=`💡 ${a}×${b} = ${b}×${a} = ${a*b} – rekkefølge spiller ingen rolle! 🔄`;
+  }
+}
+
+function grpNextQ(){
+  document.getElementById('celeb').classList.add('hidden');
+  curQ++;
+  if(curQ>=10)showResult(false,'groups');
+  else showGroupsQ();
+}
+
+// ══════════════════════════════
+//  PLANETVEIEN
+// ══════════════════════════════
+const PLANET_TYPES=['mercury','venus','earth','mars','jupiter','saturn','uranus','neptune','moon','sun'];
+const PLANET_NAMES=['Merkur','Venus','Jorda','Mars','Jupiter','Saturn','Uranus','Neptun','Månen','Sola'];
+const PLANET_EMOJIS=['🔘','🟡','🌍','🔴','🟠','🪐','🔵','💙','🌕','☀️'];
+
+let pvTable=1;          // current table (1-10 or 'mix')
+let pvRound=0;          // how many rounds completed (0-9)
+let pvCorrectSeq=[];    // e.g. [3,6,9,...,30]
+let pvNextIdx=0;        // index of next correct planet to tap
+let pvPlanetEls=[];     // array of {el, value, type}
+let pvCollectedPositions=[]; // [{x,y}] for trail lines
+let pvAnswered=false;
+let pvRoundScore=0;     // number of wrong taps in this round (used for star calc)
+let pvMistakes=0;       // mistakes this round
+let pvTotalMistakes=0;  // mistakes across all rounds
+
+function startPlanetsMode(table){
+  pvTable=table;
+  tbl=table;
+  curQ=0;score=0;streak=0;pvTotalMistakes=0;
+  pvRound=0;
+  // Reset hard mode on fresh start
+  document.getElementById('pvHintBtn').textContent='🔥 Gjør det vanskelig!';
+  document.getElementById('pvHintBtn').classList.remove('active');
+  document.getElementById('pvTarget').style.display='';
+  hideAllCards();
+  document.getElementById('planetCard').classList.remove('hidden');
+  showPlanetRound();
+}
+
+function pickPvTable(){
+  if(pvTable==='mix') return Math.floor(Math.random()*10)+1;
+  return pvTable;
+}
+
+function showPlanetRound(){
+  pvAnswered=false;pvNextIdx=0;pvMistakes=0;
+  pvCollectedPositions=[];
+  const t=pickPvTable();
+
+  // Build the 10 correct multiples
+  pvCorrectSeq=[];
+  for(let i=1;i<=10;i++) pvCorrectSeq.push(t*i);
+
+  // Build distractor pool — numbers that look plausible but aren't in the sequence
+  const correctSet=new Set(pvCorrectSeq);
+  const distractors=[];
+  const candidates=[];
+  // Nearby wrong answers
+  for(let i=1;i<=10;i++){
+    const v=t*i;
+    [-1,1,-2,2,-3,3,t-1,t+1].forEach(d=>{const w=v+d;if(w>0&&!correctSet.has(w))candidates.push(w);});
+  }
+  // Some completely random ones
+  for(let n=0;n<20;n++){const v=Math.floor(Math.random()*t*12)+1;if(!correctSet.has(v))candidates.push(v);}
+  const shuffled=[...new Set(candidates)].sort(()=>Math.random()-.5);
+  // Pick 4-6 distractors (fewer = more room between planets)
+  const numDistractors=4+Math.floor(Math.random()*3);
+  for(let i=0;i<numDistractors&&i<shuffled.length;i++) distractors.push(shuffled[i]);
+
+  // All planets to show: all 10 correct + distractors
+  const allVals=[...pvCorrectSeq,...distractors];
+
+  // Update header info
+  document.getElementById('pvScoreD').textContent=score;
+  document.getElementById('pvQnumD').textContent=pvRound+1;
+  document.getElementById('pvStreakD').textContent=streak>1?streak+' 🔥':streak;
+
+  // Build progress dots (10 stops = 10 multiples)
+  const row=document.getElementById('pvProgressRow');
+  row.innerHTML='';
+  pvCorrectSeq.forEach((v,i)=>{
+    const d=document.createElement('div');
+    d.className='pv-dot'+(i===0?' active':'');
+    d.id=`pvDot${i}`;
+    d.textContent=i+1;
+    row.appendChild(d);
+  });
+
+  // Update target display
+  updatePvTarget(t);
+
+  // Update equation strip
+  document.getElementById('pvEqStrip').innerHTML='';
+  document.getElementById('pvEqStrip').classList.remove('visible');
+  // Keep hard mode state across rounds — only restore target if not in hard mode
+  if(!document.getElementById('pvHintBtn').classList.contains('active')){
+    document.getElementById('pvTarget').style.display='';
+  }
+  document.getElementById('pvFeedback').textContent='';
+  document.getElementById('pvFeedback').className='pv-feedback';
+
+  // Clear arena and build planets
+  const arena=document.getElementById('pvArena');
+  // Remove old planets (keep trail svg)
+  pvPlanetEls=[];
+  Array.from(arena.querySelectorAll('.pv-planet-outer')).forEach(el=>el.remove());
+  document.getElementById('pvTrailSvg').innerHTML='';
+
+  // Shuffle all values and assign positions
+  const shuffledAll=allVals.sort(()=>Math.random()-.5);
+  // Assign planet types to values (correct get memorable planets)
+  const typeAssignments={};
+  const usedTypes=new Set();
+  // Assign types to correct values based on their index in the table
+  pvCorrectSeq.forEach((v,i)=>{
+    typeAssignments[v]=PLANET_TYPES[i%PLANET_TYPES.length];
+    usedTypes.add(PLANET_TYPES[i%PLANET_TYPES.length]);
+  });
+  // Distractors get remaining types or reuse
+  const leftoverTypes=PLANET_TYPES.filter(tp=>!usedTypes.has(tp));
+  distractors.forEach((v,i)=>{
+    typeAssignments[v]=leftoverTypes[i%leftoverTypes.length]||PLANET_TYPES[i%PLANET_TYPES.length];
+  });
+
+  // Place planets in a grid-like scattered layout to avoid overlap
+  const positions=generatePlanetPositions(shuffledAll.length);
+
+  shuffledAll.forEach((val,idx)=>{
+    const ptype=typeAssignments[val];
+    const isCorrect=correctSet.has(val);
+    const {x,y}=positions[idx];
+    const fspd=(3+Math.random()*3).toFixed(1);
+    const fdel=(Math.random()*2).toFixed(1);
+    const outer=document.createElement('div');
+    outer.className='pv-planet-outer';
+    // CRITICAL: outer div is the 92x92 click target, centered on x%,y%
+    outer.style.cssText=`position:absolute;left:${x}%;top:${y}%;width:92px;height:92px;transform:translate(-50%,-50%);z-index:2;overflow:visible;animation:pvOuterFloat ${fspd}s ease-in-out ${fdel}s infinite alternate;`;
+
+    if(ptype==='saturn'){
+      // Saturn ring is decorative only, pointer-events:none set in CSS
+      const ring=document.createElement('div');ring.className='pv-planet-ring';
+      outer.appendChild(ring);
+    }
+    const btn=document.createElement('button');
+    // No position:absolute, no transform — button fills the 92x92 outer wrapper
+    btn.className=`pv-planet ${ptype}`;
+    const numEl=document.createElement('span');
+    numEl.className='pv-planet-num';
+    const digits=String(val).length;
+    numEl.style.fontSize=digits>=3?'1.3rem':digits===2?'1.6rem':'2rem';
+    numEl.textContent=val;
+    btn.appendChild(numEl);
+    btn.addEventListener('click',()=>handlePvTap(btn,outer,val,x,y));
+    outer.appendChild(btn);
+    arena.appendChild(outer);
+    pvPlanetEls.push({el:btn,outer,value:val,isCorrect,x,y,ptype});
+  });
+
+  // Mark the first planet to tap
+  markNextTarget();
+}
+
+function generatePlanetPositions(n){
+  // Arena: max-width ~680px, min-height 460px
+  // Planet size: 92px = ~13.5% of 680px width = ~20% of 460px height
+  // Min distance must be > planet diameter in % space
+  const positions=[];
+  const minDistX=17; // >13.5% → no overlap in x
+  const maxAttempts=120;
+  // Pad edges: 92px/2 = 46px padding. 46/680=6.8% x, 46/460=10% y
+  const xMin=9,xMax=91,yMin=12,yMax=88;
+  // Aspect ratio: arena width/height ≈ 680/460 = 1.48
+  const aspectRatio=1.48;
+
+  for(let i=0;i<n;i++){
+    let best=null;
+    let bestScore=-Infinity;
+    // Try many random positions, pick the one furthest from all others
+    for(let attempt=0;attempt<maxAttempts;attempt++){
+      const x=xMin+Math.random()*(xMax-xMin);
+      const y=yMin+Math.random()*(yMax-yMin);
+      let minNeighborDist=Infinity;
+      let ok=true;
+      for(const p of positions){
+        // Normalise to equal-aspect distance
+        const dx=(x-p.x);
+        const dy=(y-p.y)*aspectRatio;
+        const dist=Math.sqrt(dx*dx+dy*dy);
+        if(dist<minDistX){ok=false;break;}
+        minNeighborDist=Math.min(minNeighborDist,dist);
+      }
+      if(ok&&(positions.length===0||minNeighborDist>bestScore)){
+        bestScore=minNeighborDist;best={x,y};
+        if(positions.length===0)break; // first planet, any position fine
+      }
+    }
+    if(!best){
+      // Hard fallback: structured grid
+      const cols=Math.ceil(Math.sqrt(n*1.4));
+      const rows=Math.ceil(n/cols);
+      const col=i%cols,row=Math.floor(i/cols);
+      best={
+        x:xMin+8+(col/Math.max(cols-1,1))*(xMax-xMin-16),
+        y:yMin+5+(row/Math.max(rows-1,1))*(yMax-yMin-10)
+      };
+    }
+    positions.push(best);
+  }
+  return positions;
+}
+
+function updatePvTarget(t){
+  const nextVal=pvCorrectSeq[pvNextIdx];
+  const multStr=pvNextIdx+1<=10?`(${t} × ${pvNextIdx+1})`:'' ;
+  document.getElementById('pvTargetNum').textContent=nextVal;
+  document.getElementById('pvTargetMult').textContent=multStr;
+}
+
+function markNextTarget(){
+  pvPlanetEls.forEach(p=>{p.el.classList.remove('next-target');});
+  const hardMode=document.getElementById('pvHintBtn').classList.contains('active');
+  if(hardMode)return; // no highlighting in hard mode
+  if(pvNextIdx<pvCorrectSeq.length){
+    const nextVal=pvCorrectSeq[pvNextIdx];
+    const entry=pvPlanetEls.find(p=>p.value===nextVal&&!p.el.classList.contains('used'));
+    if(entry){
+      entry.el.classList.add('next-target');
+      entry.outer.style.zIndex='15';
+    }
+  }
+}
+
+function handlePvTap(btn,outer,val,x,y){
+  if(pvAnswered||btn.classList.contains('used'))return;
+
+  const t=pvTable==='mix'?pvCorrectSeq[pvNextIdx]/( pvNextIdx+1):pvTable;
+  const expected=pvCorrectSeq[pvNextIdx];
+
+  if(val===expected){
+    // CORRECT
+    streak++;
+    // IMMEDIATELY disable this planet's outer div so it never blocks clicks
+    outer.style.pointerEvents='none';
+    outer.style.zIndex='1';
+    btn.classList.remove('next-target');
+    // Animate collect
+    btn.classList.add('collect');
+    setTimeout(()=>{btn.classList.add('used');btn.disabled=true;},480);
+
+    // Update progress dot
+    const dot=document.getElementById(`pvDot${pvNextIdx}`);
+    if(dot){dot.classList.remove('active');dot.classList.add('done');}
+
+    // Trail line: draw from previous collected to this planet
+    if(pvCollectedPositions.length>0){
+      drawTrailLine(pvCollectedPositions[pvCollectedPositions.length-1],{x,y});
+    }
+    pvCollectedPositions.push({x,y});
+
+    pvNextIdx++;
+
+    // Update equation strip
+    updatePvEqStrip(t);
+
+    // Feedback
+    const fb=document.getElementById('pvFeedback');
+    const praise=['⭐ Riktig!','🎯 Topp!','🔥 Ja!','✨ Bra!','💥 Super!'];
+    let msg=praise[Math.floor(Math.random()*praise.length)];
+    if(streak>2) msg+=` <span class="pv-combo">🔥 ${streak} på rad!</span>`;
+    fb.innerHTML=msg;fb.className='pv-feedback ok';
+
+    // Update score display
+    document.getElementById('pvScoreD').textContent=score;
+    document.getElementById('pvStreakD').textContent=streak>1?streak+' 🔥':streak;
+
+    // Spawn confetti particle
+    spawnConf();
+
+    if(pvNextIdx>=pvCorrectSeq.length){
+      // Round complete!
+      pvAnswered=true;
+      score++;
+      pvTotalMistakes+=pvMistakes;
+      document.getElementById('pvScoreD').textContent=score;
+      document.getElementById('pvQnumD').textContent=pvRound+1;
+
+      setTimeout(()=>{
+        const m=cMsgs[Math.floor(Math.random()*cMsgs.length)];
+        const subMsg=pvMistakes===0?'✨ Ingen feil! Perfekt runde!':pvMistakes<=2?`Bare ${pvMistakes} feil!`:`${pvMistakes} feil – øv videre!`;
+        showCeleb(pvMistakes===0?'🏆':'🚀',m[0],subMsg);
+      },600);
+    } else {
+      // Next target
+      const nextDot=document.getElementById(`pvDot${pvNextIdx}`);
+      if(nextDot) nextDot.classList.add('active');
+      updatePvTarget(typeof pvTable==='number'?pvTable:pvCorrectSeq[pvNextIdx]/(pvNextIdx+1));
+      markNextTarget();
+    }
+  } else {
+    // WRONG tap
+    pvMistakes++;streak=0;
+    btn.classList.add('wrong-flash');
+    setTimeout(()=>btn.classList.remove('wrong-flash'),420);
+    document.getElementById('pvStreakD').textContent='0';
+    const fb=document.getElementById('pvFeedback');
+    const miss=['❌ Ikke riktig!','🔍 Let videre!','💭 Prøv igjen!','🌌 Feil planet!'];
+    fb.textContent=miss[Math.floor(Math.random()*miss.length)];
+    fb.className='pv-feedback err';
+  }
+}
+
+function drawTrailLine(from,to){
+  const svg=document.getElementById('pvTrailSvg');
+  const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+  // Convert % to SVG coords (viewBox 0 0 100 100)
+  line.setAttribute('x1',from.x);line.setAttribute('y1',from.y);
+  line.setAttribute('x2',to.x);line.setAttribute('y2',to.y);
+  line.setAttribute('class','pv-trail-line');
+  // Animate dash reveal
+  line.style.strokeDashoffset='200';
+  line.style.transition='stroke-dashoffset .5s ease';
+  svg.appendChild(line);
+  // SVG viewBox must be set
+  svg.setAttribute('viewBox','0 0 100 100');svg.setAttribute('preserveAspectRatio','none');
+  requestAnimationFrame(()=>{requestAnimationFrame(()=>{line.style.strokeDashoffset='0';});});
+}
+
+function updatePvEqStrip(t){
+  const strip=document.getElementById('pvEqStrip');
+  let html='';
+  for(let i=0;i<pvNextIdx;i++){
+    html+=`<span class="eq-done">${t}×${i+1}=${pvCorrectSeq[i]}</span> `;
+  }
+  if(pvNextIdx<pvCorrectSeq.length){
+    html+=`<span class="eq-cur">→ ${t}×${pvNextIdx+1}=?</span>`;
+  }
+  strip.innerHTML=html;
+}
+
+function togglePvHint(){
+  const target=document.getElementById('pvTarget');
+  const btn=document.getElementById('pvHintBtn');
+  const isHard=btn.classList.contains('active');
+  if(isHard){
+    target.style.display='';
+    btn.textContent='🔥 Gjør det vanskelig!';
+    btn.classList.remove('active');
+  } else {
+    target.style.display='none';
+    btn.textContent='😅 For vanskelig!';
+    btn.classList.add('active');
+  }
+  markNextTarget(); // update glow immediately
+}
+
+function pvNextRound(){
+  document.getElementById('celeb').classList.add('hidden');
+  pvRound++;
+  curQ=pvRound;
+  if(pvRound>=10){
+    showResult(false,'planets');
+  } else {
+    showPlanetRound();
+  }
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'){
+    if(!document.getElementById('celeb').classList.contains('hidden'))nextQ();
+    else if(!document.getElementById('gameCard').classList.contains('hidden'))checkAnswer();
+  }
+});
+</script>
+</body>
+</html>

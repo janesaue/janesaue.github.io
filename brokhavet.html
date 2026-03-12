@@ -1,0 +1,1652 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brøkhavet 🌊</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --deep:#081c2e; --mid:#0a3d62; --light:#1e8bc3; --surface:#4fc3f7;
+  --teal:#00c9c8; --coral:#ff6b6b; --gold:#ffd700; --green:#56d364;
+  --white:#e8f4fd; --glass:rgba(255,255,255,.07); --gborder:rgba(255,255,255,.14);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Nunito',sans-serif;background:var(--deep);min-height:100vh;overflow-x:hidden;color:var(--white);user-select:none;}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes popIn{0%{transform:scale(.9)}60%{transform:scale(1.1)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+@keyframes floatUp{0%{transform:translateY(0) scale(1);opacity:1}100%{transform:translateY(-130px) scale(1.5);opacity:0}}
+@keyframes confettiFall{0%{opacity:1;transform:translateY(-60px) rotate(0)}100%{opacity:0;transform:translateY(100vh) rotate(540deg)}}
+@keyframes rise{0%{transform:translateY(100vh);opacity:0}8%{opacity:.9}90%{opacity:.5}100%{transform:translateY(-15vh) translateX(30px);opacity:0}}
+@keyframes swimAcross{0%{transform:translateX(-120px) scaleX(1)}49%{transform:translateX(calc(100vw + 120px)) scaleX(1)}50%{transform:translateX(calc(100vw + 120px)) scaleX(-1)}99%{transform:translateX(-120px) scaleX(-1)}100%{transform:translateX(-120px) scaleX(1)}}
+@keyframes sway{0%,100%{transform:rotate(-12deg)}50%{transform:rotate(12deg)}}
+@keyframes pulse{0%,100%{opacity:.6;transform:scale(1)}50%{opacity:1;transform:scale(1.08)}}
+@keyframes glow{0%,100%{filter:drop-shadow(0 0 8px currentColor)}50%{filter:drop-shadow(0 0 22px currentColor)}}
+@keyframes inkSplat{0%{transform:scale(0);opacity:.9}60%{transform:scale(1.2);opacity:.7}100%{transform:scale(1.5);opacity:0}}
+@keyframes reveal{0%{transform:scale(0) rotate(-20deg);opacity:0}70%{transform:scale(1.15) rotate(3deg)}100%{transform:scale(1) rotate(0);opacity:1}}
+@keyframes pingSonar{0%{transform:scale(0);opacity:.8}100%{transform:scale(4);opacity:0}}
+@keyframes glowChest{0%,100%{box-shadow:0 0 10px #ffd700,0 0 20px #ffa500}50%{box-shadow:0 0 30px #ffd700,0 0 60px #ffa500,0 0 90px #ff6b35}}
+@keyframes suckIn{0%{transform:scale(1);opacity:1}100%{transform:scale(0);opacity:0}}
+@keyframes enterCard{0%{transform:translateY(40px) scale(.8);opacity:0}100%{transform:translateY(0) scale(1);opacity:1}}
+@keyframes titleGlow{0%,100%{filter:drop-shadow(0 0 20px rgba(0,201,200,.4))}50%{filter:drop-shadow(0 0 60px rgba(0,201,200,.9))}}
+@keyframes laserBeam{0%{width:0;opacity:1}100%{width:100%;opacity:.7}}
+
+/* ─── OCEAN ATMOSPHERE ─── */
+.ocean-bg{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse at 50% 0%,#0d4f7c44 0%,transparent 70%),linear-gradient(180deg,#0a2a44 0%,#071825 60%,#030e18 100%);}
+.bubble{position:fixed;border-radius:50%;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.35),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.18);animation:rise linear infinite;pointer-events:none;z-index:1;}
+.bg-fish{position:fixed;animation:swimAcross linear infinite;opacity:.15;pointer-events:none;z-index:1;}
+.seaweed{position:fixed;bottom:-8px;opacity:.28;animation:sway ease-in-out infinite;transform-origin:bottom center;pointer-events:none;z-index:1;}
+
+/* ─── LAYOUT ─── */
+#app{position:relative;z-index:10;min-height:100vh;}
+.screen{display:none;min-height:100vh;padding:20px 16px;flex-direction:column;align-items:center;justify-content:center;}
+.screen.active{display:flex;}
+
+/* ─── TITLE ─── */
+.game-title{font-family:'Bubblegum Sans',cursive;font-size:clamp(3rem,10vw,6rem);background:linear-gradient(135deg,#e8f4fd 0%,#4fc3f7 40%,#00c9c8 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:titleGlow 3s ease-in-out infinite;text-align:center;}
+.title-creatures{font-size:clamp(2.2rem,6vw,3.5rem);margin:12px 0 6px;display:flex;gap:10px;}
+.title-creatures span{animation:bob 2s ease-in-out infinite;}
+.title-creatures span:nth-child(2){animation-delay:.3s}.title-creatures span:nth-child(3){animation-delay:.6s}.title-creatures span:nth-child(4){animation-delay:.9s}
+.subtitle{color:rgba(232,244,253,.55);font-size:1rem;margin-bottom:28px;text-align:center;}
+
+/* ─── BUTTONS ─── */
+.btn-primary{background:linear-gradient(135deg,var(--teal),#0094c6);border:none;color:white;font-family:'Bubblegum Sans',cursive;font-size:1.7rem;padding:16px 52px;border-radius:999px;cursor:pointer;transition:all .3s;box-shadow:0 6px 30px rgba(0,201,200,.35);}
+.btn-primary:hover{transform:translateY(-4px) scale(1.04);box-shadow:0 14px 40px rgba(0,201,200,.5);}
+.btn-secondary{background:linear-gradient(135deg,var(--mid),#0a2a44);border:1px solid rgba(255,255,255,.15);color:white;font-family:'Bubblegum Sans',cursive;font-size:1.1rem;padding:14px 28px;border-radius:999px;cursor:pointer;transition:all .3s;}
+.btn-secondary:hover{transform:translateY(-3px);border-color:rgba(0,201,200,.4);}
+.back-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);color:var(--white);border-radius:999px;padding:8px 18px;font-family:'Nunito',sans-serif;font-size:.9rem;cursor:pointer;transition:all .2s;}
+.back-btn:hover{background:rgba(255,255,255,.16);}
+
+/* ─── SELECT SCREEN ─── */
+#scr-select{padding:16px 12px;justify-content:flex-start;padding-top:30px;}
+.select-header{text-align:center;margin-bottom:20px;}
+.screen-title{font-family:'Bubblegum Sans',cursive;font-size:clamp(1.6rem,5vw,2.5rem);text-shadow:0 2px 20px rgba(78,195,247,.4);}
+.screen-sub{color:rgba(232,244,253,.5);font-size:.9rem;margin-top:4px;}
+.games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;max-width:920px;width:100%;margin-bottom:20px;}
+.game-card{background:var(--glass);backdrop-filter:blur(14px);border:1.5px solid var(--gborder);border-radius:22px;padding:22px 18px;text-align:center;cursor:pointer;transition:all .3s;position:relative;overflow:hidden;}
+.game-card:hover{transform:translateY(-8px);box-shadow:0 20px 50px rgba(0,0,0,.5);}
+.card-emoji{font-size:3.8rem;margin-bottom:12px;display:block;}
+.game-card h3{font-family:'Bubblegum Sans',cursive;font-size:1.4rem;color:var(--white);margin-bottom:6px;}
+.game-card p{font-size:.85rem;color:rgba(232,244,253,.65);line-height:1.45;margin-bottom:14px;}
+.stars-row{display:flex;justify-content:center;gap:4px;}
+.star-dot{font-size:1.2rem;}.star-dot.off{filter:grayscale(1) opacity(.3);}
+.badge{position:absolute;top:10px;right:10px;color:white;font-size:.68rem;font-weight:900;padding:4px 10px;border-radius:999px;text-transform:uppercase;letter-spacing:.4px;}
+
+/* World-tinted card borders */
+.card-ocean{border-color:rgba(0,201,200,.3);}.card-ocean:hover{border-color:rgba(0,201,200,.7);box-shadow:0 20px 50px rgba(0,0,0,.5),0 0 40px rgba(0,201,200,.15);}
+.card-red{border-color:rgba(255,107,107,.3);}.card-red:hover{border-color:rgba(255,107,107,.7);box-shadow:0 20px 50px rgba(0,0,0,.5),0 0 40px rgba(255,107,107,.15);}
+.card-purple{border-color:rgba(166,108,255,.3);}.card-purple:hover{border-color:rgba(166,108,255,.7);box-shadow:0 20px 50px rgba(0,0,0,.5),0 0 40px rgba(166,108,255,.15);}
+.card-pizza{border-color:rgba(255,107,53,.3);}.card-pizza:hover{border-color:rgba(255,107,53,.7);box-shadow:0 20px 50px rgba(0,0,0,.5),0 0 40px rgba(255,107,53,.15);}
+.card-coral{border-color:rgba(255,140,66,.3);}.card-coral:hover{border-color:rgba(255,140,66,.7);box-shadow:0 20px 50px rgba(0,0,0,.5),0 0 40px rgba(255,140,66,.15);}
+.card-royal{border-color:rgba(180,100,255,.3);}.card-royal:hover{border-color:rgba(180,100,255,.7);box-shadow:0 20px 50px rgba(0,0,0,.5),0 0 40px rgba(180,100,255,.2);}
+.card-amber{border-color:rgba(255,180,50,.3);}.card-amber:hover{border-color:rgba(255,180,50,.7);box-shadow:0 20px 50px rgba(0,0,0,.5),0 0 40px rgba(255,180,50,.15);}
+.card-abyss{border-color:rgba(0,255,200,.3);}.card-abyss:hover{border-color:rgba(0,255,200,.7);box-shadow:0 20px 50px rgba(0,0,0,.5),0 0 40px rgba(0,255,200,.2);}
+.card-neon{border-color:rgba(255,60,180,.3);}.card-neon:hover{border-color:rgba(255,60,180,.7);box-shadow:0 20px 50px rgba(0,0,0,.5),0 0 40px rgba(255,60,180,.2);}
+
+/* ─── HOW-TO INTRO OVERLAY ─── */
+.intro-overlay{position:fixed;inset:0;z-index:500;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.78);backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .35s;}
+.intro-overlay.show{opacity:1;pointer-events:all;}
+.intro-card{background:linear-gradient(145deg,#0a2540,#0d3d6b);border:3px solid rgba(0,201,200,.45);border-radius:32px;padding:36px 28px;text-align:center;max-width:400px;width:92%;transform:scale(.85) translateY(30px);transition:transform .4s cubic-bezier(.34,1.56,.64,1);box-shadow:0 30px 80px rgba(0,0,0,.7);}
+.intro-overlay.show .intro-card{transform:scale(1) translateY(0);}
+.intro-game-emoji{font-size:5.5rem;display:block;margin-bottom:10px;}
+.intro-title{font-family:'Bubblegum Sans',cursive;font-size:2rem;color:var(--teal);margin-bottom:20px;line-height:1.2;}
+.intro-steps{display:flex;flex-direction:column;gap:11px;margin-bottom:26px;text-align:left;}
+.intro-step{display:flex;align-items:flex-start;gap:12px;background:rgba(255,255,255,.08);border-radius:14px;padding:12px 14px;}
+.intro-step-num{font-family:'Bubblegum Sans',cursive;font-size:1.6rem;color:var(--gold);min-width:34px;line-height:1;}
+.intro-step-text{font-size:1rem;font-weight:700;color:var(--white);line-height:1.45;}
+.intro-step-text em{color:var(--teal);font-style:normal;font-size:1.1rem;}
+.btn-start-game{background:linear-gradient(135deg,#56d364,#009933);border:none;color:white;font-family:'Bubblegum Sans',cursive;font-size:1.7rem;padding:17px 56px;border-radius:999px;cursor:pointer;transition:all .3s;box-shadow:0 6px 30px rgba(86,211,100,.45);}
+.btn-start-game:hover{transform:scale(1.08) translateY(-3px);box-shadow:0 14px 44px rgba(86,211,100,.65);}
+
+/* ─── GENERIC GAME SCREEN ─── */
+.game-container{max-width:640px;width:100%;}
+.game-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.level-ind{font-family:'Bubblegum Sans',cursive;font-size:1.2rem;color:var(--teal);}
+.score-disp{font-family:'Bubblegum Sans',cursive;font-size:1.2rem;color:var(--gold);}
+.progress-bar-bg{background:rgba(255,255,255,.09);border-radius:999px;height:12px;margin-bottom:18px;overflow:hidden;}
+.progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--surface));border-radius:999px;transition:width .6s cubic-bezier(.4,0,.2,1);}
+.q-box{background:var(--glass);border:2px solid var(--gborder);border-radius:20px;padding:20px 22px;margin-bottom:18px;text-align:center;}
+.q-text{font-size:1.15rem;font-weight:800;margin-bottom:10px;}
+.q-hint{color:rgba(232,244,253,.65);font-size:.95rem;margin-top:6px;font-weight:700;}
+.frac-strong{color:var(--teal);font-size:1.45rem;font-family:'Bubblegum Sans',cursive;}
+.creature-ask{display:flex;align-items:center;gap:14px;justify-content:center;flex-wrap:wrap;}
+.creature-anim{font-size:4.2rem;animation:bob 2s ease-in-out infinite;}
+.speech-bub{background:rgba(255,255,255,.11);border:2px solid rgba(255,255,255,.22);border-radius:18px;padding:14px 18px;max-width:280px;font-weight:800;font-size:1.05rem;line-height:1.5;}
+
+/* Games 1-3 */
+.fish-grid{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;padding:16px 12px;}
+.fish-item{font-size:2.8rem;cursor:pointer;transition:all .2s;padding:10px;border-radius:16px;border:3px solid transparent;min-width:58px;min-height:58px;display:flex;align-items:center;justify-content:center;}
+.fish-item:hover{transform:scale(1.25) rotate(-5deg);}
+.fish-item.selected{background:rgba(255,215,0,.4);border-color:#ffd700;transform:scale(1.15);box-shadow:0 0 16px rgba(255,215,0,.7);}
+.sel-counter{text-align:center;font-family:'Bubblegum Sans',cursive;font-size:1.6rem;color:var(--teal);margin:6px 0;}
+.submit-btn{background:linear-gradient(135deg,var(--coral),#ff8c42);border:none;color:white;font-family:'Bubblegum Sans',cursive;font-size:1.4rem;padding:16px 48px;border-radius:999px;cursor:pointer;margin-top:12px;transition:all .3s;box-shadow:0 4px 20px rgba(255,107,107,.35);}
+.submit-btn:hover:not(:disabled){transform:scale(1.06);}
+.submit-btn:disabled{opacity:.4;cursor:default;}
+.duel-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.duel-opt{background:var(--glass);border:3px solid var(--gborder);border-radius:22px;padding:28px 16px;text-align:center;cursor:pointer;transition:all .3s;min-height:170px;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.duel-opt:hover{transform:scale(1.06);border-color:rgba(0,201,200,.55);background:rgba(0,201,200,.09);}
+.duel-creature{font-size:4rem;margin-bottom:12px;display:block;}
+.duel-frac{font-family:'Bubblegum Sans',cursive;font-size:2.3rem;background:rgba(0,201,200,.13);border:2px solid rgba(0,201,200,.38);border-radius:999px;padding:8px 24px;display:inline-block;}
+.duel-opt.correct{border-color:var(--green);background:rgba(86,211,100,.18);animation:popIn .4s ease;}
+.duel-opt.wrong{border-color:var(--coral);background:rgba(255,107,107,.15);}
+.nl-area{position:relative;height:80px;margin:36px 16px 22px;}
+.nl-track{position:absolute;top:50%;left:0;right:0;height:7px;background:linear-gradient(90deg,var(--teal),var(--surface));border-radius:4px;transform:translateY(-50%);}
+.nl-tick{position:absolute;top:50%;width:4px;height:26px;background:rgba(255,255,255,.6);transform:translate(-50%,-50%);border-radius:2px;}
+.nl-lbl{position:absolute;top:calc(50% + 22px);transform:translateX(-50%);font-family:'Bubblegum Sans',cursive;font-size:1.05rem;color:rgba(255,255,255,.85);}
+.nl-marker{position:absolute;top:50%;width:22px;height:22px;background:var(--coral);border-radius:50%;border:3px solid white;transform:translate(-50%,-50%);display:none;box-shadow:0 0 16px rgba(255,107,107,.8);}
+.nl-options-row{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:8px;}
+.nl-opt{background:rgba(255,255,255,.09);border:3px solid rgba(255,255,255,.22);border-radius:999px;padding:13px 26px;font-family:'Bubblegum Sans',cursive;font-size:1.5rem;color:white;cursor:pointer;transition:all .25s;min-width:80px;}
+.nl-opt:hover{transform:scale(1.12);border-color:var(--teal);background:rgba(0,201,200,.15);}
+.nl-opt.correct{border-color:var(--green);background:rgba(86,211,100,.25);}
+.nl-opt.wrong{border-color:var(--coral);background:rgba(255,107,107,.2);}
+
+/* ════════════════════════════════════
+   GAME 5: DEL LIKT — CORAL KITCHEN
+════════════════════════════════════ */
+#scr-delikt{padding:0;overflow:hidden;position:relative;}
+.dk-bg{position:absolute;inset:0;z-index:0;background:linear-gradient(180deg,#8B2500 0%,#C04820 25%,#A83808 55%,#5a1e00 100%);}
+.dk-coral{position:absolute;font-size:2.4rem;opacity:.35;animation:sway ease-in-out infinite;transform-origin:bottom center;}
+.dk-light{position:absolute;border-radius:50%;background:radial-gradient(circle,rgba(255,200,80,.15) 0%,transparent 70%);pointer-events:none;animation:pulse 3s ease-in-out infinite;}
+.dk-header{position:absolute;top:16px;width:100%;max-width:640px;display:flex;justify-content:space-between;align-items:center;padding:0 16px;z-index:20;}
+.dk-title{font-family:'Bubblegum Sans',cursive;font-size:1.15rem;color:#ffcc88;text-shadow:0 0 12px rgba(255,160,60,.6);}
+.dk-score{font-family:'Bubblegum Sans',cursive;font-size:1.15rem;color:var(--gold);}
+.dk-wrap{position:relative;z-index:10;width:100%;max-width:620px;display:flex;flex-direction:column;align-items:center;padding:70px 14px 24px;min-height:100vh;justify-content:center;}
+
+.dk-chef-row{display:flex;align-items:flex-end;gap:14px;margin-bottom:14px;max-width:500px;width:100%;}
+.dk-chef{font-size:4.5rem;animation:bob 2s ease-in-out infinite;flex-shrink:0;filter:drop-shadow(0 4px 10px rgba(0,0,0,.4));}
+.dk-speech{background:rgba(255,255,255,.12);border:2px solid rgba(255,200,80,.3);border-radius:18px;border-bottom-left-radius:4px;padding:14px 18px;font-weight:800;font-size:1.05rem;line-height:1.5;flex:1;backdrop-filter:blur(10px);}
+.dk-food-big{font-size:6rem;text-align:center;margin:8px 0;filter:drop-shadow(0 4px 18px rgba(0,0,0,.5));animation:bob 3s ease-in-out infinite;}
+.dk-options{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:12px;width:100%;max-width:520px;}
+.dk-opt{background:rgba(0,0,0,.35);border:3px solid rgba(255,200,80,.25);border-radius:20px;padding:16px 10px;text-align:center;cursor:pointer;transition:all .3s;display:flex;flex-direction:column;align-items:center;gap:8px;backdrop-filter:blur(10px);min-height:140px;justify-content:center;}
+.dk-opt:hover{border-color:rgba(255,200,80,.7);transform:scale(1.06);background:rgba(255,200,80,.1);}
+.dk-opt.correct{border-color:#56d364;background:rgba(86,211,100,.2);animation:popIn .4s ease;}
+.dk-opt.wrong{border-color:var(--coral);background:rgba(255,107,107,.18);animation:shake .4s ease;}
+.dk-opt-label{font-family:'Bubblegum Sans',cursive;font-size:1rem;color:rgba(232,244,253,.8);}
+
+/* ════════════════════════════════════
+   GAME 6: RETTFERDIG DELING — BALLROOM
+════════════════════════════════════ */
+#scr-deling{padding:0;overflow:hidden;position:relative;}
+.bl-bg{position:absolute;inset:0;z-index:0;background:linear-gradient(180deg,#2D006A 0%,#1A0040 50%,#0D001F 100%);}
+.bl-chandelier{position:absolute;top:0;font-size:2.5rem;transform-origin:top center;animation:sway 4s ease-in-out infinite;}
+.bl-particle{position:absolute;border-radius:50%;background:rgba(180,120,255,.5);animation:rise linear infinite;pointer-events:none;}
+.bl-header{position:absolute;top:16px;width:100%;max-width:680px;display:flex;justify-content:space-between;padding:0 16px;z-index:20;}
+.bl-title{font-family:'Bubblegum Sans',cursive;font-size:1.15rem;color:#d4a8ff;text-shadow:0 0 12px rgba(180,100,255,.7);}
+.bl-score{font-family:'Bubblegum Sans',cursive;font-size:1.15rem;color:var(--gold);}
+.bl-wrap{position:relative;z-index:10;width:100%;max-width:640px;display:flex;flex-direction:column;align-items:center;padding:70px 14px 24px;min-height:100vh;justify-content:center;}
+
+.bl-card{background:rgba(255,255,255,.06);border:2px solid rgba(180,100,255,.25);border-radius:22px;padding:20px;margin-bottom:14px;width:100%;max-width:520px;backdrop-filter:blur(10px);}
+.bl-setup-label{font-family:'Bubblegum Sans',cursive;font-size:1.2rem;color:#d4a8ff;text-align:center;margin-bottom:14px;}
+.bl-creatures-row{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:12px;}
+.bl-creature-fig{display:flex;flex-direction:column;align-items:center;gap:4px;}
+.bl-creature-emoji{font-size:3.5rem;animation:bob 2s ease-in-out infinite;}
+.bl-creature-name{font-size:.75rem;color:rgba(232,244,253,.6);}
+.bl-food-row{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;padding:14px 0;}
+.bl-food-item{font-size:3.2rem;transition:all .5s;cursor:default;}
+.bl-food-item.flying{animation:suckIn .5s ease forwards;}
+.bl-divider{width:80%;height:2px;background:linear-gradient(90deg,transparent,rgba(180,100,255,.4),transparent);margin:10px auto;}
+.bl-deal-btn{background:linear-gradient(135deg,#8b44cc,#5b1fa0);border:none;color:white;font-family:'Bubblegum Sans',cursive;font-size:1.5rem;padding:15px 46px;border-radius:999px;cursor:pointer;transition:all .3s;box-shadow:0 4px 20px rgba(140,70,200,.4);}
+.bl-deal-btn:hover{transform:scale(1.07) translateY(-3px);box-shadow:0 10px 34px rgba(140,70,200,.6);}
+.bl-fraction-reveal{text-align:center;margin:14px 0;}
+.bl-frac-big{font-family:'Bubblegum Sans',cursive;font-size:3.8rem;color:var(--gold);text-shadow:0 0 20px rgba(255,215,0,.5);display:inline-block;animation:reveal .5s cubic-bezier(.34,1.56,.64,1) forwards;}
+.bl-choices{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:14px;}
+.bl-choice{background:rgba(140,70,200,.15);border:3px solid rgba(180,100,255,.35);border-radius:999px;padding:12px 28px;font-family:'Bubblegum Sans',cursive;font-size:1.55rem;color:white;cursor:pointer;transition:all .3s;min-width:80px;}
+.bl-choice:hover{border-color:rgba(180,100,255,.9);background:rgba(140,70,200,.35);transform:scale(1.1);}
+.bl-choice.correct{border-color:var(--green);background:rgba(86,211,100,.22);}
+.bl-choice.wrong{border-color:var(--coral);background:rgba(255,107,107,.2);}
+.bl-each-label{font-size:.95rem;color:rgba(232,244,253,.7);text-align:center;margin-bottom:8px;font-weight:700;}
+
+/* ════════════════════════════════════
+   GAME 7: BRØKBYGGEREN — SUBMARINE
+════════════════════════════════════ */
+#scr-builder{padding:0;overflow:hidden;position:relative;}
+.sb-bg{position:absolute;inset:0;z-index:0;background:linear-gradient(180deg,#0A0800 0%,#1A1400 30%,#0D0B00 70%,#000 100%);}
+.sb-gear{position:absolute;font-size:3rem;opacity:.12;animation:spin linear infinite;pointer-events:none;}
+.sb-pipe{position:absolute;opacity:.15;border-radius:8px;background:linear-gradient(90deg,#3a2a00,#6a4a00);}
+.sb-header{position:absolute;top:16px;width:100%;max-width:680px;display:flex;justify-content:space-between;align-items:center;padding:0 16px;z-index:20;}
+.sb-title{font-family:'Bubblegum Sans',cursive;font-size:1.15rem;color:#ffba3c;text-shadow:0 0 12px rgba(255,180,60,.7);}
+.sb-score{font-family:'Bubblegum Sans',cursive;font-size:1.15rem;color:var(--gold);}
+.sb-wrap{position:relative;z-index:10;width:100%;max-width:600px;display:flex;flex-direction:column;align-items:center;padding:70px 14px 24px;min-height:100vh;justify-content:center;}
+
+.sb-target-display{background:rgba(0,0,0,.6);border:3px solid rgba(255,180,60,.4);border-radius:16px;padding:16px 24px;text-align:center;margin-bottom:16px;width:100%;max-width:460px;box-shadow:inset 0 0 30px rgba(255,150,0,.06),0 0 20px rgba(255,180,60,.15);}
+.sb-target-label{font-size:.85rem;color:rgba(255,180,60,.7);margin-bottom:6px;letter-spacing:1px;text-transform:uppercase;}
+.sb-target-frac{font-family:'Bubblegum Sans',cursive;font-size:3.5rem;color:#ffba3c;text-shadow:0 0 20px rgba(255,180,60,.6);}
+.sb-machine{background:rgba(0,0,0,.5);border:2px solid rgba(255,180,60,.2);border-radius:20px;padding:18px;width:100%;max-width:460px;margin-bottom:14px;}
+.sb-bar-wrap{margin-bottom:18px;}
+.sb-bar-label{font-size:.8rem;color:rgba(255,180,60,.7);margin-bottom:8px;text-transform:uppercase;letter-spacing:.8px;}
+.sb-bar{display:flex;gap:3px;height:44px;border:2px solid rgba(255,180,60,.3);border-radius:10px;overflow:hidden;background:rgba(0,0,0,.4);}
+.sb-bar-seg{flex:1;background:rgba(255,255,255,.08);transition:all .3s;border-right:1px solid rgba(0,0,0,.3);}
+.sb-bar-seg.filled{background:linear-gradient(180deg,#ffd700 0%,#ff8c00 100%);box-shadow:0 0 8px rgba(255,180,0,.6);}
+.sb-bar-seg:last-child{border-right:none;}
+.sb-dials{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.sb-dial{background:rgba(0,0,0,.4);border:2px solid rgba(255,180,60,.28);border-radius:16px;padding:16px 10px;text-align:center;}
+.sb-dial-label{font-size:.85rem;color:rgba(255,180,60,.8);margin-bottom:10px;text-transform:uppercase;letter-spacing:.8px;font-weight:800;}
+.sb-dial-val{font-family:'Bubblegum Sans',cursive;font-size:2.8rem;color:#ffba3c;margin:6px 0;}
+.sb-dial-sub{font-size:.75rem;color:rgba(255,180,60,.55);margin-bottom:10px;}
+.sb-btns{display:flex;gap:10px;justify-content:center;}
+.sb-dial-btn{width:54px;height:54px;border-radius:50%;border:3px solid rgba(255,180,60,.55);background:rgba(255,180,60,.12);color:#ffba3c;font-size:1.9rem;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;line-height:1;font-family:'Bubblegum Sans',cursive;}
+.sb-dial-btn:hover{background:rgba(255,180,60,.32);transform:scale(1.18);}
+.sb-dial-btn:active{transform:scale(.95);}
+.sb-fire-btn{background:linear-gradient(135deg,#ff6b35,#c43a00);border:none;color:white;font-family:'Bubblegum Sans',cursive;font-size:1.6rem;padding:16px 50px;border-radius:999px;cursor:pointer;transition:all .3s;box-shadow:0 4px 20px rgba(255,107,53,.4);margin-top:6px;opacity:.4;pointer-events:none;}
+.sb-fire-btn.ready{opacity:1;pointer-events:all;animation:pulse 1.5s ease-in-out infinite;}
+.sb-fire-btn.ready:hover{transform:scale(1.1) translateY(-4px);box-shadow:0 10px 40px rgba(255,107,53,.7);}
+.sb-status{font-family:'Bubblegum Sans',cursive;font-size:1.05rem;color:rgba(255,180,60,.65);text-align:center;margin-top:8px;min-height:26px;}
+.sb-steam{position:absolute;font-size:1.8rem;animation:floatUp .9s ease-out forwards;pointer-events:none;z-index:50;}
+
+/* ════════════════════════════════════
+   GAME 8: BRØKTELESKOPET — THE ABYSS
+════════════════════════════════════ */
+#scr-telescope{padding:0;overflow:hidden;position:relative;}
+.ab-bg{position:absolute;inset:0;z-index:0;background:#000;}
+.ab-particle{position:absolute;border-radius:50%;animation:pulse ease-in-out infinite;pointer-events:none;}
+.ab-creature{position:absolute;pointer-events:none;opacity:.4;animation:swimAcross linear infinite;}
+.ab-header{position:absolute;top:16px;width:100%;max-width:680px;display:flex;justify-content:space-between;align-items:center;padding:0 16px;z-index:20;}
+.ab-title{font-family:'Bubblegum Sans',cursive;font-size:1.15rem;color:#00ffcc;text-shadow:0 0 12px rgba(0,255,200,.6);}
+.ab-score{font-family:'Bubblegum Sans',cursive;font-size:1.15rem;color:var(--gold);}
+.ab-wrap{position:relative;z-index:10;width:100%;max-width:640px;display:flex;flex-direction:column;align-items:center;padding:70px 14px 24px;min-height:100vh;justify-content:center;}
+
+.ab-sub{font-size:4rem;text-align:center;margin-bottom:10px;animation:bob 3s ease-in-out infinite;filter:drop-shadow(0 0 20px rgba(0,255,200,.4));}
+.ab-instruction{background:rgba(0,255,200,.06);border:1px solid rgba(0,255,200,.2);border-radius:16px;padding:14px 20px;text-align:center;margin-bottom:14px;width:100%;max-width:520px;}
+.ab-frac-show{font-family:'Bubblegum Sans',cursive;font-size:2.8rem;color:#00ffcc;text-shadow:0 0 20px rgba(0,255,200,.6);}
+.ab-find-label{font-size:.9rem;color:rgba(0,255,200,.6);margin-bottom:6px;}
+.ab-hint{font-size:.8rem;color:rgba(0,255,200,.4);margin-top:6px;}
+
+.ab-line-container{width:100%;max-width:520px;position:relative;padding:10px 0;margin-bottom:14px;}
+.ab-line{position:relative;height:60px;cursor:crosshair;}
+.ab-rope{position:absolute;top:50%;left:0;right:0;height:4px;background:linear-gradient(90deg,#00ff9d,#00ccff,#00ff9d);border-radius:2px;transform:translateY(-50%);box-shadow:0 0 10px rgba(0,255,200,.5);}
+.ab-end-label{position:absolute;top:calc(50% + 14px);transform:translateX(-50%);font-family:'Bubblegum Sans',cursive;font-size:1rem;color:rgba(0,255,200,.7);}
+.ab-end-tick{position:absolute;top:50%;width:3px;height:24px;background:rgba(0,255,200,.7);transform:translate(-50%,-50%);}
+.ab-treasure{position:absolute;top:50%;font-size:1.8rem;transform:translate(-50%,-50%);animation:glowChest 2s ease-in-out infinite;cursor:crosshair;pointer-events:none;}
+.ab-click-marker{position:absolute;top:50%;width:22px;height:22px;border-radius:50%;transform:translate(-50%,-50%);border:3px solid white;pointer-events:none;display:none;}
+.ab-ping{position:absolute;top:50%;width:22px;height:22px;border-radius:50%;transform:translate(-50%,-50%);border:3px solid rgba(255,255,255,.8);pointer-events:none;animation:pingSonar .8s ease-out forwards;}
+.ab-correct-zone{position:absolute;top:0;height:100%;background:rgba(0,255,150,.1);border:1px dashed rgba(0,255,150,.3);pointer-events:none;display:none;transform:translateX(-50%);}
+
+.ab-attempts{display:flex;justify-content:center;gap:6px;margin:8px 0;}
+.ab-heart{font-size:1.4rem;transition:all .3s;}
+.ab-hint-btn{background:rgba(0,255,200,.08);border:1px solid rgba(0,255,200,.25);color:rgba(0,255,200,.8);font-family:'Nunito',sans-serif;font-size:.85rem;padding:7px 18px;border-radius:999px;cursor:pointer;margin-top:8px;transition:all .2s;}
+.ab-hint-btn:hover{background:rgba(0,255,200,.18);}
+
+/* ════════════════════════════════════
+   GAME 9: BLEKKSPRUT-KAMUFLASJE — CARNIVAL
+════════════════════════════════════ */
+#scr-carnival{padding:0;overflow:hidden;position:relative;}
+.cv-bg{position:absolute;inset:0;z-index:0;background:linear-gradient(180deg,#0A0020 0%,#150038 50%,#0A0020 100%);}
+.cv-light{position:absolute;border-radius:50%;pointer-events:none;animation:pulse ease-in-out infinite;}
+.cv-banner{position:absolute;font-size:.9rem;font-weight:900;color:white;letter-spacing:2px;opacity:.3;}
+.cv-header{position:absolute;top:16px;width:100%;max-width:720px;display:flex;justify-content:space-between;align-items:center;padding:0 16px;z-index:20;}
+.cv-title{font-family:'Bubblegum Sans',cursive;font-size:1.15rem;color:#ff60e0;text-shadow:0 0 12px rgba(255,60,220,.7);}
+.cv-score{font-family:'Bubblegum Sans',cursive;font-size:1.15rem;color:var(--gold);}
+.cv-wrap{position:relative;z-index:10;width:100%;max-width:680px;display:flex;flex-direction:column;align-items:center;padding:70px 12px 24px;min-height:100vh;justify-content:center;}
+
+.cv-instruction{background:rgba(255,60,220,.07);border:1px solid rgba(255,60,220,.2);border-radius:16px;padding:12px 18px;text-align:center;margin-bottom:14px;width:100%;max-width:580px;}
+.cv-inst-title{font-family:'Bubblegum Sans',cursive;font-size:1.25rem;color:#ff60e0;margin-bottom:4px;}
+.cv-inst-sub{font-size:.82rem;color:rgba(232,244,253,.6);}
+.cv-progress{font-family:'Bubblegum Sans',cursive;font-size:1rem;color:rgba(255,60,220,.7);text-align:center;margin-bottom:10px;}
+.cv-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;width:100%;max-width:600px;}
+.cv-grid.six-cards{grid-template-columns:repeat(3,1fr);}
+.cv-grid.four-cards{grid-template-columns:repeat(2,1fr);}
+.cv-card{border-radius:18px;padding:16px 10px;text-align:center;cursor:pointer;transition:all .3s;position:relative;overflow:hidden;border:3px solid transparent;animation:enterCard .4s ease both;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.cv-card:hover{transform:scale(1.08) translateY(-4px);}
+.cv-card.selected{transform:scale(1.12) translateY(-5px);box-shadow:0 8px 30px rgba(255,255,255,.25);}
+.cv-card.matched{opacity:.5;cursor:default;transform:none;}
+.cv-card.matched::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2.2rem;color:rgba(255,255,255,.9);background:rgba(86,211,100,.3);}
+.cv-card.wrong-flash{animation:shake .35s ease;}
+.cv-octopus{font-size:2.8rem;display:block;margin-bottom:4px;animation:bob 2s ease-in-out infinite;}
+.cv-costume{font-size:1.2rem;display:block;margin-bottom:4px;}
+.cv-frac{font-family:'Bubblegum Sans',cursive;font-size:1.45rem;font-weight:900;color:white;text-shadow:0 1px 4px rgba(0,0,0,.6);}
+.cv-ink-splat{position:fixed;font-size:8rem;z-index:150;pointer-events:none;animation:inkSplat .7s ease-out forwards;top:50%;left:50%;transform:translate(-50%,-50%);}
+
+/* ════════════════════════════════════
+   PIZZA GAME (existing, kept)
+════════════════════════════════════ */
+#scr-pizza{padding:0;overflow:hidden;position:relative;}
+.restaurant-bg{position:absolute;inset:0;z-index:0;background:linear-gradient(180deg,#1a0a00 0%,#2d1200 30%,#1a0800 100%);overflow:hidden;}
+.rest-light{position:absolute;top:-60px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(255,200,80,.18) 0%,transparent 70%);animation:pulse 4s ease-in-out infinite;}
+.rest-sign{position:absolute;top:16px;left:50%;transform:translateX(-50%);font-family:'Bubblegum Sans',cursive;font-size:1.05rem;background:linear-gradient(135deg,#ff6b35,#ff4500);color:white;padding:7px 20px;border-radius:999px;box-shadow:0 0 20px rgba(255,100,20,.5);white-space:nowrap;z-index:5;animation:pulse 3s ease-in-out infinite;}
+.pizza-header{position:absolute;top:56px;width:100%;max-width:600px;display:flex;justify-content:space-between;padding:0 16px;z-index:20;}
+.pizza-back-btn{background:rgba(0,0,0,.5);border:1px solid rgba(255,200,80,.3);color:var(--white);border-radius:999px;padding:8px 18px;font-family:'Nunito',sans-serif;font-size:.9rem;cursor:pointer;transition:all .2s;}
+.pizza-back-btn:hover{background:rgba(255,200,80,.15);}
+.pizza-score-hd{font-family:'Bubblegum Sans',cursive;font-size:1.1rem;color:var(--gold);background:rgba(0,0,0,.5);border-radius:999px;padding:7px 16px;}
+.pizza-game-wrap{position:relative;z-index:10;width:100%;max-width:600px;padding:80px 16px 24px;display:flex;flex-direction:column;align-items:center;min-height:100vh;justify-content:center;}
+.pizza-round-badge{background:linear-gradient(135deg,#ff6b35,#c43a00);color:white;font-family:'Bubblegum Sans',cursive;font-size:1rem;padding:5px 16px;border-radius:999px;margin-bottom:6px;display:inline-block;}
+.pizza-customer{display:flex;align-items:flex-end;gap:12px;margin-bottom:14px;width:100%;max-width:520px;}
+.pizza-customer.right{flex-direction:row-reverse;}
+.cust-emoji{font-size:3.6rem;animation:bob 2s ease-in-out infinite;flex-shrink:0;}
+.cust-bubble{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);backdrop-filter:blur(10px);border-radius:18px;border-bottom-left-radius:4px;padding:12px 16px;font-weight:700;font-size:.95rem;line-height:1.5;flex:1;}
+.pizza-customer.right .cust-bubble{border-radius:18px;border-bottom-right-radius:4px;}
+.pizza-name-tag{font-family:'Bubblegum Sans',cursive;color:var(--gold);font-size:1.05rem;display:block;margin-bottom:4px;}
+.pizza-stage{position:relative;display:flex;flex-direction:column;align-items:center;margin:8px 0;}
+.pizza-svg-wrap{filter:drop-shadow(0 8px 30px rgba(0,0,0,.7));transition:transform .3s;}
+.pizza-svg-wrap.spinning{animation:spin .6s ease-out;}
+.cut-panel{background:rgba(0,0,0,.4);border:1px solid rgba(255,200,80,.18);border-radius:20px;padding:18px 20px;margin-top:14px;text-align:center;width:100%;max-width:460px;}
+.cut-title{font-family:'Bubblegum Sans',cursive;font-size:1.3rem;color:var(--gold);margin-bottom:14px;}
+.cut-options{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+.cut-btn{background:rgba(255,200,80,.12);border:3px solid rgba(255,200,80,.3);color:var(--white);font-family:'Bubblegum Sans',cursive;font-size:1.3rem;padding:14px 24px;border-radius:16px;cursor:pointer;transition:all .3s;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:80px;}
+.cut-btn:hover{background:rgba(255,200,80,.26);border-color:rgba(255,200,80,.7);transform:scale(1.08);}
+.cut-btn.correct-cut{border-color:var(--green);background:rgba(86,211,100,.22);animation:popIn .4s ease;}
+.cut-btn.wrong-cut{border-color:var(--coral);background:rgba(255,107,107,.2);animation:shake .4s ease;}
+.topping-panel{background:rgba(0,0,0,.4);border:1px solid rgba(255,200,80,.15);border-radius:18px;padding:14px 18px;margin-top:10px;width:100%;max-width:460px;text-align:center;}
+.topping-order{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;}
+.topping-emoji-big{font-size:2.4rem;animation:bob 1.5s ease-in-out infinite;}
+.topping-text{font-family:'Bubblegum Sans',cursive;font-size:1.15rem;color:var(--white);}
+.topping-frac{color:var(--teal);font-size:1.4rem;}
+.topping-counter{font-family:'Bubblegum Sans',cursive;font-size:1rem;color:rgba(232,244,253,.6);margin-bottom:10px;}
+.topping-submit{background:linear-gradient(135deg,var(--coral),#ff8c42);border:none;color:white;font-family:'Bubblegum Sans',cursive;font-size:1.2rem;padding:11px 32px;border-radius:999px;cursor:pointer;transition:all .3s;box-shadow:0 4px 20px rgba(255,107,107,.3);}
+.topping-submit:hover:not(:disabled){transform:scale(1.06);}.topping-submit:disabled{opacity:.35;cursor:default;}
+.topping-steps{display:flex;gap:7px;justify-content:center;margin-bottom:10px;}
+.step-dot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.3);transition:all .3s;}
+.step-dot.done{background:var(--green);border-color:var(--green);}
+.step-dot.active{background:var(--gold);border-color:var(--gold);box-shadow:0 0 8px var(--gold);}
+.deliver-panel{background:rgba(0,0,0,.4);border:1px solid rgba(255,200,80,.2);border-radius:18px;padding:20px;margin-top:10px;text-align:center;width:100%;max-width:460px;}
+.deliver-title{font-family:'Bubblegum Sans',cursive;font-size:1.7rem;color:var(--gold);margin-bottom:7px;}
+.pizza-score-row{display:flex;justify-content:center;gap:5px;font-size:1.7rem;margin:10px 0;}
+.deliver-btn{background:linear-gradient(135deg,#ffa500,#ff6b35);border:none;color:white;font-family:'Bubblegum Sans',cursive;font-size:1.35rem;padding:13px 40px;border-radius:999px;cursor:pointer;transition:all .3s;box-shadow:0 6px 30px rgba(255,107,53,.4);}
+.deliver-btn:hover{transform:translateY(-4px) scale(1.05);}
+.ingredient-tray{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+.ing-chip{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:4px 12px;font-size:.8rem;display:flex;align-items:center;gap:4px;}
+.ing-chip.done{background:rgba(86,211,100,.18);border-color:rgba(86,211,100,.5);}
+.float-ing{position:fixed;pointer-events:none;z-index:150;font-size:2rem;animation:floatUp .9s ease-out forwards;}
+
+/* ─── FEEDBACK OVERLAY ─── */
+.feedback-overlay{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .3s;}
+.feedback-overlay.show{opacity:1;pointer-events:all;}
+.feedback-card{background:linear-gradient(145deg,rgba(8,28,46,.97),rgba(10,61,98,.97));border:3px solid rgba(78,195,247,.28);border-radius:28px;padding:40px 30px;text-align:center;max-width:380px;width:92%;transform:scale(.8) translateY(30px);transition:transform .3s cubic-bezier(.34,1.56,.64,1);box-shadow:0 30px 80px rgba(0,0,0,.5);}
+.feedback-overlay.show .feedback-card{transform:scale(1) translateY(0);}
+.fb-emoji{font-size:5.5rem;display:block;margin-bottom:14px;}
+.fb-title{font-family:'Bubblegum Sans',cursive;font-size:2.2rem;margin-bottom:7px;}
+.fb-title.ok{color:var(--green);}.fb-title.bad{color:var(--coral);}
+.fb-msg{color:rgba(232,244,253,.8);font-size:1rem;line-height:1.65;margin-bottom:12px;font-weight:700;}
+.fb-visual{min-height:0;margin-bottom:16px;}
+.btn-next{background:linear-gradient(135deg,var(--teal),#0094c6);border:none;color:white;font-family:'Bubblegum Sans',cursive;font-size:1.5rem;padding:16px 52px;border-radius:999px;cursor:pointer;transition:all .3s;box-shadow:0 4px 20px rgba(0,201,200,.35);}
+.btn-next:hover{transform:scale(1.07);}
+
+/* ─── END SCREEN ─── */
+.end-wrap{text-align:center;max-width:460px;}
+.end-creature{font-size:3.8rem;animation:bob 2s ease-in-out infinite;}
+.end-title{font-family:'Bubblegum Sans',cursive;font-size:clamp(2.2rem,7vw,3.5rem);color:var(--gold);text-shadow:0 0 30px rgba(255,215,0,.4);margin-bottom:8px;}
+.end-stars{display:flex;justify-content:center;gap:8px;font-size:2.6rem;margin:16px 0;}
+.end-score{font-size:1.1rem;color:var(--surface);margin-bottom:26px;}
+.end-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;}
+.confetti-piece{position:fixed;border-radius:3px;z-index:300;animation:confettiFall linear forwards;}
+
+@media(max-width:520px){
+  .cv-grid{grid-template-columns:repeat(3,1fr);}.cv-grid.four-cards{grid-template-columns:repeat(2,1fr);}
+  .sb-dials{grid-template-columns:1fr;}.sb-target-frac{font-size:2.8rem;}
+  .dk-options{grid-template-columns:1fr;} .bl-creature-emoji{font-size:2.4rem;}
+}
+</style>
+</head>
+<body>
+<div class="ocean-bg"></div>
+<div id="atmos"></div>
+
+<div class="intro-overlay" id="introOverlay">
+  <div class="intro-card">
+    <span class="intro-game-emoji" id="introEmoji">🎮</span>
+    <div class="intro-title" id="introTitle">Slik spiller du!</div>
+    <div class="intro-steps" id="introSteps"></div>
+    <button class="btn-start-game" id="btnStartGame">La oss spille! 🚀</button>
+  </div>
+</div>
+
+<div class="feedback-overlay" id="fbOverlay">
+  <div class="feedback-card">
+    <span class="fb-emoji" id="fbEmoji"></span>
+    <div class="fb-title" id="fbTitle"></div>
+    <div class="fb-msg" id="fbMsg"></div>
+    <div class="fb-visual" id="fbVisual"></div>
+    <button class="btn-next" id="btnNext">Neste ➜</button>
+  </div>
+</div>
+
+<div id="app">
+
+<!-- TITLE -->
+<div class="screen active" id="scr-title">
+  <h1 class="game-title">🌊 Brøkhavet 🌊</h1>
+  <div class="title-creatures"><span>🐠</span><span>🐙</span><span>🦈</span><span>🐋</span></div>
+  <p class="subtitle">Dykk ned og lær om brøker! 9 spennende spill venter!</p>
+  <button class="btn-primary" onclick="goTo('scr-select')">Dykk ned! 🤿</button>
+</div>
+
+<!-- SELECT -->
+<div class="screen" id="scr-select">
+  <div class="select-header">
+    <div class="screen-title">🌊 Velg ditt eventyr</div>
+    <div class="screen-sub">Velg et spill og dykk ned! 🤿</div>
+  </div>
+  <div class="games-grid">
+    <div class="game-card card-ocean" onclick="startGame('delFisken')">
+      <span class="badge" style="background:linear-gradient(135deg,var(--teal),#0094c6)">Grunnleggende</span>
+      <span class="card-emoji">🐠</span><h3>Del Fisken!</h3>
+      <p>Gi sjødyrene riktig del av fiskene!</p>
+      <div class="stars-row" id="srow-delFisken"></div>
+    </div>
+    <div class="game-card card-red" onclick="startGame('duell')">
+      <span class="badge" style="background:linear-gradient(135deg,var(--coral),#cc3300)">Sammenlign</span>
+      <span class="card-emoji">🦈</span><h3>Dyphavsduell!</h3>
+      <p>Hvem har den største brøken? Velg vinneren!</p>
+      <div class="stars-row" id="srow-duell"></div>
+    </div>
+    <div class="game-card card-purple" onclick="startGame('tallinja')">
+      <span class="badge" style="background:linear-gradient(135deg,#a66cff,#6c52e5)">Tallinje</span>
+      <span class="card-emoji">🐋</span><h3>Brøklinjen!</h3>
+      <p>Plasser brøken på rett sted mellom 0 og 1!</p>
+      <div class="stars-row" id="srow-tallinja"></div>
+    </div>
+    <div class="game-card card-pizza" onclick="startPizzaGame()">
+      <span class="badge" style="background:linear-gradient(135deg,#ff6b35,#c43a00)">Pizzeria</span>
+      <span class="card-emoji">🍕</span><h3>Havets Pizzeria!</h3>
+      <p>Del og topp undervannspizzaer!</p>
+      <div class="stars-row" id="srow-pizza"></div>
+    </div>
+    <div class="game-card card-coral" onclick="startNewGame('delikt')">
+      <span class="badge" style="background:linear-gradient(135deg,#ff8c42,#cc5500)">Del likt</span>
+      <span class="card-emoji">🔪</span><h3>Kokkens Kjøkken!</h3>
+      <p>Hjelp kokk Orvar å dele mat i LIKE store biter!</p>
+      <div class="stars-row" id="srow-delikt"></div>
+    </div>
+    <div class="game-card card-royal" onclick="startNewGame('deling')">
+      <span class="badge" style="background:linear-gradient(135deg,#9b44ff,#6610cc)">Deling</span>
+      <span class="card-emoji">🎩</span><h3>Rettferdig Deling!</h3>
+      <p>Del mat likt mellom sultne sjødyr i ballsalen!</p>
+      <div class="stars-row" id="srow-deling"></div>
+    </div>
+    <div class="game-card card-amber" onclick="startNewGame('builder')">
+      <span class="badge" style="background:linear-gradient(135deg,#ffaa00,#cc7700)">Bygg</span>
+      <span class="card-emoji">⚙️</span><h3>Brøkbyggeren!</h3>
+      <p>Bruk ubåtens maskiner til å bygge riktig brøk!</p>
+      <div class="stars-row" id="srow-builder"></div>
+    </div>
+    <div class="game-card card-abyss" onclick="startNewGame('telescope')">
+      <span class="badge" style="background:linear-gradient(135deg,#00ffcc,#009988)">Dyp</span>
+      <span class="card-emoji">🔭</span><h3>Brøkteleskopet!</h3>
+      <p>Søk etter skatten som gjemmer seg i mørket!</p>
+      <div class="stars-row" id="srow-telescope"></div>
+    </div>
+    <div class="game-card card-neon" onclick="startNewGame('carnival')">
+      <span class="badge" style="background:linear-gradient(135deg,#ff3cb0,#cc0080)">Kamuflasje</span>
+      <span class="card-emoji">🐙</span><h3>Blekksprut-Kamuflasje!</h3>
+      <p>Avslør blekksprutene i forkledning! Finn de som er like!</p>
+      <div class="stars-row" id="srow-carnival"></div>
+    </div>
+  </div>
+  <button class="btn-secondary" onclick="goTo('scr-title')">← Hjem</button>
+</div>
+
+<!-- GENERIC GAME SCREEN (games 1-3) -->
+<div class="screen" id="scr-game">
+  <div class="game-container">
+    <div class="game-header">
+      <button class="back-btn" onclick="goTo('scr-select')">← Tilbake</button>
+      <div class="level-ind" id="lvlInd">Spørsmål 1/5</div>
+      <div class="score-disp" id="scoreDp">⭐ 0</div>
+    </div>
+    <div class="progress-bar-bg"><div class="progress-bar-fill" id="pbar" style="width:0%"></div></div>
+    <div id="gameArea"></div>
+  </div>
+</div>
+
+<!-- PIZZA SCREEN -->
+<div class="screen" id="scr-pizza">
+  <div class="restaurant-bg" id="restBg"></div>
+  <div class="rest-sign">🌊 Havets Pizzeria 🍕</div>
+  <div class="pizza-header">
+    <button class="pizza-back-btn" onclick="goTo('scr-select')">← Meny</button>
+    <div class="pizza-score-hd">🍕 <span id="pzScoreHd">0</span></div>
+  </div>
+  <div class="pizza-game-wrap" id="pizzaWrap"></div>
+</div>
+
+<!-- DEL LIKT SCREEN -->
+<div class="screen" id="scr-delikt">
+  <div class="dk-bg" id="dkBg"></div>
+  <div class="dk-header">
+    <button class="back-btn" onclick="goTo('scr-select')">← Tilbake</button>
+    <div class="dk-title">🔪 Kokkens Kjøkken</div>
+    <div class="dk-score">⭐ <span id="dkScore">0</span></div>
+  </div>
+  <div class="dk-wrap" id="dkWrap"></div>
+</div>
+
+<!-- RETTFERDIG DELING SCREEN -->
+<div class="screen" id="scr-deling">
+  <div class="bl-bg" id="blBg"></div>
+  <div class="bl-header">
+    <button class="back-btn" onclick="goTo('scr-select')">← Tilbake</button>
+    <div class="bl-title">🎩 Ballsalens Deling</div>
+    <div class="bl-score">⭐ <span id="blScore">0</span></div>
+  </div>
+  <div class="bl-wrap" id="blWrap"></div>
+</div>
+
+<!-- BRØKBYGGEREN SCREEN -->
+<div class="screen" id="scr-builder">
+  <div class="sb-bg" id="sbBg"></div>
+  <div class="sb-header">
+    <button class="back-btn" onclick="goTo('scr-select')">← Tilbake</button>
+    <div class="sb-title">⚙️ Maskinrommet</div>
+    <div class="sb-score">⭐ <span id="sbScore">0</span></div>
+  </div>
+  <div class="sb-wrap" id="sbWrap"></div>
+</div>
+
+<!-- BRØKTELESKOPET SCREEN -->
+<div class="screen" id="scr-telescope">
+  <div class="ab-bg" id="abBg"></div>
+  <div class="ab-header">
+    <button class="back-btn" onclick="goTo('scr-select')">← Tilbake</button>
+    <div class="ab-title">🔭 Dyphavets Skatt</div>
+    <div class="ab-score">⭐ <span id="abScore">0</span></div>
+  </div>
+  <div class="ab-wrap" id="abWrap"></div>
+</div>
+
+<!-- BLEKKSPRUT-KAMUFLASJE SCREEN -->
+<div class="screen" id="scr-carnival">
+  <div class="cv-bg" id="cvBg"></div>
+  <div class="cv-header">
+    <button class="back-btn" onclick="goTo('scr-select')">← Tilbake</button>
+    <div class="cv-title">🐙 Karnevalets Hemmelighet</div>
+    <div class="cv-score">⭐ <span id="cvScore">0</span></div>
+  </div>
+  <div class="cv-wrap" id="cvWrap"></div>
+</div>
+
+<!-- END SCREEN -->
+<div class="screen" id="scr-end">
+  <div class="end-wrap">
+    <div class="end-creature" id="endCreature">🏆</div>
+    <div class="end-title" id="endTitle">Bra jobbet!</div>
+    <div class="end-stars" id="endStars"></div>
+    <div class="end-score" id="endScore"></div>
+    <div class="end-btns">
+      <button class="btn-primary" style="font-size:1.2rem;padding:14px 30px" onclick="replayGame()">🔄 Prøv igjen</button>
+      <button class="btn-secondary" onclick="goTo('scr-select')">🌊 Velg spill</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- #app -->
+
+<script>
+// ══════════════════════════════════════
+// DATA — EXISTING GAMES
+// ══════════════════════════════════════
+const DATA = {
+  delFisken:[
+    {num:1,den:2,total:6, creature:'🦈',name:'Haien',       fish:'🐟'},  // 1/2 = 3
+    {num:1,den:3,total:9, creature:'🐙',name:'Blekkspruten',fish:'🐠'},  // 1/3 = 3
+    {num:2,den:3,total:9, creature:'🐋',name:'Hvalen',      fish:'🐡'},  // 2/3 = 6
+    {num:3,den:4,total:8, creature:'🦀',name:'Krabben',     fish:'🐟'},  // 3/4 = 6
+    {num:3,den:6,total:12,creature:'🐠',name:'Sjøhesten',   fish:'🐟'},  // 3/6 = 6
+    {num:2,den:5,total:10,creature:'🦑',name:'Blekkspruten',fish:'🐠'},  // 2/5 = 4
+    {num:5,den:6,total:12,creature:'🦈',name:'Haien',       fish:'🐡'},  // 5/6 = 10
+    {num:3,den:8,total:16,creature:'🦞',name:'Hummeren',    fish:'🐟'},  // 3/8 = 6
+  ],
+  duell:[
+    {a:[1,2],b:[1,4],cA:'🦈',cB:'🐙'},  // 0.50 vs 0.25 — lett
+    {a:[3,4],b:[1,2],cA:'🐡',cB:'🦑'},  // 0.75 vs 0.50 — lett
+    {a:[2,3],b:[1,3],cA:'🦞',cB:'🐠'},  // 0.67 vs 0.33 — lett
+    {a:[3,5],b:[2,5],cA:'🦈',cB:'🐙'},  // 0.60 vs 0.40 — middels
+    {a:[5,8],b:[3,4],cA:'🐡',cB:'🦀'},  // 0.63 vs 0.75 — middels (B vinner)
+    {a:[2,3],b:[3,5],cA:'🐋',cB:'🦑'},  // 0.67 vs 0.60 — vanskelig
+    {a:[4,9],b:[1,2],cA:'🦞',cB:'🐠'},  // 0.44 vs 0.50 — vanskelig (B vinner)
+    {a:[7,8],b:[5,6],cA:'🦈',cB:'🐙'},  // 0.875 vs 0.83 — hardest
+  ],
+  tallinja:[
+    {num:1,den:2,opts:['1/4','1/2','3/4','1'],ci:1},
+    {num:1,den:4,opts:['1/8','1/4','1/2','3/4'],ci:1},
+    {num:1,den:3,opts:['1/4','1/3','1/2','2/3'],ci:1},
+    {num:3,den:4,opts:['1/2','2/3','3/4','4/5'],ci:2},
+    {num:2,den:3,opts:['1/2','2/3','3/4','4/5'],ci:1},
+    {num:3,den:8,opts:['1/4','3/8','1/2','5/8'],ci:1},
+    {num:4,den:5,opts:['3/4','4/5','5/6','9/10'],ci:1},
+    {num:5,den:6,opts:['2/3','3/4','5/6','9/10'],ci:2},
+  ]
+};
+
+// ── DEL LIKT DATA ──
+const DELIKT_DATA=[
+  {food:'🐟',n:2,label:'Del fisken i 2 like store biter!'},
+  {food:'🌟',n:3,label:'Del sjøstjernen i 3 like store biter!'},
+  {food:'🦐',n:4,label:'Del rekene i 4 like store biter!'},
+  {food:'🪸',n:2,label:'Del korallen i 2 like store biter!'},
+  {food:'🐡',n:3,label:'Del fisken i 3 like store biter!'},
+  {food:'🦑',n:4,label:'Del blekksprutten i 4 like store biter!'},
+  {food:'🐚',n:2,label:'Del skjellet i 2 like store biter!'},
+  {food:'🦀',n:3,label:'Del krabben i 3 like store biter!'},
+];
+
+// ── RETTFERDIG DELING DATA — alle egentlige brøker, stigende vanskelighetsgrad ──
+const DELING_DATA=[
+  {creatures:['🦈','🐙'],              food:1,foodEmoji:'🐟',num:1,den:2},   // 1÷2 = 1/2
+  {creatures:['🦈','🐙','🦞'],         food:1,foodEmoji:'🐡',num:1,den:3},   // 1÷3 = 1/3
+  {creatures:['🦈','🐙','🦞','🦀'],    food:1,foodEmoji:'🐠',num:1,den:4},   // 1÷4 = 1/4
+  {creatures:['🦈','🐙','🦞'],         food:2,foodEmoji:'🐟',num:2,den:3},   // 2÷3 = 2/3
+  {creatures:['🦈','🐙','🦞','🦀'],    food:3,foodEmoji:'🐠',num:3,den:4},   // 3÷4 = 3/4
+  {creatures:['🦈','🐙','🦞','🦀'],    food:2,foodEmoji:'🐡',num:2,den:4},   // 2÷4 = 2/4
+  {creatures:['🦈','🐙','🦞','🦀','🦑'],food:2,foodEmoji:'🐟',num:2,den:5}, // 2÷5 = 2/5
+  {creatures:['🦈','🐙','🦞','🦀','🦑'],food:3,foodEmoji:'🐠',num:3,den:5}, // 3÷5 = 3/5
+];
+
+// ── BRØKBYGGEREN DATA — stigende vanskelighetsgrad ──
+const BUILDER_DATA=[
+  {num:1,den:2},{num:1,den:3},{num:1,den:4},{num:2,den:3},{num:3,den:4},
+  {num:2,den:5},{num:3,den:5},{num:1,den:6},{num:4,den:5},{num:5,den:6},
+];
+
+// ── TELESCOPE DATA — stigende vanskelighetsgrad ──
+const TELESCOPE_DATA=[
+  {num:1,den:2},{num:1,den:4},{num:3,den:4},{num:1,den:3},{num:2,den:3},
+  {num:3,den:8},{num:5,den:8},{num:1,den:6},{num:5,den:6},{num:7,den:8},
+];
+
+// ── CARNIVAL ROUNDS ──
+const CARNIVAL_COSTUMES=['🎩','👑','🤠','🎪','🌺','💎','🎭','🤡'];
+const CARNIVAL_ROUNDS=[
+  [{f:'1/2',g:0,c:'#ff6b9d'},{f:'2/4',g:0,c:'#ff9a3c'},{f:'1/3',g:1,c:'#4fc3f7'},{f:'2/6',g:1,c:'#56d364'}],
+  [{f:'1/2',g:0,c:'#ff6b9d'},{f:'3/6',g:0,c:'#ff9a3c'},{f:'2/3',g:1,c:'#4fc3f7'},{f:'4/6',g:1,c:'#a78bfa'},{f:'3/4',g:2,c:'#ffd700'},{f:'6/8',g:2,c:'#56d364'}],
+  [{f:'1/2',g:0,c:'#ff6b9d'},{f:'4/8',g:0,c:'#ff9a3c'},{f:'1/3',g:1,c:'#4fc3f7'},{f:'3/9',g:1,c:'#56d364'},{f:'2/5',g:2,c:'#a78bfa'},{f:'4/10',g:2,c:'#ffd700'},{f:'3/4',g:3,c:'#00ffcc'},{f:'6/8',g:3,c:'#ff60e0'}],
+];
+
+// ── PIZZA DATA ──
+const PIZZA_TYPES=[
+  {id:'korall',name:'Korallpizza',base:'#f5c842',sauce:'#d93a2b',crust:'#c8793a',decor:'🪸'},
+  {id:'dyp',name:'Dyphavspizza',base:'#2a9d8f',sauce:'#1d6e64',crust:'#145f57',decor:'🌑'},
+  {id:'vulkan',name:'Vulkanpizza',base:'#e63946',sauce:'#8b0000',crust:'#5c0000',decor:'🌋'},
+  {id:'tang',name:'Tangpizza',base:'#52b788',sauce:'#2d6a4f',crust:'#1b4332',decor:'🌿'},
+  {id:'perle',name:'Perlepizza',base:'#caf0f8',sauce:'#90e0ef',crust:'#023e8a',decor:'🫧'},
+];
+const PIZZA_INGREDIENTS=[
+  {emoji:'🧀',name:'Gryteost',wild:false},{emoji:'🍅',name:'Sjøtomat',wild:false},
+  {emoji:'🌶️',name:'Hav-chili',wild:false},{emoji:'🍄',name:'Dyphavssopp',wild:false},
+  {emoji:'🫑',name:'Undervanns-paprika',wild:false},{emoji:'🐙',name:'Blekksprutringer',wild:true},
+  {emoji:'🦐',name:'Reker',wild:true},{emoji:'🌿',name:'Tang og tare',wild:true},
+  {emoji:'⭐',name:'Sjøstjerne',wild:true},{emoji:'🦀',name:'Krabbekjøtt',wild:true},
+  {emoji:'🐡',name:'Sprø kuglefisk',wild:true},{emoji:'💎',name:'Perlemelk',wild:true},
+  {emoji:'🌊',name:'Havmousse',wild:true},{emoji:'🦞',name:'Hummerflaket',wild:true},
+  {emoji:'🫧',name:'Bobledressing',wild:true},
+];
+const PIZZA_CUSTOMERS=[
+  {emoji:'🦈',name:'Haien Herman'},{emoji:'🐙',name:'Blekkspruten Bjørn'},
+  {emoji:'🐋',name:'Hvalen Harald'},{emoji:'🦞',name:'Hummeren Henriette'},
+  {emoji:'🦀',name:'Krabben Karl'},{emoji:'🐡',name:'Kuglefisken Knut'},
+  {emoji:'🐠',name:'Fisken Frida'},{emoji:'🦑',name:'Blekkspruten Bodil'},
+];
+const PIZZA_ROUNDS=[
+  {sliceCount:4,fakeSlices:[2,3,6,8],orders:[{num:3,den:4},{num:1,den:4}]},
+  {sliceCount:6,fakeSlices:[2,4,8,3],orders:[{num:2,den:6},{num:3,den:6}]},
+  {sliceCount:8,fakeSlices:[4,6,3,10],orders:[{num:4,den:8},{num:2,den:8}]},
+  {sliceCount:3,fakeSlices:[2,4,6,8],orders:[{num:2,den:3}]},
+  {sliceCount:6,fakeSlices:[2,3,4,8],orders:[{num:1,den:6},{num:2,den:6},{num:3,den:6}]},
+  {sliceCount:4,fakeSlices:[2,3,6,8],orders:[{num:2,den:4},{num:2,den:4}]},
+  {sliceCount:8,fakeSlices:[4,6,2,5],orders:[{num:5,den:8},{num:3,den:8}]},
+];
+
+// ══════════════════════════════════════
+// STATE
+// ══════════════════════════════════════
+let game=null, lvl=0, score=0;
+let stars={delFisken:0,duell:0,tallinja:0,pizza:0,delikt:0,deling:0,builder:0,telescope:0,carnival:0};
+let feedbackCb=null;
+const LEVELS=5;
+
+// New game states
+let dk={round:0,score:0};
+let bl={round:0,score:0,phase:'setup'};
+let sb={round:0,score:0,curNum:1,curDen:2,target:null};
+let ab={round:0,score:0,attempts:0,maxAttempts:3};
+let cv={round:0,score:0,roundIdx:0,selected:null,matched:new Set()};
+let pz={roundIndex:0,totalRounds:5,pizzaScore:0,phase:'cut',pizzaType:null,customer:null,roundData:null,toppingIndex:0,selectedSlices:new Set(),completedToppings:[],sliceIngredients:{},lockedSlices:new Set()};
+
+// ══════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════
+function goTo(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  renderStarsAll();
+}
+function renderStarsAll(){
+  Object.keys(stars).forEach(g=>{
+    const row=document.getElementById('srow-'+g);if(!row)return;
+    row.innerHTML='';
+    for(let i=0;i<5;i++){const s=document.createElement('span');s.className='star-dot'+(i<stars[g]?'':' off');s.textContent='⭐';row.appendChild(s);}
+  });
+}
+function replayGame(){
+  if(game==='pizza') startPizzaGame();
+  else if(['delikt','deling','builder','telescope','carnival'].includes(game)) startNewGame(game);
+  else startGame(game);
+}
+
+// Allow tapping outside intro card to dismiss (child-friendly)
+document.getElementById('introOverlay').addEventListener('click', function(e){
+  if(e.target===this){ this.classList.remove('show'); if(introCb){introCb();introCb=null;} }
+});
+
+// Shared feedback
+const GOOD=['Fantastisk! 🎉','Strålende! ✨','Perfekt! 💯','Bra jobbet! 🌟','Kjempebra! 🏆'];
+const BAD=['Ikke helt — prøv igjen!','Nesten!','Du klarer det!','Ikke gi opp!'];
+const GOOD_EMO=['🎉','⭐','🐠','🌊','🏆','🎊','✨'];
+const BAD_EMO=['🤔','💙','🐙','💪','🌊'];
+
+function playSound(type){
+  try{
+    const ctx=new(window.AudioContext||window.webkitAudioContext)();
+    const osc=ctx.createOscillator(),gain=ctx.createGain();
+    osc.connect(gain);gain.connect(ctx.destination);
+    gain.gain.setValueAtTime(0,ctx.currentTime);
+    if(type==='correct'){
+      osc.type='sine';
+      osc.frequency.setValueAtTime(523,ctx.currentTime);
+      osc.frequency.setValueAtTime(659,ctx.currentTime+.13);
+      osc.frequency.setValueAtTime(784,ctx.currentTime+.26);
+      gain.gain.linearRampToValueAtTime(.22,ctx.currentTime+.04);
+      gain.gain.setValueAtTime(.22,ctx.currentTime+.36);
+      gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.75);
+      osc.start();osc.stop(ctx.currentTime+.75);
+    } else {
+      osc.type='sine';
+      osc.frequency.setValueAtTime(320,ctx.currentTime);
+      osc.frequency.setValueAtTime(220,ctx.currentTime+.18);
+      gain.gain.linearRampToValueAtTime(.18,ctx.currentTime+.04);
+      gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.45);
+      osc.start();osc.stop(ctx.currentTime+.45);
+    }
+  }catch(e){}
+}
+
+function makeFracBar(num,den,label,color){
+  color=color||'#4fc3f7';
+  const segs=Array.from({length:den},(_,i)=>`<div style="flex:1;height:100%;background:${i<num?color:'rgba(255,255,255,.1)'};border-right:${i<den-1?'2px solid rgba(0,0,0,.35)':'none'};box-sizing:border-box"></div>`).join('');
+  return `<div style="text-align:center;display:inline-block;margin:0 8px">
+    <div style="font-size:.72rem;color:rgba(232,244,253,.55);margin-bottom:3px">${label}</div>
+    <div style="display:flex;width:120px;height:28px;border:2px solid ${color};border-radius:6px;overflow:hidden;margin:0 auto">${segs}</div>
+    <div style="font-size:.95rem;color:${color};margin-top:3px;font-weight:bold">${num}/${den}</div>
+  </div>`;
+}
+
+function showFeedback(ok,msg,cb,visualHtml){
+  feedbackCb=cb;
+  document.getElementById('fbEmoji').textContent=ok?GOOD_EMO[~~(Math.random()*GOOD_EMO.length)]:BAD_EMO[~~(Math.random()*BAD_EMO.length)];
+  const t=document.getElementById('fbTitle');
+  t.textContent=ok?GOOD[~~(Math.random()*GOOD.length)]:BAD[~~(Math.random()*BAD.length)];
+  t.className='fb-title '+(ok?'ok':'bad');
+  document.getElementById('fbMsg').textContent=msg;
+  const vis=document.getElementById('fbVisual');
+  if(vis) vis.innerHTML=visualHtml||'';
+  document.getElementById('btnNext').onclick=()=>{document.getElementById('fbOverlay').classList.remove('show');if(feedbackCb){feedbackCb();feedbackCb=null;}};
+  document.getElementById('fbOverlay').classList.add('show');
+  playSound(ok?'correct':'wrong');
+  if(ok) spawnConfetti();
+}
+
+// ══════════════════════════════════════
+// INTRO SYSTEM
+// ══════════════════════════════════════
+const INTROS = {
+  delFisken: {
+    emoji: '🐠',
+    title: 'Del Fisken!',
+    steps: [
+      { num: '1️⃣', text: 'Et sjødyr vil ha <em>sin del</em> av fiskene' },
+      { num: '2️⃣', text: '<em>Klikk på riktig antall fisker</em> — de blir gylne!' },
+      { num: '3️⃣', text: 'Trykk <em>Gi fisken!</em> når du har valgt riktig antall' },
+    ]
+  },
+  duell: {
+    emoji: '🦈',
+    title: 'Dyphavsduell!',
+    steps: [
+      { num: '1️⃣', text: 'To sjødyr har hver sin brøk' },
+      { num: '2️⃣', text: '<em>Trykk på sjødyret</em> med den STØRSTE brøken!' },
+      { num: '💡', text: 'Tips: jo større del av kaken, jo større brøk!' },
+    ]
+  },
+  tallinja: {
+    emoji: '🐋',
+    title: 'Brøklinjen!',
+    steps: [
+      { num: '1️⃣', text: 'Du ser en linje fra 0 til 1' },
+      { num: '2️⃣', text: '<em>Velg brøken</em> som hører hjemme på riktig plass!' },
+      { num: '💡', text: 'Tips: 1/2 er midt på linjen!' },
+    ]
+  },
+  pizza: {
+    emoji: '🍕',
+    title: 'Havets Pizzeria!',
+    steps: [
+      { num: '1️⃣', text: 'Kunden vil ha pizzaen delt i <em>et bestemt antall biter</em>' },
+      { num: '2️⃣', text: 'Klikk på pizzaskivene for å legge på <em>riktig antall</em> ingredienser' },
+      { num: '3️⃣', text: 'Lever pizzaen og vinn stjerner! ⭐' },
+    ]
+  },
+  delikt: {
+    emoji: '🔪',
+    title: 'Kokkens Kjøkken!',
+    steps: [
+      { num: '1️⃣', text: 'Kokk Orvar vil dele maten i <em>like store biter</em>' },
+      { num: '2️⃣', text: '<em>Trykk på bildet</em> der alle bitene er like store!' },
+      { num: '⚠️', text: 'Brøkdeler MÅ være like store — ellers er det ikke rettferdig!' },
+    ]
+  },
+  deling: {
+    emoji: '🎩',
+    title: 'Rettferdig Deling!',
+    steps: [
+      { num: '1️⃣', text: 'Sultne sjødyr vil dele maten <em>likt mellom seg</em>' },
+      { num: '2️⃣', text: 'Trykk <em>Del likt!</em> og se hva hvert dyr får' },
+      { num: '3️⃣', text: '<em>Velg brøken</em> som viser hva ett dyr fikk' },
+    ]
+  },
+  builder: {
+    emoji: '⚙️',
+    title: 'Brøkbyggeren!',
+    steps: [
+      { num: '1️⃣', text: 'Du skal stille inn maskinene for å lage riktig brøk' },
+      { num: '2️⃣', text: '<em>Bunn-tall</em> = hvor mange like biter du deler i' },
+      { num: '3️⃣', text: '<em>Topp-tall</em> = hvor mange biter du vil ha — trykk AVFYR! 🚀' },
+    ]
+  },
+  telescope: {
+    emoji: '🔭',
+    title: 'Brøkteleskopet!',
+    steps: [
+      { num: '1️⃣', text: 'En skatt gjemmer seg et sted på linjen mellom 0 og 1!' },
+      { num: '2️⃣', text: '<em>Klikk på linjen</em> der du tror brøken er' },
+      { num: '❤️', text: 'Du har 3 forsøk — trykk på lyspæren 💡 om du trenger hjelp!' },
+    ]
+  },
+  carnival: {
+    emoji: '🐙',
+    title: 'Blekksprut-Kamuflasje!',
+    steps: [
+      { num: '1️⃣', text: 'Noen blekkspruter er egentlig <em>den samme blekkspruten</em> i ny forkledning!' },
+      { num: '2️⃣', text: '<em>Klikk to blekkspruter</em> som er like store — de hører sammen!' },
+      { num: '💦', text: 'Feil par gir blekksprutblekk! Finn alle parene for å vinne!' },
+    ]
+  },
+};
+
+let introCb = null;
+
+function showIntro(gameKey, cb) {
+  const data = INTROS[gameKey];
+  if (!data) { cb(); return; }
+  introCb = cb;
+  document.getElementById('introEmoji').textContent = data.emoji;
+  document.getElementById('introTitle').textContent = data.title;
+  const stepsEl = document.getElementById('introSteps');
+  stepsEl.innerHTML = data.steps.map(s =>
+    `<div class="intro-step">
+      <span class="intro-step-num">${s.num}</span>
+      <span class="intro-step-text">${s.text}</span>
+    </div>`
+  ).join('');
+  document.getElementById('btnStartGame').onclick = () => {
+    document.getElementById('introOverlay').classList.remove('show');
+    if (introCb) { introCb(); introCb = null; }
+  };
+  document.getElementById('introOverlay').classList.add('show');
+}
+
+// ══════════════════════════════════════
+// GAMES 1-3 (existing)
+// ══════════════════════════════════════
+function startGame(g){game=g;lvl=0;score=0;goTo('scr-game');showIntro(g,()=>renderQ());}
+function renderQ(){
+  const d=DATA[game][lvl%DATA[game].length];
+  document.getElementById('lvlInd').textContent=`Spørsmål ${lvl+1}/${LEVELS}`;
+  document.getElementById('scoreDp').textContent=`⭐ ${score}`;
+  document.getElementById('pbar').style.width=`${(lvl/LEVELS)*100}%`;
+  const area=document.getElementById('gameArea');
+  if(game==='delFisken') renderDelFisken(area,d);
+  if(game==='duell')     renderDuell(area,d);
+  if(game==='tallinja')  renderTallinja(area,d);
+}
+function nextQ(){lvl++;if(lvl>=LEVELS)endGame();else renderQ();}
+
+function renderDelFisken(area,d){
+  const ans=(d.num/d.den)*d.total;
+  area.innerHTML=`<div class="q-box"><div class="creature-ask"><div class="creature-anim">${d.creature}</div><div class="speech-bub">${d.name} vil ha <span class="frac-strong">${d.num}/${d.den}</span> av fiskene!</div></div><p class="q-hint">Klikk på akkurat ${ans} fisk!</p></div><div style="background:var(--glass);border:1px solid var(--gborder);border-radius:18px;padding:14px;"><div class="fish-grid" id="fgrid"></div><div class="sel-counter" id="scount">Valgt: 0 av ${ans}</div><div style="text-align:center"><button class="submit-btn" id="sbtn" onclick="checkDelFisken(${ans})" disabled>Gi fisken! 🎁</button></div></div>`;
+  const grid=document.getElementById('fgrid');
+  for(let i=0;i<d.total;i++){const el=document.createElement('div');el.className='fish-item';el.textContent=d.fish;el.onclick=()=>toggleFish(el,ans);grid.appendChild(el);}
+}
+function toggleFish(el,max){
+  const sel=document.getElementById('fgrid').querySelectorAll('.selected').length;
+  if(el.classList.contains('selected')) el.classList.remove('selected');
+  else{if(sel>=max)return;el.classList.add('selected');}
+  const n=document.getElementById('fgrid').querySelectorAll('.selected').length;
+  document.getElementById('scount').textContent=`Valgt: ${n} av ${max}`;
+  document.getElementById('sbtn').disabled=(n!==max);
+}
+function checkDelFisken(ans){
+  const d=DATA[game][lvl%DATA[game].length];
+  const ok=document.getElementById('fgrid').querySelectorAll('.selected').length===ans;
+  const visual=!ok?makeFracBar(d.num,d.den,'Riktig del','#56d364'):'';
+  showFeedback(ok,`${d.num}/${d.den} av ${d.total} fisker er ${ans} fisker. ${ok?'Godt jobbet!':'Prøv neste!'}`,()=>{score+=(ok?1:0);nextQ();},visual);
+}
+
+function renderDuell(area,d){
+  area.innerHTML=`<div class="q-box"><div class="q-text">Hvem har den <span style="color:var(--gold)">STØRSTE</span> brøken?</div><p class="q-hint">Klikk på vinneren! 🏆</p></div><div class="duel-grid"><div class="duel-opt" id="dA" onclick="checkDuell(true,${d.a[0]/d.a[1]},${d.b[0]/d.b[1]})"><span class="duel-creature">${d.cA}</span><div class="duel-frac">${d.a[0]}/${d.a[1]}</div></div><div class="duel-opt" id="dB" onclick="checkDuell(false,${d.a[0]/d.a[1]},${d.b[0]/d.b[1]})"><span class="duel-creature">${d.cB}</span><div class="duel-frac">${d.b[0]}/${d.b[1]}</div></div></div>`;
+}
+function checkDuell(choseA,av,bv){
+  document.getElementById('dA').onclick=null;document.getElementById('dB').onclick=null;
+  const correctA=av>bv,ok=choseA===correctA;
+  const d=DATA[game][lvl%DATA[game].length];
+  document.getElementById(choseA?'dA':'dB').classList.add(ok?'correct':'wrong');
+  if(!ok) document.getElementById(correctA?'dA':'dB').classList.add('correct');
+  const bigF=correctA?`${d.a[0]}/${d.a[1]}`:`${d.b[0]}/${d.b[1]}`;
+  const smF=correctA?`${d.b[0]}/${d.b[1]}`:`${d.a[0]}/${d.a[1]}`;
+  const tip=`${bigF} er større enn ${smF}. Større brøk = større del av kaken!`;
+  const visual=!ok?`<div style="display:flex;justify-content:center">${makeFracBar(d.a[0],d.a[1],'','#4fc3f7')}${makeFracBar(d.b[0],d.b[1],'','#ff6b9d')}</div>`:'';
+  setTimeout(()=>showFeedback(ok,tip,()=>{score+=(ok?1:0);nextQ();},visual),600);
+}
+
+function renderTallinja(area,d){
+  const pct=(d.num/d.den)*100;
+  area.innerHTML=`<div class="q-box"><div class="q-text">Hvor på tallinjen er <span class="frac-strong"> ${d.num}/${d.den}</span>?</div><div style="padding:6px 8px;"><div class="nl-area"><div class="nl-track"></div><div class="nl-tick" style="left:0%"></div><div class="nl-lbl" style="left:0%">0</div><div class="nl-tick" style="left:50%"></div><div class="nl-lbl" style="left:50%">½</div><div class="nl-tick" style="left:100%"></div><div class="nl-lbl" style="left:100%">1</div><div class="nl-marker" id="nlMark" style="left:${pct}%"></div></div></div><p class="q-hint">Velg riktig brøk nedenfor 👇</p></div><div class="nl-options-row">${d.opts.map((o,i)=>`<button class="nl-opt" onclick="checkTallinja(${i},${d.ci},${pct})" id="nlo${i}">${o}</button>`).join('')}</div>`;
+}
+function checkTallinja(chosen,correct,pct){
+  document.querySelectorAll('.nl-opt').forEach(b=>b.onclick=null);
+  const ok=chosen===correct;
+  document.getElementById('nlo'+chosen).classList.add(ok?'correct':'wrong');
+  if(!ok) document.getElementById('nlo'+correct).classList.add('correct');
+  document.getElementById('nlMark').style.display='block';
+  const d=DATA[game][lvl%DATA[game].length];
+  const val=pct/100;
+  const pos2=val<.5?`nærmere 0`:val>.5?`nærmere 1`:`akkurat i midten`;
+  const visual=!ok?makeFracBar(d.num,d.den,'Riktig svar','#56d364'):'';
+  setTimeout(()=>showFeedback(ok,`${d.num}/${d.den} er ${pos2} på linjen.`,()=>{score+=(ok?1:0);nextQ();},visual),700);
+}
+
+function endGame(){
+  const earned=Math.round((score/LEVELS)*5);
+  stars[game]=Math.max(stars[game],earned);
+  showEndScreen(earned,`${score} av ${LEVELS} riktige!`);
+}
+function showEndScreen(earned,scoreText){
+  const msgs=['Øv litt til! 💪','Bra forsøk! 🌊','Bra jobbet! 🐠','Veldig bra! ⭐','Utrolig bra! 🏆','PERFEKT! 👑'];
+  const crs=['😅','🐙','🐠','🦈','🐋','👑'];
+  document.getElementById('endCreature').textContent=crs[Math.min(earned,5)];
+  document.getElementById('endTitle').textContent=msgs[Math.min(earned,5)];
+  document.getElementById('endScore').textContent=scoreText;
+  const stEl=document.getElementById('endStars');stEl.innerHTML='';
+  for(let i=0;i<5;i++){const s=document.createElement('span');s.textContent='⭐';s.style.filter=i<earned?'drop-shadow(0 0 10px gold)':'grayscale(1) opacity(.3)';stEl.appendChild(s);}
+  goTo('scr-end');
+  if(earned>=4) spawnConfetti(50);
+}
+
+// ══════════════════════════════════════════════════════
+// PIZZA GAME (existing, unchanged)
+// ══════════════════════════════════════════════════════
+function startPizzaGame(){
+  game='pizza';pz.roundIndex=0;pz.totalRounds=5;pz.pizzaScore=0;
+  goTo('scr-pizza');buildRestaurantBg();
+  showIntro('pizza',()=>startPizzaRound());
+}
+function buildRestaurantBg(){const bg=document.getElementById('restBg');bg.innerHTML='';[15,35,55,75,92].forEach(l=>{const d=document.createElement('div');d.className='rest-light';d.style.cssText=`left:${l}%;animation-delay:${Math.random()*3}s;`;bg.appendChild(d);});}
+function startPizzaRound(){
+  const rd=PIZZA_ROUNDS[pz.roundIndex%PIZZA_ROUNDS.length];
+  pz.roundData={...rd};pz.pizzaType=PIZZA_TYPES[~~(Math.random()*PIZZA_TYPES.length)];
+  pz.customer=PIZZA_CUSTOMERS[~~(Math.random()*PIZZA_CUSTOMERS.length)];
+  pz.phase='cut';pz.toppingIndex=0;pz.selectedSlices=new Set();pz.completedToppings=[];pz.sliceIngredients={};pz.lockedSlices=new Set();
+  const shuffled=[...PIZZA_INGREDIENTS].sort(()=>Math.random()-.5);
+  pz.roundData.ordersWithIng=pz.roundData.orders.map((o,i)=>({...o,ing:shuffled[i%shuffled.length]}));
+  document.getElementById('pzScoreHd').textContent=pz.pizzaScore;renderPizzaPhase();
+}
+function renderPizzaPhase(){
+  const wrap=document.getElementById('pizzaWrap');wrap.innerHTML='';
+  const badge=document.createElement('div');badge.className='pizza-round-badge';badge.textContent=`Pizza ${pz.roundIndex+1} av ${pz.totalRounds}`;wrap.appendChild(badge);
+  if(pz.phase==='cut') renderPizzaCut(wrap);
+  if(pz.phase==='topping') renderPizzaTopping(wrap);
+  if(pz.phase==='deliver') renderPizzaDeliver(wrap);
+}
+function renderPizzaCut(wrap){
+  const d=pz.roundData,pt=pz.pizzaType,cu=pz.customer;
+  wrap.appendChild(makePizzaCustomerBubble(cu,`Hei! Vil ha en <strong>${pt.name}</strong> delt i <strong>${d.sliceCount} like biter</strong>! ${pt.decor}`));
+  const stage=document.createElement('div');stage.className='pizza-stage';stage.innerHTML=`<div class="pizza-svg-wrap" id="pizzaSvgWrap">${drawWholePizza(pt)}</div>`;wrap.appendChild(stage);
+  const panel=document.createElement('div');panel.className='cut-panel';
+  const opts=shuffleArr([d.sliceCount,...d.fakeSlices.slice(0,3)]);
+  panel.innerHTML=`<div class="cut-title">🔪 Del pizzaen i…</div><div class="cut-options">${opts.map(n=>`<button class="cut-btn" onclick="chooseCut(${n},${d.sliceCount})"><span style="font-size:1.5rem">${pizzaIcon(n)}</span><span>${n} biter</span></button>`).join('')}</div>`;wrap.appendChild(panel);
+}
+function chooseCut(chosen,correct){
+  document.querySelectorAll('.cut-btn').forEach(b=>b.onclick=null);
+  document.querySelectorAll('.cut-btn').forEach(b=>{const n=parseInt(b.querySelector('span:last-child').textContent);if(n===chosen)b.classList.add(chosen===correct?'correct-cut':'wrong-cut');if(n===correct&&chosen!==correct)b.classList.add('correct-cut');});
+  const ok=chosen===correct;
+  if(ok){const sw=document.getElementById('pizzaSvgWrap');if(sw){sw.classList.add('spinning');setTimeout(()=>{sw.classList.remove('spinning');sw.innerHTML=drawSlicedPizza(pz.pizzaType,correct,new Set(),{},true);},500);}}
+  setTimeout(()=>showFeedback(ok,ok?`Perfekt! Delt i ${correct} like biter.`:`${chosen} biter var feil — kunden ville ha ${correct}!`,()=>{if(ok){pz.phase='topping';renderPizzaPhase();}else renderPizzaPhase();}),ok?700:400);
+}
+function renderPizzaTopping(wrap){
+  const d=pz.roundData,pt=pz.pizzaType,cu=pz.customer;
+  const order=d.ordersWithIng[pz.toppingIndex];
+  const needCount=(order.num/order.den)*d.sliceCount;
+  wrap.appendChild(makePizzaCustomerBubble(cu,`Legg <strong>${order.ing.emoji} ${order.ing.name}</strong> på <strong>${order.num}/${order.den}</strong> av skivene! (${needCount} skiver)`,'right'));
+  const dots=document.createElement('div');dots.className='topping-steps';
+  d.ordersWithIng.forEach((_,i)=>{const dot=document.createElement('div');dot.className='step-dot'+(i<pz.toppingIndex?' done':i===pz.toppingIndex?' active':'');dots.appendChild(dot);});wrap.appendChild(dots);
+  const stage=document.createElement('div');stage.className='pizza-stage';stage.innerHTML=`<div class="pizza-svg-wrap" id="pizzaSvgWrap">${drawSlicedPizza(pt,d.sliceCount,pz.selectedSlices,pz.sliceIngredients,true)}</div>`;wrap.appendChild(stage);
+  const panel=document.createElement('div');panel.className='topping-panel';
+  panel.innerHTML=`<div class="topping-order"><div class="topping-emoji-big">${order.ing.emoji}</div><div><div class="topping-text">Legg på <span class="topping-frac">${order.num}/${order.den}</span> av skivene</div>${order.ing.wild?'<div style="font-size:.75rem;color:rgba(232,244,253,.5)">🌟 Vill ingrediens!</div>':''}</div></div><div class="topping-counter" id="toppingCounter">Trykk på ${needCount} skive${needCount!==1?'r':''} 🍕</div><button class="topping-submit" id="toppingSubmit" onclick="submitTopping(${needCount})" disabled>Legg på! ✅</button>`;wrap.appendChild(panel);
+  if(pz.completedToppings.length>0){const tray=document.createElement('div');tray.className='ingredient-tray';pz.completedToppings.forEach(t=>{tray.innerHTML+=`<div class="ing-chip done">${t.ing.emoji} ${t.ing.name} ✓</div>`;});wrap.appendChild(tray);}
+}
+function pizzaSliceClick(i){
+  if(pz.lockedSlices.has(i)||pz.phase!=='topping') return;
+  const order=pz.roundData.ordersWithIng[pz.toppingIndex];
+  const needCount=(order.num/order.den)*pz.roundData.sliceCount;
+  if(pz.selectedSlices.has(i)) pz.selectedSlices.delete(i);
+  else{if(pz.selectedSlices.size>=needCount)return;pz.selectedSlices.add(i);const sw=document.getElementById('pizzaSvgWrap');if(sw){const r=sw.getBoundingClientRect();floatIng(order.ing.emoji,r.left+r.width/2+Math.random()*50-25,r.top+r.height/2+Math.random()*40-20);}}
+  const sw=document.getElementById('pizzaSvgWrap');if(sw)sw.innerHTML=drawSlicedPizza(pz.pizzaType,pz.roundData.sliceCount,pz.selectedSlices,pz.sliceIngredients,true);
+  const sel=pz.selectedSlices.size;
+  const ctr=document.getElementById('toppingCounter');if(ctr)ctr.textContent=sel===needCount?`✅ ${needCount} valgt! Trykk "Legg på!"`:sel>0?`${sel} av ${needCount} valgt…`:`Trykk på ${needCount} skive${needCount!==1?'r':''}`;
+  const sub=document.getElementById('toppingSubmit');if(sub)sub.disabled=(sel!==needCount);
+}
+function submitTopping(needCount){
+  const order=pz.roundData.ordersWithIng[pz.toppingIndex];
+  if(pz.selectedSlices.size!==needCount)return;
+  pz.selectedSlices.forEach(i=>{pz.lockedSlices.add(i);pz.sliceIngredients[i]=order.ing.emoji;});
+  pz.completedToppings.push(order);pz.pizzaScore+=10;pz.selectedSlices=new Set();
+  document.getElementById('pzScoreHd').textContent=pz.pizzaScore;
+  const msg=`${order.ing.emoji} ${order.ing.name} på ${needCount} skive${needCount!==1?'r':''}! ${order.num}/${order.den} av pizzaen. ${order.ing.wild?'Vill og deilig! 🌟':'Supert! 👍'}`;
+  showFeedback(true,msg,()=>{pz.toppingIndex++;if(pz.toppingIndex>=pz.roundData.ordersWithIng.length){pz.phase='deliver';}else pz.phase='topping';renderPizzaPhase();});
+}
+function renderPizzaDeliver(wrap){
+  const pt=pz.pizzaType,cu=pz.customer,d=pz.roundData;
+  const deliverMsgs=['Nydelig!','Mamma mia!','Fantastisk!','Smakfullt!','Perfekt!'];
+  wrap.appendChild(makePizzaCustomerBubble(cu,`${deliverMsgs[~~(Math.random()*deliverMsgs.length)]} Pizzaen er utrolig! 🎉`));
+  const stage=document.createElement('div');stage.className='pizza-stage';stage.innerHTML=`<div class="pizza-svg-wrap" style="animation:spin .8s ease-out;">${drawSlicedPizza(pt,d.sliceCount,new Set(),pz.sliceIngredients,false)}</div>`;wrap.appendChild(stage);
+  const tray=document.createElement('div');tray.className='ingredient-tray';tray.style.justifyContent='center';pz.completedToppings.forEach(t=>{tray.innerHTML+=`<div class="ing-chip done">${t.ing.emoji} ${t.ing.name} — <strong>${t.num}/${t.den}</strong></div>`;});wrap.appendChild(tray);
+  const panel=document.createElement('div');panel.className='deliver-panel';
+  panel.innerHTML=`<div class="deliver-title">🍕 Pizza levert!</div><div class="pizza-score-row">${'⭐'.repeat(3)}</div><div style="color:rgba(232,244,253,.7);font-size:.85rem;margin-bottom:14px">+${pz.completedToppings.length*10} poeng!</div><button class="deliver-btn" onclick="nextPizzaRound()">${pz.roundIndex+1<pz.totalRounds?'Neste pizza! ➜':'Se resultatet! 🏆'}</button>`;wrap.appendChild(panel);
+  spawnConfetti(25);
+}
+function nextPizzaRound(){pz.roundIndex++;if(pz.roundIndex>=pz.totalRounds)endPizzaGame();else startPizzaRound();}
+function endPizzaGame(){
+  const earned=Math.min(5,Math.round((pz.pizzaScore/(pz.totalRounds*20))*5)+1);
+  stars['pizza']=Math.max(stars['pizza'],earned);
+  showEndScreen(earned,`${pz.pizzaScore} poeng! ${pz.totalRounds} pizzaer levert!`);
+}
+function drawWholePizza(pt){const sz=200,cx=sz/2,cy=sz/2,r=sz/2-4;return `<svg viewBox="0 0 ${sz} ${sz}" width="${sz}" height="${sz}"><circle cx="${cx}" cy="${cy}" r="${sz/2}" fill="${pt.crust}"/><circle cx="${cx}" cy="${cy}" r="${r}" fill="${pt.sauce}"/><circle cx="${cx}" cy="${cy}" r="${r-10}" fill="${pt.base}"/><text x="${cx}" y="${cy+7}" text-anchor="middle" font-size="20">${pt.decor}</text></svg>`;}
+function drawSlicedPizza(pt,n,selected,ingredients,clickable){
+  const sz=260,cx=sz/2,cy=sz/2,r=sz/2-6,step=(2*Math.PI)/n;
+  let paths='',texts='';
+  for(let i=0;i<n;i++){
+    const start=-Math.PI/2+i*step,end=start+step;
+    const x1=cx+r*Math.cos(start),y1=cy+r*Math.sin(start),x2=cx+r*Math.cos(end),y2=cy+r*Math.sin(end);
+    const large=step>Math.PI?1:0;
+    const isSel=selected.has(i),isLok=pz.lockedSlices.has(i);
+    let fill=pt.base,stroke=pt.crust,sw=3;
+    if(isSel){fill='rgba(255,230,30,.92)';stroke='#FFD700';sw=5;}
+    if(isLok){fill='rgba(86,211,100,.55)';stroke='#56d364';sw=4;}
+    const oc=clickable&&!isLok?`onclick="pizzaSliceClick(${i})"`:'' ;
+    const cur=clickable&&!isLok?'cursor:pointer':'cursor:default';
+    paths+=`<path d="M ${cx} ${cy} L ${x1.toFixed(1)} ${y1.toFixed(1)} A ${r} ${r} 0 ${large} 1 ${x2.toFixed(1)} ${y2.toFixed(1)} Z" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" style="${cur};transition:all .2s" ${oc}/>`;
+    const ing=ingredients[i];
+    if(ing){const ma=start+step/2;texts+=`<text x="${(cx+(r*.62)*Math.cos(ma)).toFixed(1)}" y="${(cy+(r*.62)*Math.sin(ma)).toFixed(1)}" text-anchor="middle" dominant-baseline="middle" font-size="18" style="pointer-events:none">${ing}</text>`;}
+    if(isSel){const ma=start+step/2;const mx=(cx+(r*.62)*Math.cos(ma)).toFixed(1),my=(cy+(r*.62)*Math.sin(ma)).toFixed(1);texts+=`<circle cx="${mx}" cy="${my}" r="16" fill="rgba(255,220,0,.5)" stroke="#FFD700" stroke-width="3" style="pointer-events:none"/><text x="${mx}" y="${my}" text-anchor="middle" dominant-baseline="middle" font-size="14" style="pointer-events:none">✓</text>`;}
+  }
+  let lines='';for(let i=0;i<n;i++){const a=-Math.PI/2+i*step;lines+=`<line x1="${cx}" y1="${cy}" x2="${(cx+r*Math.cos(a)).toFixed(1)}" y2="${(cy+r*Math.sin(a)).toFixed(1)}" stroke="${pt.crust}" stroke-width="2.5" style="pointer-events:none"/>`;}
+  return `<svg viewBox="0 0 ${sz} ${sz}" width="${sz}" height="${sz}"><circle cx="${cx}" cy="${cy}" r="${sz/2-1}" fill="${pt.crust}"/><circle cx="${cx}" cy="${cy}" r="${r}" fill="${pt.sauce}"/>${paths}${lines}${texts}<circle cx="${cx}" cy="${cy}" r="13" fill="${pt.sauce}" style="pointer-events:none"/><text x="${cx}" y="${cy+5}" text-anchor="middle" dominant-baseline="middle" font-size="12" style="pointer-events:none">${pt.decor}</text></svg>`;}
+function pizzaIcon(n){return ({2:'✂️',3:'🔺',4:'✚',6:'❆',8:'⭐',10:'🔟'})[n]||`${n}×`;}
+function makePizzaCustomerBubble(cu,html,side=''){const div=document.createElement('div');div.className='pizza-customer '+(side||'');div.innerHTML=`<div class="cust-emoji">${cu.emoji}</div><div class="cust-bubble"><span class="pizza-name-tag">${cu.name}</span>${html}</div>`;return div;}
+
+// ══════════════════════════════════════════════════════
+// GAME 5: DEL LIKT! — KOKKEN ORVAR'S KJØKKEN
+// ══════════════════════════════════════════════════════
+function startNewGame(g){
+  game=g;
+  if(g==='delikt'){dk.round=0;dk.score=0;buildDkBg();goTo('scr-delikt');showIntro('delikt',()=>renderDkRound());}
+  else if(g==='deling'){bl.round=0;bl.score=0;buildBlBg();goTo('scr-deling');showIntro('deling',()=>renderBlRound());}
+  else if(g==='builder'){sb.round=0;sb.score=0;buildSbBg();goTo('scr-builder');showIntro('builder',()=>renderSbRound());}
+  else if(g==='telescope'){ab.round=0;ab.score=0;ab.attempts=0;buildAbBg();goTo('scr-telescope');showIntro('telescope',()=>renderAbRound());}
+  else if(g==='carnival'){cv.round=0;cv.score=0;cv.roundIdx=0;buildCvBg();goTo('scr-carnival');showIntro('carnival',()=>renderCvRound());}
+}
+
+function buildDkBg(){
+  const bg=document.getElementById('dkBg');bg.innerHTML='';
+  const corals=['🪸','🌿','🌾','🪸','🌿'];
+  corals.forEach((c,i)=>{
+    const el=document.createElement('div');el.className='dk-coral';el.textContent=c;
+    el.style.cssText=`bottom:-10px;left:${5+i*20}%;animation-delay:${i*.6}s;animation-duration:${2+Math.random()}s;font-size:${1.8+Math.random()}rem;`;
+    bg.appendChild(el);
+  });
+  const light=document.createElement('div');light.className='dk-light';
+  light.style.cssText='top:-40px;left:50%;width:300px;height:300px;transform:translateX(-50%);';bg.appendChild(light);
+}
+
+function renderDkRound(){
+  document.getElementById('dkScore').textContent=dk.score;
+  const d=DELIKT_DATA[dk.round%DELIKT_DATA.length];
+  const wrap=document.getElementById('dkWrap');wrap.innerHTML='';
+
+  // Chef Orvar
+  const chefRow=document.createElement('div');chefRow.className='dk-chef-row';
+  chefRow.innerHTML=`<div class="dk-chef">🐙</div><div class="dk-speech"><strong>🍳 Kokk Orvar sier:</strong><br>${d.label}<br><span style="color:rgba(232,244,253,.65);font-size:.88rem">Alle biter MÅ være like store!</span></div>`;wrap.appendChild(chefRow);
+
+  // Food item
+  const foodDiv=document.createElement('div');foodDiv.className='dk-food-big';foodDiv.textContent=d.food;wrap.appendChild(foodDiv);
+
+  // Progress
+  const prog=document.createElement('div');prog.style.cssText='text-align:center;margin-bottom:10px;font-family:"Bubblegum Sans",cursive;font-size:.95rem;color:rgba(255,200,100,.7);';
+  prog.textContent=`Runde ${dk.round+1} av ${LEVELS}`;wrap.appendChild(prog);
+
+  // Generate options: 1 correct (equal), 3 wrong (unequal)
+  const correct=makeEqualAngles(d.n);
+  const wrongs=makeWrongAngles(d.n,3);
+  const allOpts=shuffleArr([{angles:correct,isCorrect:true},...wrongs.map(a=>({angles:a,isCorrect:false}))]);
+
+  const optGrid=document.createElement('div');optGrid.className='dk-options';
+  const sliceColors=['#ff6b9d','#4fc3f7','#ffd700','#56d364','#ff8c42','#a78bfa'];
+  allOpts.forEach((opt,idx)=>{
+    const card=document.createElement('div');card.className='dk-opt';
+    card.innerHTML=`${makePieSVG(opt.angles,sliceColors,d.food)}<div class="dk-opt-label">${opt.isCorrect?'':'?'}</div>`;
+    card.onclick=()=>checkDkAnswer(opt.isCorrect,card,optGrid,d.n);
+    optGrid.appendChild(card);
+  });
+  wrap.appendChild(optGrid);
+}
+
+function makeEqualAngles(n){return Array(n).fill(360/n);}
+function makeWrongAngles(n,count){
+  const results=[];
+  const unequals={
+    2:[[120,240],[80,280],[140,220],[100,260]],
+    3:[[60,120,180],[90,90,180],[80,100,180],[150,120,90]],
+    4:[[60,60,120,120],[45,90,135,90],[70,80,100,110],[120,80,90,70]],
+  };
+  const options=unequals[n]||unequals[2];
+  const shuffled=shuffleArr([...options]);
+  for(let i=0;i<count;i++) results.push(shuffled[i%shuffled.length]);
+  return results;
+}
+function makePieSVG(angles,colors,foodEmoji){
+  const cx=65,cy=65,r=55;let svg=`<svg viewBox="0 0 130 130" width="120" height="120">`;
+  svg+=`<circle cx="${cx}" cy="${cy}" r="${r+4}" fill="#3a2008" opacity=".6"/>`;
+  let cur=-90;
+  angles.forEach((a,i)=>{
+    const s=(cur)*Math.PI/180,e=(cur+a)*Math.PI/180;
+    const x1=cx+r*Math.cos(s),y1=cy+r*Math.sin(s),x2=cx+r*Math.cos(e),y2=cy+r*Math.sin(e);
+    const large=a>180?1:0;
+    svg+=`<path d="M ${cx} ${cy} L ${x1.toFixed(1)} ${y1.toFixed(1)} A ${r} ${r} 0 ${large} 1 ${x2.toFixed(1)} ${y2.toFixed(1)} Z" fill="${colors[i%colors.length]}" stroke="rgba(255,255,255,.3)" stroke-width="2"/>`;
+    const ma=(cur+a/2)*Math.PI/180;
+    const lx=(cx+(r*.62)*Math.cos(ma)).toFixed(1),ly=(cy+(r*.62)*Math.sin(ma)).toFixed(1);
+    svg+=`<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="middle" font-size="16" style="pointer-events:none">${foodEmoji}</text>`;
+    cur+=a;
+  });
+  svg+=`</svg>`;return svg;
+}
+function checkDkAnswer(isCorrect,card,grid,n){
+  grid.querySelectorAll('.dk-opt').forEach(c=>c.onclick=null);
+  card.classList.add(isCorrect?'correct':'wrong');
+  if(!isCorrect){grid.querySelectorAll('.dk-opt').forEach(c=>{if(c!==card&&!c.classList.contains('wrong'))c.classList.add('correct');});}
+  const eq=360/n;
+  const msg=isCorrect?`Riktig! Alle ${n} biter er like store — det er rettferdig! 🎉`:`Ikke helt! Noen biter er for store og andre for små. Finn de som er like!`;
+  const visual=!isCorrect?makeFracBar(1,n,'Like store biter','#56d364'):'';
+  setTimeout(()=>showFeedback(isCorrect,msg,()=>{
+    if(isCorrect) dk.score++;
+    dk.round++;
+    if(dk.round>=LEVELS){const earned=Math.round((dk.score/LEVELS)*5);stars.delikt=Math.max(stars.delikt,earned);showEndScreen(earned,`${dk.score} av ${LEVELS} riktige!`);}
+    else renderDkRound();
+  },visual),500);
+}
+
+// ══════════════════════════════════════════════════════
+// GAME 6: RETTFERDIG DELING — BALLROOM
+// ══════════════════════════════════════════════════════
+function buildBlBg(){
+  const bg=document.getElementById('blBg');bg.innerHTML='';
+  ['🦀','⭐','🌟','🦐','💎'].forEach((c,i)=>{
+    const el=document.createElement('div');el.className='bl-chandelier';el.textContent=c;
+    el.style.cssText=`left:${10+i*20}%;top:-10px;animation-delay:${i*.4}s;animation-duration:${3+Math.random()}s;`;
+    bg.appendChild(el);
+  });
+  for(let i=0;i<12;i++){
+    const p=document.createElement('div');p.className='bl-particle';
+    const sz=3+Math.random()*5;
+    p.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;animation-duration:${6+Math.random()*10}s;animation-delay:${-Math.random()*15}s;`;
+    bg.appendChild(p);
+  }
+}
+
+function renderBlRound(){
+  document.getElementById('blScore').textContent=bl.score;
+  const d=DELING_DATA[bl.round%DELING_DATA.length];
+  bl.phase='setup';
+  const wrap=document.getElementById('blWrap');wrap.innerHTML='';
+  const creaNames=['Den sultne haien','Den nysgjerrige blekkspruten','Hummeren i dress','Krabben med sløyfe','Den blinkende fisken','Blekktspruten med topp'];
+
+  // Setup card
+  const card=document.createElement('div');card.className='bl-card';
+  card.innerHTML=`<div class="bl-setup-label">🎩 ${d.food} fisker til ${d.creatures.length} gjester</div>
+    <div class="bl-creatures-row">${d.creatures.map((c,i)=>`<div class="bl-creature-fig"><div class="bl-creature-emoji" style="animation-delay:${i*.2}s">${c}</div></div>`).join('')}</div>
+    <div class="bl-divider"></div>
+    <div class="bl-food-row" id="blFoodRow">${Array(d.food).fill(null).map((_,i)=>`<div class="bl-food-item" id="food${i}">${d.foodEmoji}</div>`).join('')}</div>`;
+  wrap.appendChild(card);
+
+  // Button
+  const btn=document.createElement('button');btn.className='bl-deal-btn';btn.textContent='Del likt! 🔪';
+  btn.onclick=()=>animateDeling(d,wrap,btn);wrap.appendChild(btn);
+}
+
+function animateDeling(d,wrap,btn){
+  btn.disabled=true;btn.style.opacity='.5';
+  // Animate food items flying away
+  document.querySelectorAll('.bl-food-item').forEach((el,i)=>{
+    setTimeout(()=>{el.style.transition='all .4s';el.style.transform='scale(0) translateY(-30px)';el.style.opacity='0';},i*120);
+  });
+  setTimeout(()=>{
+    // Show fraction reveal
+    const revDiv=document.createElement('div');revDiv.className='bl-fraction-reveal';
+    const fracText=d.num===d.den?'1 hel! 🥳':`${d.num}/${d.den}`;
+    revDiv.innerHTML=`<div style="font-size:.9rem;color:rgba(212,168,255,.8);margin-bottom:8px">Hvert dyr fikk:</div><div class="bl-frac-big">${fracText}</div>`;
+    wrap.appendChild(revDiv);
+
+    // Generate choices
+    const choices=generateFracChoices(d.num,d.den);
+    const choiceDiv=document.createElement('div');choiceDiv.innerHTML='<div class="bl-each-label">Velg riktig brøk! 👇</div>';
+    const row=document.createElement('div');row.className='bl-choices';
+    choices.forEach(c=>{
+      const btn=document.createElement('button');btn.className='bl-choice';btn.textContent=c.label;
+      btn.onclick=()=>checkBlAnswer(c.correct,btn,row,d);row.appendChild(btn);
+    });
+    choiceDiv.appendChild(row);wrap.appendChild(choiceDiv);
+
+    // Creature celebrate row
+    const celebRow=document.createElement('div');celebRow.style.cssText='display:flex;justify-content:center;gap:10px;font-size:2.5rem;margin-top:10px;';
+    celebRow.innerHTML=d.creatures.map((c,i)=>`<span style="animation:bob 1.5s ease-in-out ${i*.2}s infinite">${c}</span>`).join('');
+    wrap.appendChild(celebRow);
+  },d.food*120+400);
+}
+
+function generateFracChoices(num,den){
+  const correct=num===den?'1 hel':`${num}/${den}`;
+  const wrongs=[];
+  const candidates=[[num+1,den],[num,den+1],[num>1?num-1:2,den],[den,num]].filter(([n,d])=>n>0&&d>0&&!(n===num&&d===den)&&n<=d);
+  shuffleArr(candidates).slice(0,3).forEach(([n,d])=>{wrongs.push(n===d?'1 hel':`${n}/${d}`);});
+  while(wrongs.length<3) wrongs.push(`${Math.max(1,num-1)}/${den+1}`);
+  return shuffleArr([{label:correct,correct:true},...wrongs.slice(0,3).map(w=>({label:w,correct:false}))]);
+}
+function checkBlAnswer(isCorrect,btn,row,d){
+  row.querySelectorAll('.bl-choice').forEach(b=>b.onclick=null);
+  btn.classList.add(isCorrect?'correct':'wrong');
+  if(!isCorrect) row.querySelectorAll('.bl-choice').forEach(b=>{if(b!==btn&&!b.classList.contains('wrong'))b.classList.add('correct');});
+  const n=d.num,de=d.den;
+  const msg=isCorrect?`Riktig! ${d.food} fisker delt på ${d.creatures.length} dyr = ${n}/${de} til hvert dyr. Brøk er deling!`:`Ikke helt! ${d.food} delt på ${d.creatures.length} gir ${n}/${de} til hvert dyr. Prøv neste!`;
+  const visual=!isCorrect?makeFracBar(n,de,'Riktig svar','#56d364'):'';
+  setTimeout(()=>showFeedback(isCorrect,msg,()=>{
+    if(isCorrect) bl.score++;
+    bl.round++;
+    if(bl.round>=LEVELS){const earned=Math.round((bl.score/LEVELS)*5);stars.deling=Math.max(stars.deling,earned);showEndScreen(earned,`${bl.score} av ${LEVELS} riktige!`);}
+    else renderBlRound();
+  },visual),500);
+}
+
+// ══════════════════════════════════════════════════════
+// GAME 7: BRØKBYGGEREN — MASKINROMMET
+// ══════════════════════════════════════════════════════
+function buildSbBg(){
+  const bg=document.getElementById('sbBg');bg.innerHTML='';
+  const gears=['⚙️','🔩','⚙️','🔩','⚙️'];
+  gears.forEach((g,i)=>{
+    const el=document.createElement('div');el.className='sb-gear';el.textContent=g;
+    el.style.cssText=`${i%2===0?'top':'bottom'}:${10+Math.random()*30}%;${i<3?'left':'right'}:${Math.random()*20}%;animation-duration:${4+Math.random()*8}s;font-size:${2+Math.random()*2}rem;`;
+    bg.appendChild(el);
+  });
+  // Pipes
+  for(let i=0;i<3;i++){
+    const p=document.createElement('div');p.className='sb-pipe';
+    p.style.cssText=`width:${30+Math.random()*60}px;height:${50+Math.random()*120}px;${Math.random()>.5?'left':'right'}:${Math.random()*10}%;top:${20+Math.random()*60}%;`;
+    bg.appendChild(p);
+  }
+}
+
+function renderSbRound(){
+  document.getElementById('sbScore').textContent=sb.score;
+  const d=BUILDER_DATA[sb.round%BUILDER_DATA.length];
+  sb.target={...d};sb.curNum=1;sb.curDen=2;
+  const wrap=document.getElementById('sbWrap');wrap.innerHTML='';
+
+  // Target display
+  const targ=document.createElement('div');targ.className='sb-target-display';
+  targ.innerHTML=`<div class="sb-target-label">⚙️ LAG DENNE BRØKEN:</div><div class="sb-target-frac">${d.num}/${d.den}</div><div style="font-size:.85rem;color:rgba(255,180,60,.6);margin-top:4px">Still inn tallene og trykk AVFYR! 🚀</div>`;
+  wrap.appendChild(targ);
+
+  // Machine
+  const machine=document.createElement('div');machine.className='sb-machine';machine.id='sbMachine';
+  machine.innerHTML=`
+    <div class="sb-bar-wrap">
+      <div class="sb-bar-label">📊 Slik ser brøken ut</div>
+      <div class="sb-bar" id="sbBar"></div>
+    </div>
+    <div class="sb-dials">
+      <div class="sb-dial">
+        <div class="sb-dial-label">BUNN-TALL</div>
+        <div class="sb-dial-val" id="sbDen">2</div>
+        <div class="sb-dial-sub">Deler i like biter</div>
+        <div class="sb-btns">
+          <button class="sb-dial-btn" onclick="adjustSb('den',-1)">−</button>
+          <button class="sb-dial-btn" onclick="adjustSb('den',1)">+</button>
+        </div>
+      </div>
+      <div class="sb-dial">
+        <div class="sb-dial-label">TOPP-TALL</div>
+        <div class="sb-dial-val" id="sbNum">1</div>
+        <div class="sb-dial-sub">Hvor mange biter du tar</div>
+        <div class="sb-btns">
+          <button class="sb-dial-btn" onclick="adjustSb('num',-1)">−</button>
+          <button class="sb-dial-btn" onclick="adjustSb('num',1)">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="sb-status" id="sbStatus">Still inn brøken og trykk AVFYR!</div>`;
+  wrap.appendChild(machine);
+
+  const fireBtn=document.createElement('button');fireBtn.className='sb-fire-btn';fireBtn.id='sbFireBtn';fireBtn.innerHTML='🚀 AVFYR! 🚀';fireBtn.onclick=checkSbAnswer;wrap.appendChild(fireBtn);
+
+  const prog=document.createElement('div');prog.style.cssText='text-align:center;margin-top:8px;font-size:.85rem;color:rgba(255,180,60,.5);';prog.textContent=`Runde ${sb.round+1} av ${LEVELS}`;wrap.appendChild(prog);
+  updateSbVisual();
+}
+
+function adjustSb(which,delta){
+  if(which==='den'){sb.curDen=Math.max(2,Math.min(10,sb.curDen+delta));if(sb.curNum>sb.curDen)sb.curNum=sb.curDen;}
+  else{sb.curNum=Math.max(1,Math.min(sb.curDen,sb.curNum+delta));}
+  updateSbVisual();
+  // Steam effect when adjusting
+  const wrap=document.getElementById('sbWrap');if(wrap){const st=document.createElement('div');st.className='sb-steam';st.textContent='💨';st.style.cssText=`top:60%;left:${40+Math.random()*20}%;`;wrap.appendChild(st);setTimeout(()=>st.remove(),950);}
+}
+
+function updateSbVisual(){
+  const denEl=document.getElementById('sbDen');const numEl=document.getElementById('sbNum');const barEl=document.getElementById('sbBar');const fireEl=document.getElementById('sbFireBtn');const statEl=document.getElementById('sbStatus');
+  if(!denEl||!barEl) return;
+  denEl.textContent=sb.curDen;numEl.textContent=sb.curNum;
+  // Draw bar
+  barEl.innerHTML='';
+  for(let i=0;i<sb.curDen;i++){const seg=document.createElement('div');seg.className='sb-bar-seg'+(i<sb.curNum?' filled':'');barEl.appendChild(seg);}
+  // Check if correct
+  const correct=sb.curNum===sb.target.num&&sb.curDen===sb.target.den;
+  if(fireEl){fireEl.classList.toggle('ready',correct);}
+  if(statEl){
+    if(correct) statEl.innerHTML=`<span style="color:#56d364;font-size:1.1rem">✅ ${sb.curNum}/${sb.curDen} — TREFFER! Trykk AVFYR! 🚀</span>`;
+    else statEl.textContent=`Du har laget: ${sb.curNum}/${sb.curDen} — du vil lage: ${sb.target.num}/${sb.target.den}`;
+  }
+}
+
+function checkSbAnswer(){
+  const correct=sb.curNum===sb.target.num&&sb.curDen===sb.target.den;
+  if(!correct)return;
+  // LAUNCH ANIMATION
+  const wrap=document.getElementById('sbWrap');
+  ['🐟','🐠','🐡','⭐','💥','🚀'].forEach((e,i)=>{setTimeout(()=>{const el=document.createElement('div');el.style.cssText=`position:absolute;font-size:2rem;left:${20+Math.random()*60}%;top:60%;animation:floatUp .8s ease-out forwards;z-index:50;pointer-events:none`;el.textContent=e;wrap.appendChild(el);setTimeout(()=>el.remove(),850);},i*120);});
+  const t=sb.target;
+  const msg=`${t.num}/${t.den}! Bunn-tall ${t.den} deler i biter, topp-tall ${t.num} er hvor mange du tar. AVFYRT! 🚀`;
+  setTimeout(()=>showFeedback(true,msg,()=>{
+    sb.score++;sb.round++;
+    if(sb.round>=LEVELS){const earned=Math.round((sb.score/LEVELS)*5);stars.builder=Math.max(stars.builder,earned);showEndScreen(earned,`${sb.score} av ${LEVELS} riktige!`);}
+    else renderSbRound();
+  }),700);
+}
+
+// ══════════════════════════════════════════════════════
+// GAME 8: BRØKTELESKOPET — THE ABYSS
+// ══════════════════════════════════════════════════════
+function buildAbBg(){
+  const bg=document.getElementById('abBg');bg.innerHTML='';
+  const bioColors=['#00ff9d','#00ccff','#7b2fff','#ff00cc','#00ff66'];
+  for(let i=0;i<30;i++){
+    const p=document.createElement('div');p.className='ab-particle';
+    const sz=2+Math.random()*5;
+    p.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;background:${bioColors[~~(Math.random()*bioColors.length)]};animation-duration:${2+Math.random()*4}s;animation-delay:${-Math.random()*5}s;box-shadow:0 0 ${sz*2}px currentColor;`;
+    bg.appendChild(p);
+  }
+  ['🐙','🦑','🐡'].forEach((c,i)=>{
+    const el=document.createElement('div');el.className='ab-creature';el.textContent=c;
+    el.style.cssText=`top:${20+i*25}%;animation-duration:${18+Math.random()*12}s;animation-delay:${-Math.random()*20}s;font-size:${1.5+Math.random()*1.2}rem;`;
+    bg.appendChild(el);
+  });
+}
+
+function renderAbRound(){
+  document.getElementById('abScore').textContent=ab.score;
+  const d=TELESCOPE_DATA[ab.round%TELESCOPE_DATA.length];
+  ab.attempts=0;
+  const wrap=document.getElementById('abWrap');wrap.innerHTML='';
+
+  // Submarine
+  const sub=document.createElement('div');sub.className='ab-sub';sub.textContent='🚢';wrap.appendChild(sub);
+
+  // Instruction
+  const inst=document.createElement('div');inst.className='ab-instruction';
+  inst.innerHTML=`<div class="ab-find-label">🔭 Ubåten leter etter:</div><div class="ab-frac-show">${d.num}/${d.den}</div><div class="ab-hint">Klikk på linjen der du tror skatten er!</div>`;wrap.appendChild(inst);
+
+  // Attempts (hearts)
+  const hearts=document.createElement('div');hearts.className='ab-attempts';hearts.id='abHearts';
+  for(let i=0;i<3;i++){const h=document.createElement('span');h.className='ab-heart';h.textContent='❤️';h.id=`heart${i}`;hearts.appendChild(h);}wrap.appendChild(hearts);
+
+  // Number line
+  const lineContainer=document.createElement('div');lineContainer.className='ab-line-container';
+  lineContainer.innerHTML=`<div class="ab-line" id="abLine">
+    <div class="ab-rope"></div>
+    <div class="ab-end-tick" style="left:0%"></div><div class="ab-end-label" style="left:0%">0</div>
+    <div class="ab-end-tick" style="left:50%"></div><div class="ab-end-label" style="left:50%">½</div>
+    <div class="ab-end-tick" style="left:100%"></div><div class="ab-end-label" style="left:100%">1</div>
+    <div class="ab-treasure" id="abTreasure" style="left:-999px">💰</div>
+    <div class="ab-click-marker" id="abClickMarker" style="background:rgba(255,100,100,.8)"></div>
+  </div>`;wrap.appendChild(lineContainer);
+
+  // Hint button
+  const hintBtn=document.createElement('button');hintBtn.className='ab-hint-btn';hintBtn.id='abHintBtn';hintBtn.textContent='💡 Vis et hint';hintBtn.onclick=()=>showAbHint(d);wrap.appendChild(hintBtn);
+
+  const prog=document.createElement('div');prog.style.cssText='text-align:center;margin-top:8px;font-family:"Bubblegum Sans",cursive;font-size:.9rem;color:rgba(0,255,200,.4);';prog.textContent=`Runde ${ab.round+1} av ${LEVELS}`;wrap.appendChild(prog);
+
+  // Click handler
+  document.getElementById('abLine').onclick=(e)=>handleAbClick(e,d);
+}
+
+function showAbHint(d){
+  const pct=(d.num/d.den)*100;
+  const hintDiv=document.querySelector('.ab-hint');
+  if(hintDiv){
+    const hints=[
+      `${d.num}/${d.den} betyr: del linjen i ${d.den} like deler og pek på biten nummer ${d.num}.`,
+      `Er ${d.num}/${d.den} nærmere 0 eller nærmere 1?`,
+      `Tips: 1/2 er midt på. ${d.num}/${d.den} er ${d.num/d.den>0.5?'til høyre for':'til venstre for'} midten!`
+    ];
+    hintDiv.textContent=hints[ab.attempts%hints.length];
+    hintDiv.style.color='rgba(0,255,200,.8)';
+  }
+}
+
+function handleAbClick(e,d){
+  const line=document.getElementById('abLine');
+  const rect=line.getBoundingClientRect();
+  const clickPct=(e.clientX-rect.left)/rect.width;
+  const correctPct=d.num/d.den;
+  const tolerance=0.10;
+
+  // Show ping animation
+  const ping=document.createElement('div');ping.className='ab-ping';ping.style.left=`${clickPct*100}%`;line.appendChild(ping);setTimeout(()=>ping.remove(),800);
+
+  // Show click marker
+  const marker=document.getElementById('abClickMarker');
+  marker.style.display='block';marker.style.left=`${clickPct*100}%`;
+  marker.style.background=Math.abs(clickPct-correctPct)<=tolerance?'rgba(86,211,100,.8)':'rgba(255,100,100,.8)';
+
+  const ok=Math.abs(clickPct-correctPct)<=tolerance;
+  if(ok){
+    line.onclick=null;
+    // Show treasure!
+    const chest=document.getElementById('abTreasure');
+    chest.style.left=`${correctPct*100}%`;chest.style.display='block';
+    spawnConfetti(20);
+    const pos=correctPct<.33?'nærmere 0':correctPct>.66?'nærmere 1':'rundt midten';
+    setTimeout(()=>showFeedback(true,`Skatten funnet! ${d.num}/${d.den} er ${pos} på linjen. Bra jobbet! 🎉`,()=>{
+      ab.score++;ab.round++;
+      if(ab.round>=LEVELS){const earned=Math.round((ab.score/LEVELS)*5);stars.telescope=Math.max(stars.telescope,earned);showEndScreen(earned,`${ab.score} av ${LEVELS} riktige!`);}
+      else renderAbRound();
+    }),400);
+  } else {
+    ab.attempts++;
+    const heartEl=document.getElementById(`heart${ab.attempts-1}`);if(heartEl)heartEl.textContent='🖤';
+    if(ab.attempts>=3){
+      line.onclick=null;
+      // Show where it was
+      const chest=document.getElementById('abTreasure');chest.style.left=`${correctPct*100}%`;chest.style.opacity='0.6';
+      setTimeout(()=>showFeedback(false,`${d.num}/${d.den} var litt lenger ${correctPct>0.5?'til høyre':'til venstre'}. Neste gang! 💪`,()=>{
+        ab.round++;
+        if(ab.round>=LEVELS){const earned=Math.round((ab.score/LEVELS)*5);stars.telescope=Math.max(stars.telescope,earned);showEndScreen(earned,`${ab.score} av ${LEVELS} riktige!`);}
+        else renderAbRound();
+      }),400);
+    } else {
+      const diff=correctPct-clickPct;
+      const abLine=document.querySelector('.ab-hint');
+      if(abLine) abLine.textContent=diff>0?`Litt for langt til venstre! Prøv lenger til høyre. (${ab.attempts}/3 forsøk)`:
+        `Litt for langt til høyre! Prøv lenger til venstre. (${ab.attempts}/3 forsøk)`;
+    }
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// GAME 9: BLEKKSPRUT-KAMUFLASJE — KARNEVAL
+// ══════════════════════════════════════════════════════
+function buildCvBg(){
+  const bg=document.getElementById('cvBg');bg.innerHTML='';
+  const neonColors=['rgba(255,60,180,.15)','rgba(0,220,255,.1)','rgba(255,220,0,.12)','rgba(120,60,255,.12)','rgba(0,255,130,.1)'];
+  for(let i=0;i<10;i++){
+    const l=document.createElement('div');l.className='cv-light';
+    const sz=100+Math.random()*200;
+    l.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;background:${neonColors[~~(Math.random()*neonColors.length)]};animation-duration:${2+Math.random()*3}s;animation-delay:${-Math.random()*5}s;`;
+    bg.appendChild(l);
+  }
+}
+
+function renderCvRound(){
+  document.getElementById('cvScore').textContent=cv.score;
+  const roundCards=CARNIVAL_ROUNDS[cv.roundIdx%CARNIVAL_ROUNDS.length];
+  cv.selected=null;cv.matched=new Set();
+  const wrap=document.getElementById('cvWrap');wrap.innerHTML='';
+
+  // Instructions
+  const inst=document.createElement('div');inst.className='cv-instruction';
+  inst.innerHTML=`<div class="cv-inst-title">🐙 Finn de hemmelige tvillingene!</div><div class="cv-inst-sub">Blekksprutene er i forkledning! Finn to som er LIKE STORE. Feil par = blekkspruten skyter blekk! 🦑💦</div>`;wrap.appendChild(inst);
+
+  const progEl=document.createElement('div');progEl.className='cv-progress';progEl.id='cvProgress';progEl.textContent=`${roundCards.length/2} par igjen! 🎭 Runde ${cv.round+1} av ${LEVELS}`;wrap.appendChild(progEl);
+
+  // Card grid
+  const grid=document.createElement('div');
+  grid.className='cv-grid'+(roundCards.length<=4?' four-cards':roundCards.length===6?' six-cards':'');
+  grid.id='cvGrid';
+  
+  // Assign costumes randomly
+  const costumes=shuffleArr([...CARNIVAL_COSTUMES]);
+  const shuffledCards=shuffleArr([...roundCards]);
+  
+  shuffledCards.forEach((card,idx)=>{
+    const div=document.createElement('div');div.className='cv-card';
+    div.id=`cvCard${idx}`;
+    div.style.cssText=`background:${card.c}22;border-color:${card.c}66;animation-delay:${idx*.08}s;`;
+    div.innerHTML=`<span class="cv-octopus">🐙</span><span class="cv-costume">${costumes[idx%costumes.length]}</span><span class="cv-frac" style="color:${card.c}">${card.f}</span>`;
+    div.dataset.group=card.g;div.dataset.idx=idx;div.dataset.frac=card.f;
+    div.onclick=()=>handleCvClick(idx,div,roundCards.length);
+    div.style.boxShadow=`0 4px 20px ${card.c}44`;
+    grid.appendChild(div);
+  });
+  wrap.appendChild(grid);
+}
+
+function handleCvClick(idx,div,totalCards){
+  if(cv.matched.has(idx)||div.classList.contains('selected')) return;
+  
+  if(cv.selected===null){
+    cv.selected=idx;div.classList.add('selected');
+    div.style.transform='scale(1.1) translateY(-4px)';
+  } else {
+    const prevIdx=cv.selected;const prevDiv=document.getElementById(`cvCard${prevIdx}`);
+    cv.selected=null;
+    
+    const sameGroup=div.dataset.group===prevDiv.dataset.group;
+    if(sameGroup){
+      // MATCH! 🎉
+      cv.matched.add(idx);cv.matched.add(prevIdx);
+      div.classList.add('matched');prevDiv.classList.add('matched');
+      div.style.transform='none';prevDiv.style.transform='none';
+      // Dance animation
+      div.style.animation='spin .5s ease';prevDiv.style.animation='spin .5s ease';
+      spawnConfetti(15);
+      const remaining=(totalCards/2)-cv.matched.size/2;
+      const prog=document.getElementById('cvProgress');if(prog)prog.textContent=`${remaining} par igjen! 🎭 Runde ${cv.round+1} av ${LEVELS}`;
+      
+      if(cv.matched.size===totalCards){
+        setTimeout(()=>showFeedback(true,`Alle blekksprutene avslørt! ${div.dataset.frac} og ${prevDiv.dataset.frac} er like store — de var forkledd!`,()=>{
+          cv.score++;cv.round++;cv.roundIdx++;
+          if(cv.round>=LEVELS){const earned=Math.round((cv.score/LEVELS)*5);stars.carnival=Math.max(stars.carnival,earned);showEndScreen(earned,`${cv.score} av ${LEVELS} riktige!`);}
+          else renderCvRound();
+        }),600);
+      } else {
+        setTimeout(()=>showFeedback(true,`${div.dataset.frac} og ${prevDiv.dataset.frac} er like store — samme blekksprut i ny forkledning! 🎉`,()=>{}),300);
+      }
+    } else {
+      // WRONG — ink splat!
+      div.classList.add('wrong-flash');prevDiv.classList.add('wrong-flash');
+      div.style.transform='none';prevDiv.style.transform='none';
+      prevDiv.classList.remove('selected');
+      
+      const splat=document.createElement('div');splat.className='cv-ink-splat';splat.textContent='🦑';document.body.appendChild(splat);setTimeout(()=>splat.remove(),750);
+      
+      setTimeout(()=>{div.classList.remove('wrong-flash');prevDiv.classList.remove('wrong-flash');},400);
+      
+      const f1=div.dataset.frac,f2=prevDiv.dataset.frac;
+      const v1=evalFrac(f1),v2=evalFrac(f2);
+      setTimeout(()=>showFeedback(false,`${f1} og ${f2} er ikke like store. Prøv et annet par! 🦑`,()=>{}),200);
+    }
+  }
+}
+
+function evalFrac(str){const p=str.split('/');return p.length===2?parseInt(p[0])/parseInt(p[1]):parseInt(p[0]);}
+
+// ══════════════════════════════════════
+// SHARED UTILITIES
+// ══════════════════════════════════════
+function spawnConfetti(count=26){
+  const cols=['#FFD700','#FF6B6B','#4FC3F7','#00C9C8','#56D364','#FF9800','#A78BFA','#FF60E0'];
+  for(let i=0;i<count;i++){
+    const c=document.createElement('div');c.className='confetti-piece';
+    const sz=7+Math.random()*10;
+    c.style.cssText=`left:${Math.random()*100}vw;top:-20px;width:${sz}px;height:${sz}px;background:${cols[~~(Math.random()*cols.length)]};animation-duration:${1.2+Math.random()*1.8}s;animation-delay:${Math.random()*.5}s;border-radius:${Math.random()>.5?'50%':'3px'};`;
+    document.body.appendChild(c);setTimeout(()=>c.remove(),3200);
+  }
+}
+function floatIng(emoji,x,y){const el=document.createElement('div');el.className='float-ing';el.textContent=emoji;el.style.cssText=`left:${x}px;top:${y}px;`;document.body.appendChild(el);setTimeout(()=>el.remove(),950);}
+function shuffleArr(arr){return [...arr].sort(()=>Math.random()-.5);}
+
+// ══════════════════════════════════════
+// OCEAN ATMOSPHERE
+// ══════════════════════════════════════
+(function buildAtmos(){
+  const wrap=document.getElementById('atmos');
+  for(let i=0;i<18;i++){
+    const b=document.createElement('div');b.className='bubble';
+    const sz=5+Math.random()*22;
+    b.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;animation-duration:${7+Math.random()*14}s;animation-delay:${-Math.random()*20}s;`;
+    wrap.appendChild(b);
+  }
+  ['🐟','🐠','🐡','🦑','🦐','🦀'].forEach((f,i)=>{
+    const el=document.createElement('div');el.className='bg-fish';el.textContent=f;
+    el.style.cssText=`top:${8+Math.random()*80}%;animation-duration:${16+Math.random()*22}s;animation-delay:${-Math.random()*25}s;font-size:${1.4+Math.random()*1.3}rem;`;
+    wrap.appendChild(el);
+  });
+  const plants=['🌿','🌾','🌿','🌿','🌾','🌿'];
+  for(let i=0;i<7;i++){
+    const w=document.createElement('div');w.className='seaweed';w.textContent=plants[i%plants.length];
+    w.style.cssText=`left:${3+i*14}%;animation-delay:${i*.45}s;animation-duration:${2.5+Math.random()*2}s;font-size:${2+Math.random()*2}rem;`;
+    wrap.appendChild(w);
+  }
+})();
+
+renderStarsAll();
+</script>
+</body>
+</html>
