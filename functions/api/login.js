@@ -18,7 +18,7 @@ export async function onRequestPost(context) {
   return new Response("OK", {
     status: 200,
     headers: {
-      "Set-Cookie": `pw=${passord}; Path=/; HttpOnly; Secure; SameSite=Strict`
+      "Set-Cookie": `pw=${passord}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000`
     }
   });
 }
