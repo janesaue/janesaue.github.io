@@ -2,6 +2,7 @@
 <html lang="no">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Logg inn</title>
   <style>
     body {
@@ -44,7 +45,7 @@
 <body>
   <div class="boks">
     <h2>Skriv inn passord</h2>
-    <input type="password" id="passord" placeholder="Passord" />
+    <input type="password" id="passord" placeholder="Passord" onkeydown="if(event.key==='Enter')loggInn()" />
     <br>
     <button onclick="loggInn()">Logg inn</button>
     <p class="feil" id="feilmelding">Feil passord – prøv igjen</p>
@@ -55,6 +56,7 @@
       const passord = document.getElementById("passord").value;
       const svar = await fetch("/api/login", {
         method: "POST",
+        credentials: "same-origin",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ passord })
       });
