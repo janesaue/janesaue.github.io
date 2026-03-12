@@ -23,12 +23,15 @@ export async function onRequestPost(context) {
   // Tell opp bruken
   await env.PASSWORDS.put(passord, String(Number(count) + 1));
 
-  // Sett cookie og redirect til forsiden
-  return new Response(null, {
-    status: 302,
-    headers: {
-      "Location": url.origin + "/",
-      "Set-Cookie": `pw=${passord}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000`
+  // Returner HTML-side med cookie — iOS Safari dropper cookies på 302-redirects
+  return new Response(
+    `<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0;url=/"></head><body>Logger inn...</body></html>`,
+    {
+      status: 200,
+      headers: {
+        "Content-Type": "text/html",
+        "Set-Cookie": `pw=${passord}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000`
+      }
     }
-  });
+  );
 }
