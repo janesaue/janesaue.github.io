@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <title>Logg inn</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background: #f0f0f0;
+    }
+    .boks {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    input {
+      padding: 0.5rem;
+      font-size: 1rem;
+      margin: 1rem 0;
+      width: 200px;
+    }
+    button {
+      padding: 0.5rem 1.5rem;
+      font-size: 1rem;
+      background: #4a90e2;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .feil {
+      color: red;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="boks">
+    <h2>Skriv inn passord</h2>
+    <input type="password" id="passord" placeholder="Passord" />
+    <br>
+    <button onclick="loggInn()">Logg inn</button>
+    <p class="feil" id="feilmelding">Feil passord – prøv igjen</p>
+  </div>
+
+  <script>
+    async function loggInn() {
+      const passord = document.getElementById("passord").value;
+      const svar = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ passord })
+      });
+      if (svar.ok) {
+        window.location.href = "/";
+      } else {
+        document.getElementById("feilmelding").style.display = "block";
+      }
+    }
+  </script>
+</body>
+</html>
