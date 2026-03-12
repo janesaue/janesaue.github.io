@@ -45,26 +45,17 @@
 <body>
   <div class="boks">
     <h2>Skriv inn passord</h2>
-    <input type="password" id="passord" placeholder="Passord" onkeydown="if(event.key==='Enter')loggInn()" />
-    <br>
-    <button onclick="loggInn()">Logg inn</button>
+    <form method="POST" action="/api/login">
+      <input type="password" name="passord" placeholder="Passord" />
+      <br>
+      <button type="submit">Logg inn</button>
+    </form>
     <p class="feil" id="feilmelding">Feil passord – prøv igjen</p>
   </div>
 
   <script>
-    async function loggInn() {
-      const passord = document.getElementById("passord").value;
-      const svar = await fetch("/api/login", {
-        method: "POST",
-        credentials: "same-origin",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ passord })
-      });
-      if (svar.ok) {
-        window.location.href = "/";
-      } else {
-        document.getElementById("feilmelding").style.display = "block";
-      }
+    if (new URLSearchParams(window.location.search).get("feil") === "1") {
+      document.getElementById("feilmelding").style.display = "block";
     }
   </script>
 </body>
