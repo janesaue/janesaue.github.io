@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 — Kodebasen</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #000;
+      color: #00ff88;
+      font-family: 'Share Tech Mono', monospace;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.05) 2px, rgba(0,0,0,0.05) 4px);
+      pointer-events: none;
+    }
+    .terminal {
+      max-width: 600px;
+      width: 100%;
+    }
+    .line { line-height: 1.9; font-size: clamp(12px, 2vw, 14px); }
+    .red   { color: #ff4444; }
+    .dim   { color: #2a6e4a; }
+    .white { color: #c9d1d9; }
+    .blink { animation: blink 1s step-end infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+    .big { font-size: clamp(3rem, 10vw, 6rem); color: #ff4444; line-height: 1; margin: 1.5rem 0; letter-spacing: -0.02em; }
+    .back-link {
+      display: inline-block;
+      margin-top: 2rem;
+      font-size: 13px;
+      color: #00ff88;
+      text-decoration: none;
+      border: 1px solid #00ff88;
+      padding: 8px 16px;
+      letter-spacing: 0.08em;
+      transition: background 0.15s;
+    }
+    .back-link:hover { background: rgba(0,255,136,0.1); }
+  </style>
+</head>
+<body>
+  <div class="terminal">
+    <div class="line dim">KODEBASEN OS v1.0.4</div>
+    <div class="line dim">──────────────────────────────────</div>
+    <div class="big">404</div>
+    <div class="line red">FEIL: fil eller program ikke funnet</div>
+    <div class="line">&nbsp;</div>
+    <div class="line dim">traceback:</div>
+    <div class="line white">&nbsp;&nbsp;→ forespørsel mottatt</div>
+    <div class="line white">&nbsp;&nbsp;→ søker i filsystem...</div>
+    <div class="line red">&nbsp;&nbsp;→ ingen treff — operasjon avbrutt</div>
+    <div class="line">&nbsp;</div>
+    <div class="line dim">// programmet du leter etter eksisterer ikke</div>
+    <div class="line dim">// eller har blitt fjernet fra systemet</div>
+    <div class="line">&nbsp;</div>
+    <div class="line">&gt; <span class="blink">_</span></div>
+    <a class="back-link" href="/">[ tilbake til kodebasen ]</a>
+  </div>
+</body>
+</html>
