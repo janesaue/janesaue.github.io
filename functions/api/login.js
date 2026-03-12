@@ -23,15 +23,10 @@ export async function onRequestPost(context) {
   // Tell opp bruken
   await env.PASSWORDS.put(passord, String(Number(count) + 1));
 
-  // Returner HTML-side med cookie — iOS Safari dropper cookies på 302-redirects
-  return new Response(
-    `<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0;url=/"></head><body>Logger inn...</body></html>`,
-    {
-      status: 200,
-      headers: {
-        "Content-Type": "text/html",
-        "Set-Cookie": `pw=${passord}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000`
-      }
-    }
-  );
+  // Lagre engangs-token i KV (utløper etter 60 sek)
+  const token = crypto.randomUUID();
+  await env.PASSWORDS.put("_tok_" + token, passord, { expirationTtl: 60 });
+
+  // Redirect til forsiden med token — middleware setter cookien fra GET
+  return Response.redirect(url.origin + "/?tok=" + token, 302);
 }
