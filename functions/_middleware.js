@@ -15,9 +15,12 @@ export async function onRequest(context) {
       // Slett engangs-token
       await env.PASSWORDS.delete("_tok_" + tok);
       // Server selve siden med Set-Cookie på 200-respons (Safari dropper cookies på 302)
-      const pageResponse = await next();
+      const cleanUrl = new URL(url);
+      cleanUrl.searchParams.delete("tok");
+      const pageRequest = new Request(cleanUrl.toString(), request);
+      const pageResponse = await env.ASSETS.fetch(pageRequest);
       const newResponse = new Response(pageResponse.body, pageResponse);
-      newResponse.headers.set("Set-Cookie", `pw=${passord}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000`);
+      newResponse.headers.set("Set-Cookie", `pw=${encodeURIComponent(passord)}; Path=/; Max-Age=2592000`);
       return newResponse;
     }
   }
@@ -26,7 +29,7 @@ export async function onRequest(context) {
   const cookie = request.headers.get("Cookie") || "";
   const match = cookie.match(/pw=([^;]+)/);
   if (match) {
-    const pw = match[1];
+    const pw = decodeURIComponent(match[1]);
     const count = await env.PASSWORDS.get(pw);
     if (count !== null) {
       return next();
