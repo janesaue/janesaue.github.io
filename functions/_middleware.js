@@ -14,15 +14,11 @@ export async function onRequest(context) {
     if (passord) {
       // Slett engangs-token
       await env.PASSWORDS.delete("_tok_" + tok);
-      // Sett cookie og redirect til ren URL (uten token)
-      url.searchParams.delete("tok");
-      return new Response(null, {
-        status: 302,
-        headers: {
-          "Location": url.toString(),
-          "Set-Cookie": `pw=${passord}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000`
-        }
-      });
+      // Server selve siden med Set-Cookie på 200-respons (Safari dropper cookies på 302)
+      const pageResponse = await next();
+      const newResponse = new Response(pageResponse.body, pageResponse);
+      newResponse.headers.set("Set-Cookie", `pw=${passord}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000`);
+      return newResponse;
     }
   }
 
