@@ -13,6 +13,7 @@
 }
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;overflow-x:hidden}
+button,.tbtn,.mcard,.cbtn,.sbtn,.gbtn,.pbtn{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 .stars{position:fixed;inset:0;pointer-events:none;z-index:0}
 .star{position:absolute;border-radius:50%;background:#fff;animation:twinkle var(--d) ease-in-out infinite alternate}
 @keyframes twinkle{from{opacity:.1;transform:scale(.8)}to{opacity:.9;transform:scale(1.2)}}
@@ -802,7 +803,7 @@ input[type=number]{-moz-appearance:textfield}
 // ─── AUDIO ───
 const AudioCtx=window.AudioContext||window.webkitAudioContext;
 let _actx=null;
-function getAudio(){if(!_actx)_actx=new AudioCtx();return _actx;}
+function getAudio(){if(!_actx)_actx=new AudioCtx();if(_actx.state==='suspended')_actx.resume();return _actx;}
 function sndCorrect(){
   try{const c=getAudio();[523,659,784].forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;g.gain.setValueAtTime(0.08,c.currentTime+i*0.08);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+i*0.08+0.2);o.start(c.currentTime+i*0.08);o.stop(c.currentTime+i*0.08+0.25);});}catch(e){}
 }
@@ -821,6 +822,9 @@ function sndCountdown(){
 function sndLaunch(){
   try{const c=getAudio(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sawtooth';o.frequency.setValueAtTime(200,c.currentTime);o.frequency.exponentialRampToValueAtTime(1200,c.currentTime+0.5);g.gain.setValueAtTime(0.06,c.currentTime);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.6);o.start(c.currentTime);o.stop(c.currentTime+0.7);}catch(e){}
 }
+
+// ─── SHUFFLE (Fisher-Yates) ───
+function shuf(a){const c=[...a];for(let i=c.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[c[i],c[j]]=[c[j],c[i]];}return c;}
 
 // ─── STARS ───
 const starsEl=document.getElementById('stars');
@@ -849,7 +853,7 @@ let timerInt=null,timerStart=0;
 const RTTIME=8000;
 
 // Skip state
-let skipStep=2,skipSeq=[],skQType='next'; // 'next' or 'missing'
+let skipStep=2,skipSeq=[],skQType='next',skipMixMode=false; // 'next' or 'missing'
 let skBlankIdx=0, skWindowStart=0;
 
 // ─── MODE INFO DATA ───
@@ -1031,7 +1035,7 @@ function startTimer(){
     bar.style.width=(pct*100)+'%';lbl.textContent=Math.ceil(pct*8)+'s';
     r.style.bottom=(28+(1-pct)*72)+'px';
     if(pct<0.5)bar.style.background='linear-gradient(90deg,#ff6b6b,#e74c3c)';
-    if(pct<0.32&&!answered){r.classList.add('shaking','igniting');f.classList.add('on');sndCountdown();}
+    if(pct<0.32&&!answered){r.classList.add('shaking','igniting');f.classList.add('on');if(!startTimer._lastCd||Date.now()-startTimer._lastCd>500){sndCountdown();startTimer._lastCd=Date.now();}}
     if(el>=RTTIME&&!answered){clearInterval(timerInt);timerInt=null;rocketTimeout();}
   },80);
 }
@@ -1080,8 +1084,8 @@ function rNextQ(){document.getElementById('celeb').classList.add('hidden');curQ+
 //  SKIP COUNTING
 // ══════════════════════════════
 function startSkipMode(step){
-  skipStep=step;score=0;streak=0;bonus=0;curQ=0;answered=false;
-  if(step==='mix') skipStep=pickRandomStep();
+  skipMixMode=(step==='mix');score=0;streak=0;bonus=0;curQ=0;answered=false;
+  skipStep=skipMixMode?pickRandomStep():step;
   skipSeq=buildSkipSeq(skipStep,0,20);
   showSkipTutorial();
 }
@@ -1212,7 +1216,7 @@ function genSkipChoices(correct,step){
   const set=new Set([correct]);
   const opts=[correct+step,correct-step,correct+step*2,correct-step*2,correct+1,correct-1,correct+2,correct-2,correct+3,correct-3,correct+step*3,correct-step*3].filter(v=>v>0).sort(()=>Math.random()-.5);
   for(const v of opts){if(!set.has(v)&&v>0)set.add(v);if(set.size>=3)break;}
-  while(set.size<3){const v=Math.floor(Math.random()*correct*1.5)+1;if(!set.has(v))set.add(v);}
+  let _s1=0;while(set.size<3&&_s1++<100){const v=Math.floor(Math.random()*Math.max(correct*1.5,10))+1;if(!set.has(v))set.add(v);}
   return[...set].sort(()=>Math.random()-.5);
 }
 
@@ -1276,7 +1280,7 @@ function skNextQ(){
   if(curQ>=10){showResult(false,'skip');}
   else {
     // In mix mode, sometimes change step
-    if(mode==='skip'&&skipStep==='mix'&&curQ%3===0){
+    if(mode==='skip'&&skipMixMode&&curQ%3===0){
       skipStep=pickRandomStep();
       skipSeq=buildSkipSeq(skipStep,0,20);
     }
@@ -1462,7 +1466,7 @@ function genNumDistractors(correct){
     Math.floor(correct*1.5),Math.ceil(correct*.75),correct+10,correct-10].filter(v=>v>0&&v!==correct);
   candidates.sort(()=>Math.random()-.5);
   for(const v of candidates){if(!set.has(v))set.add(v);if(set.size>=4)break;}
-  while(set.size<4){const v=Math.floor(Math.random()*60)+2;if(!set.has(v))set.add(v);}
+  let _s2=0;while(set.size<4&&_s2++<100){const v=Math.floor(Math.random()*60)+2;if(!set.has(v))set.add(v);}
   return [...set].sort(()=>Math.random()-.5);
 }
 
@@ -1493,7 +1497,7 @@ function genArrayDistractors(a,b){
     if(!used.has(k)){opts.push({a:x,b:y,correct:false});used.add(k);}
     if(opts.length>=3)break;
   }
-  while(opts.length<3){
+  let _s3=0;while(opts.length<3&&_s3++<100){
     const x=Math.floor(Math.random()*4)+2,y=Math.floor(Math.random()*4)+2;
     const k=`${x},${y}`;
     if(!used.has(k)&&x*y!==correctProd){opts.push({a:x,b:y,correct:false});used.add(k);}
@@ -1559,7 +1563,7 @@ function handleGrpArray(card,selA,selB,correctA,correctB){
     streak=0;sndWrong();card.classList.add('no');
     document.querySelectorAll('.acard').forEach(c=>{
       const lbl=c.querySelector('.acard-label');
-      if(lbl&&lbl.textContent===`${correctA} rader × ${correctB}`)c.classList.add('ok');
+      if(lbl&&(lbl.textContent===`${correctA} rader × ${correctB}`||lbl.textContent===`${correctB} rader × ${correctA}`))c.classList.add('ok');
     });
     document.getElementById('grpStreakD').textContent='0';
     const fb=document.getElementById('grpFb');

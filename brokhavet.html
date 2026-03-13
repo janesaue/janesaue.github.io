@@ -13,6 +13,7 @@
   --white:#e8f4fd; --glass:rgba(255,255,255,.07); --gborder:rgba(255,255,255,.14);
 }
 *{margin:0;padding:0;box-sizing:border-box;}
+button,a,.game-card,.fish-item,.duel-opt,.nl-opt,.dk-opt,.bl-choice,.bl-deal-btn,.cv-card,.cut-btn,.topping-submit,.deliver-btn,.ab-line,.sb-dial-btn,.sb-fire-btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
 body{font-family:'Nunito',sans-serif;background:var(--deep);min-height:100vh;overflow-x:hidden;color:var(--white);user-select:none;}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
 @keyframes popIn{0%{transform:scale(.9)}60%{transform:scale(1.1)}100%{transform:scale(1)}}
@@ -746,9 +747,11 @@ const BAD=['Ikke helt — prøv igjen!','Nesten!','Du klarer det!','Ikke gi opp!
 const GOOD_EMO=['🎉','⭐','🐠','🌊','🏆','🎊','✨'];
 const BAD_EMO=['🤔','💙','🐙','💪','🌊'];
 
+let _sndCtx=null;
+function _getSndCtx(){if(!_sndCtx)_sndCtx=new(window.AudioContext||window.webkitAudioContext)();if(_sndCtx.state==='suspended')_sndCtx.resume();return _sndCtx;}
 function playSound(type){
   try{
-    const ctx=new(window.AudioContext||window.webkitAudioContext)();
+    const ctx=_getSndCtx();
     const osc=ctx.createOscillator(),gain=ctx.createGain();
     osc.connect(gain);gain.connect(ctx.destination);
     gain.gain.setValueAtTime(0,ctx.currentTime);
@@ -1154,7 +1157,8 @@ function renderDkRound(){
   const sliceColors=['#ff6b9d','#4fc3f7','#ffd700','#56d364','#ff8c42','#a78bfa'];
   allOpts.forEach((opt,idx)=>{
     const card=document.createElement('div');card.className='dk-opt';
-    card.innerHTML=`${makePieSVG(opt.angles,sliceColors,d.food)}<div class="dk-opt-label">${opt.isCorrect?'':'?'}</div>`;
+    card.innerHTML=`${makePieSVG(opt.angles,sliceColors,d.food)}<div class="dk-opt-label"></div>`;
+    card.dataset.correct=opt.isCorrect?'1':'0';
     card.onclick=()=>checkDkAnswer(opt.isCorrect,card,optGrid,d.n);
     optGrid.appendChild(card);
   });
@@ -1193,7 +1197,7 @@ function makePieSVG(angles,colors,foodEmoji){
 function checkDkAnswer(isCorrect,card,grid,n){
   grid.querySelectorAll('.dk-opt').forEach(c=>c.onclick=null);
   card.classList.add(isCorrect?'correct':'wrong');
-  if(!isCorrect){grid.querySelectorAll('.dk-opt').forEach(c=>{if(c!==card&&!c.classList.contains('wrong'))c.classList.add('correct');});}
+  if(!isCorrect){grid.querySelectorAll('.dk-opt').forEach(c=>{if(c!==card&&c.dataset.correct==='1')c.classList.add('correct');});}
   const eq=360/n;
   const msg=isCorrect?`Riktig! Alle ${n} biter er like store — det er rettferdig! 🎉`:`Ikke helt! Noen biter er for store og andre for små. Finn de som er like!`;
   const visual=!isCorrect?makeFracBar(1,n,'Like store biter','#56d364'):'';
@@ -1284,7 +1288,7 @@ function generateFracChoices(num,den){
 function checkBlAnswer(isCorrect,btn,row,d){
   row.querySelectorAll('.bl-choice').forEach(b=>b.onclick=null);
   btn.classList.add(isCorrect?'correct':'wrong');
-  if(!isCorrect) row.querySelectorAll('.bl-choice').forEach(b=>{if(b!==btn&&!b.classList.contains('wrong'))b.classList.add('correct');});
+  if(!isCorrect) row.querySelectorAll('.bl-choice').forEach(b=>{if(b!==btn&&b.textContent===(d.num===d.den?'1 hel':`${d.num}/${d.den}`))b.classList.add('correct');});
   const n=d.num,de=d.den;
   const msg=isCorrect?`Riktig! ${d.food} fisker delt på ${d.creatures.length} dyr = ${n}/${de} til hvert dyr. Brøk er deling!`:`Ikke helt! ${d.food} delt på ${d.creatures.length} gir ${n}/${de} til hvert dyr. Prøv neste!`;
   const visual=!isCorrect?makeFracBar(n,de,'Riktig svar','#56d364'):'';
@@ -1631,7 +1635,7 @@ function spawnConfetti(count=26){
   }
 }
 function floatIng(emoji,x,y){const el=document.createElement('div');el.className='float-ing';el.textContent=emoji;el.style.cssText=`left:${x}px;top:${y}px;`;document.body.appendChild(el);setTimeout(()=>el.remove(),950);}
-function shuffleArr(arr){return [...arr].sort(()=>Math.random()-.5);}
+function shuffleArr(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 
 // ══════════════════════════════════════
 // OCEAN ATMOSPHERE
