@@ -871,65 +871,74 @@ function buildMenu(){
   const unlocked=allDone();
   const doneSys=SYSTEMS.filter(s=>stars(s.id)===3).map(s=>s.id);
 
-  // A body part lights up if ANY system that claims it is done
+  // X-ray style: bright bones on dark background
   const ownersOf=id=>SYSTEMS.filter(s=>s.bodyParts&&s.bodyParts.includes(id));
-  const fill=id=>{const owners=ownersOf(id);const done=owners.find(o=>doneSys.includes(o.id));return done?done.color:'#E8D8C8';};
-  const op=id=>ownersOf(id).some(o=>doneSys.includes(o.id))?'.85':'.25';
+  const boneC=id=>{const owners=ownersOf(id);const done=owners.find(o=>doneSys.includes(o.id));return done?done.color:'#C8D8E8';};
+  const organC=id=>{const owners=ownersOf(id);const done=owners.find(o=>doneSys.includes(o.id));return done?done.color:'rgba(160,180,200,0.4)';};
+  const bOp=id=>ownersOf(id).some(o=>doneSys.includes(o.id))?.95:.7;
+  const oOp=id=>ownersOf(id).some(o=>doneSys.includes(o.id))?.6:.25;
 
-  const svg=`<svg viewBox="0 0 80 160" xmlns="http://www.w3.org/2000/svg">
-    <!-- X-ray background glow -->
+  const svg=`<svg viewBox="0 0 80 160" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 0 4px rgba(100,160,255,0.2))">
     <defs>
-      <radialGradient id="xg"><stop offset="0%" stop-color="#1E3A5F" stop-opacity=".15"/><stop offset="100%" stop-color="transparent"/></radialGradient>
+      <radialGradient id="xbg"><stop offset="0%" stop-color="#1A2A44"/><stop offset="80%" stop-color="#0E1825"/><stop offset="100%" stop-color="#080E18"/></radialGradient>
+      <filter id="xgl"><feGaussianBlur stdDeviation=".7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
     </defs>
-    <ellipse cx="40" cy="75" rx="38" ry="72" fill="url(#xg)"/>
-    <!-- SKULL -->
-    <ellipse cx="40" cy="14" rx="11" ry="12" fill="none" stroke="${fill('b-skull')}" stroke-width="1.2" opacity="${op('b-skull')}"/>
-    <ellipse cx="36" cy="12" rx="2.5" ry="2" fill="none" stroke="${fill('b-skull')}" stroke-width=".7" opacity="${op('b-skull')}"/>
-    <ellipse cx="44" cy="12" rx="2.5" ry="2" fill="none" stroke="${fill('b-skull')}" stroke-width=".7" opacity="${op('b-skull')}"/>
-    <path d="M36,19 Q40,21 44,19" fill="none" stroke="${fill('b-skull')}" stroke-width=".6" opacity="${op('b-skull')}"/>
-    <!-- BRAIN (inside skull) -->
-    <path d="M33,10 Q36,5 40,6 Q44,5 47,10 Q48,14 45,16 Q40,17 35,16 Q32,14 33,10Z" fill="${fill('b-brain')}" opacity="${op('b-brain')}" stroke="none"/>
-    <!-- NECK vertebrae -->
-    ${[27,29.5,32].map(y=>`<rect x="37" y="${y}" width="6" height="2" rx="1" fill="none" stroke="${fill('b-spine')}" stroke-width=".7" opacity="${op('b-spine')}"/>`).join('')}
-    <!-- SPINE -->
-    ${[35,38,41,44,47,50,53,56,59,62,65,68,71,74].map(y=>`<rect x="37.5" y="${y}" width="5" height="2.2" rx="1" fill="none" stroke="${fill('b-spine')}" stroke-width=".6" opacity="${op('b-spine')}"/>`).join('')}
-    <!-- RIBCAGE -->
-    ${[0,1,2,3,4].map(i=>{const y=37+i*5.5;return `<ellipse cx="40" cy="${y}" rx="${14+i*.5}" ry="${2.2+i*.2}" fill="none" stroke="${fill('b-torso')}" stroke-width=".8" stroke-dasharray="0 ${Math.round((14+i*.5)*.55)} 999" stroke-linecap="round" opacity="${op('b-torso')}"/>`;}).join('')}
-    <!-- CLAVICLES -->
-    <line x1="28" y1="34" x2="38" y2="33" stroke="${fill('b-torso')}" stroke-width="1" stroke-linecap="round" opacity="${op('b-torso')}"/>
-    <line x1="52" y1="34" x2="42" y2="33" stroke="${fill('b-torso')}" stroke-width="1" stroke-linecap="round" opacity="${op('b-torso')}"/>
-    <!-- HEART (inside ribcage) -->
-    <path d="M35,44 Q33,41 36,40 Q38,40 38,42 Q38,40 40,40 Q43,41 41,44 L38,48Z" fill="${fill('b-heart')}" opacity="${op('b-heart')}" stroke="none"/>
-    <!-- LUNGS (inside ribcage) -->
-    <path d="M36,38 Q28,42 27,50 Q27,56 30,58 Q34,59 36,56Z" fill="${fill('b-lung-l')}" opacity="${op('b-lung-l')}" stroke="none"/>
-    <path d="M44,38 Q52,42 53,50 Q53,56 50,58 Q46,59 44,56Z" fill="${fill('b-lung-r')}" opacity="${op('b-lung-r')}" stroke="none"/>
-    <!-- PELVIS -->
-    <path d="M28,77 Q30,72 40,74 Q50,72 52,77 Q53,83 48,87 L40,85 L32,87 Q27,83 28,77Z" fill="none" stroke="${fill('b-torso')}" stroke-width="1" opacity="${op('b-torso')}"/>
-    <!-- STOMACH & INTESTINES (inside torso) -->
-    <ellipse cx="43" cy="66" rx="5" ry="3.5" fill="${fill('b-stomach')}" opacity="${op('b-stomach')}" stroke="none"/>
-    <path d="M33,72 Q36,70 39,72 Q42,74 38,75 Q34,76 36,73" fill="${fill('b-intestine')}" opacity="${op('b-intestine')}" stroke="none"/>
-    <!-- ARMS — humerus + radius/ulna -->
-    <line x1="27" y1="35" x2="18" y2="55" stroke="${fill('b-arm-l')}" stroke-width="1.2" stroke-linecap="round" opacity="${op('b-arm-l')}"/>
-    <line x1="18" y1="55" x2="12" y2="72" stroke="${fill('b-arm-l')}" stroke-width=".9" stroke-linecap="round" opacity="${op('b-arm-l')}"/>
-    <line x1="18" y1="55" x2="14" y2="73" stroke="${fill('b-arm-l')}" stroke-width=".9" stroke-linecap="round" opacity="${op('b-arm-l')}"/>
-    <line x1="53" y1="35" x2="62" y2="55" stroke="${fill('b-arm-r')}" stroke-width="1.2" stroke-linecap="round" opacity="${op('b-arm-r')}"/>
-    <line x1="62" y1="55" x2="68" y2="72" stroke="${fill('b-arm-r')}" stroke-width=".9" stroke-linecap="round" opacity="${op('b-arm-r')}"/>
-    <line x1="62" y1="55" x2="66" y2="73" stroke="${fill('b-arm-r')}" stroke-width=".9" stroke-linecap="round" opacity="${op('b-arm-r')}"/>
-    <!-- HANDS -->
-    <path d="M11,72 L9,76 M12,72 L11,77 M13,73 L13,77 M14,73 L15,76" stroke="${fill('b-arm-l')}" stroke-width=".5" stroke-linecap="round" opacity="${op('b-arm-l')}"/>
-    <path d="M69,72 L71,76 M68,72 L69,77 M67,73 L67,77 M66,73 L65,76" stroke="${fill('b-arm-r')}" stroke-width=".5" stroke-linecap="round" opacity="${op('b-arm-r')}"/>
-    <!-- LEGS — femur + tibia/fibula -->
-    <line x1="34" y1="85" x2="30" y2="112" stroke="${fill('b-leg-l')}" stroke-width="1.3" stroke-linecap="round" opacity="${op('b-leg-l')}"/>
-    <circle cx="30" cy="113" r="2.5" fill="none" stroke="${fill('b-leg-l')}" stroke-width=".8" opacity="${op('b-leg-l')}"/>
-    <line x1="30" y1="115" x2="28" y2="138" stroke="${fill('b-leg-l')}" stroke-width="1" stroke-linecap="round" opacity="${op('b-leg-l')}"/>
-    <line x1="30" y1="115" x2="30" y2="138" stroke="${fill('b-leg-l')}" stroke-width="1" stroke-linecap="round" opacity="${op('b-leg-l')}"/>
-    <line x1="46" y1="85" x2="50" y2="112" stroke="${fill('b-leg-r')}" stroke-width="1.3" stroke-linecap="round" opacity="${op('b-leg-r')}"/>
-    <circle cx="50" cy="113" r="2.5" fill="none" stroke="${fill('b-leg-r')}" stroke-width=".8" opacity="${op('b-leg-r')}"/>
-    <line x1="50" y1="115" x2="52" y2="138" stroke="${fill('b-leg-r')}" stroke-width="1" stroke-linecap="round" opacity="${op('b-leg-r')}"/>
-    <line x1="50" y1="115" x2="50" y2="138" stroke="${fill('b-leg-r')}" stroke-width="1" stroke-linecap="round" opacity="${op('b-leg-r')}"/>
-    <!-- FEET -->
-    <path d="M26,138 L24,141 L32,141 L31,138" fill="none" stroke="${fill('b-leg-l')}" stroke-width=".8" stroke-linecap="round" stroke-linejoin="round" opacity="${op('b-leg-l')}"/>
-    <path d="M50,138 L48,141 L56,141 L55,138" fill="none" stroke="${fill('b-leg-r')}" stroke-width=".8" stroke-linecap="round" stroke-linejoin="round" opacity="${op('b-leg-r')}"/>
+    <rect width="80" height="160" rx="8" fill="url(#xbg)"/>
+    <rect width="80" height="160" rx="8" fill="none" stroke="#2A3A55" stroke-width=".7"/>
+    <g filter="url(#xgl)">
+      <!-- SKULL -->
+      <ellipse cx="40" cy="15" rx="11" ry="12" fill="${boneC('b-skull')}" fill-opacity=".15" stroke="${boneC('b-skull')}" stroke-width="1.5" opacity="${bOp('b-skull')}"/>
+      <ellipse cx="36" cy="13" rx="2.8" ry="2.2" fill="#0E1825" stroke="${boneC('b-skull')}" stroke-width=".9" opacity="${bOp('b-skull')}"/>
+      <ellipse cx="44" cy="13" rx="2.8" ry="2.2" fill="#0E1825" stroke="${boneC('b-skull')}" stroke-width=".9" opacity="${bOp('b-skull')}"/>
+      <ellipse cx="40" cy="17.5" rx="2" ry="1.3" fill="#0E1825" stroke="${boneC('b-skull')}" stroke-width=".5" opacity="${bOp('b-skull')}"/>
+      <path d="M35,21 Q40,23 45,21" fill="none" stroke="${boneC('b-skull')}" stroke-width=".8" opacity="${bOp('b-skull')}"/>
+      <!-- BRAIN -->
+      <path d="M33,11 Q36,5 40,7 Q44,5 47,11 Q48,15 45,17 Q40,18 35,17 Q32,15 33,11Z" fill="${organC('b-brain')}" opacity="${oOp('b-brain')}"/>
+      <!-- NECK -->
+      ${[28,30.5,33].map(y=>`<rect x="37" y="${y}" width="6" height="1.8" rx="1" fill="${boneC('b-spine')}" opacity="${bOp('b-spine')*.6}"/>`).join('')}
+      <!-- SPINE -->
+      ${[36,39,42,45,48,51,54,57,60,63,66,69,72,75].map(y=>`<rect x="37.5" y="${y}" width="5" height="2" rx="1" fill="${boneC('b-spine')}" opacity="${bOp('b-spine')*.55}"/>`).join('')}
+      <!-- RIBCAGE -->
+      ${[0,1,2,3,4].map(i=>{const y=38+i*5.5,rx=14+i*.6;return `<ellipse cx="40" cy="${y}" rx="${rx}" ry="${2.5+i*.2}" fill="none" stroke="${boneC('b-torso')}" stroke-width="1.3" stroke-dasharray="0 ${Math.round(rx*.55)} 999" stroke-linecap="round" opacity="${bOp('b-torso')*.65}"/>`;}).join('')}
+      <!-- CLAVICLES -->
+      <line x1="27" y1="35" x2="38" y2="34" stroke="${boneC('b-torso')}" stroke-width="1.5" stroke-linecap="round" opacity="${bOp('b-torso')*.75}"/>
+      <line x1="53" y1="35" x2="42" y2="34" stroke="${boneC('b-torso')}" stroke-width="1.5" stroke-linecap="round" opacity="${bOp('b-torso')*.75}"/>
+      <!-- HEART -->
+      <path d="M34,45 Q32,42 35,41 Q37,41 37,43 Q37,41 39,41 Q42,42 40,45 L37,49Z" fill="${organC('b-heart')}" opacity="${oOp('b-heart')}"/>
+      <!-- LUNGS -->
+      <path d="M36,39 Q27,43 26,51 Q26,57 29,59 Q34,60 36,57Z" fill="${organC('b-lung-l')}" opacity="${oOp('b-lung-l')}"/>
+      <path d="M44,39 Q53,43 54,51 Q54,57 51,59 Q46,60 44,57Z" fill="${organC('b-lung-r')}" opacity="${oOp('b-lung-r')}"/>
+      <!-- PELVIS -->
+      <path d="M27,78 Q29,73 40,75 Q51,73 53,78 Q54,84 49,88 L40,86 L31,88 Q26,84 27,78Z" fill="${boneC('b-torso')}" fill-opacity=".12" stroke="${boneC('b-torso')}" stroke-width="1.3" opacity="${bOp('b-torso')*.7}"/>
+      <!-- STOMACH -->
+      <ellipse cx="43" cy="67" rx="5" ry="3.5" fill="${organC('b-stomach')}" opacity="${oOp('b-stomach')}"/>
+      <!-- INTESTINES -->
+      <path d="M33,73 Q36,71 39,73 Q42,75 38,76 Q34,77 36,74" fill="${organC('b-intestine')}" opacity="${oOp('b-intestine')}"/>
+      <!-- ARMS -->
+      <line x1="26" y1="36" x2="17" y2="56" stroke="${boneC('b-arm-l')}" stroke-width="1.8" stroke-linecap="round" opacity="${bOp('b-arm-l')*.7}"/>
+      <line x1="17" y1="56" x2="11" y2="74" stroke="${boneC('b-arm-l')}" stroke-width="1.2" stroke-linecap="round" opacity="${bOp('b-arm-l')*.6}"/>
+      <line x1="17" y1="56" x2="13" y2="75" stroke="${boneC('b-arm-l')}" stroke-width="1.2" stroke-linecap="round" opacity="${bOp('b-arm-l')*.6}"/>
+      <line x1="54" y1="36" x2="63" y2="56" stroke="${boneC('b-arm-r')}" stroke-width="1.8" stroke-linecap="round" opacity="${bOp('b-arm-r')*.7}"/>
+      <line x1="63" y1="56" x2="69" y2="74" stroke="${boneC('b-arm-r')}" stroke-width="1.2" stroke-linecap="round" opacity="${bOp('b-arm-r')*.6}"/>
+      <line x1="63" y1="56" x2="67" y2="75" stroke="${boneC('b-arm-r')}" stroke-width="1.2" stroke-linecap="round" opacity="${bOp('b-arm-r')*.6}"/>
+      <!-- HANDS -->
+      <path d="M10,74 L8,78 M11,74 L10,79 M12,75 L12,79 M13,75 L14,78" stroke="${boneC('b-arm-l')}" stroke-width=".8" stroke-linecap="round" opacity="${bOp('b-arm-l')*.5}"/>
+      <path d="M70,74 L72,78 M69,74 L70,79 M68,75 L68,79 M67,75 L66,78" stroke="${boneC('b-arm-r')}" stroke-width=".8" stroke-linecap="round" opacity="${bOp('b-arm-r')*.5}"/>
+      <!-- LEGS -->
+      <line x1="34" y1="86" x2="30" y2="113" stroke="${boneC('b-leg-l')}" stroke-width="2" stroke-linecap="round" opacity="${bOp('b-leg-l')*.7}"/>
+      <line x1="46" y1="86" x2="50" y2="113" stroke="${boneC('b-leg-r')}" stroke-width="2" stroke-linecap="round" opacity="${bOp('b-leg-r')*.7}"/>
+      <!-- KNEECAPS -->
+      <ellipse cx="30" cy="114" rx="3" ry="2.5" fill="${boneC('b-leg-l')}" fill-opacity=".15" stroke="${boneC('b-leg-l')}" stroke-width="1" opacity="${bOp('b-leg-l')*.65}"/>
+      <ellipse cx="50" cy="114" rx="3" ry="2.5" fill="${boneC('b-leg-r')}" fill-opacity=".15" stroke="${boneC('b-leg-r')}" stroke-width="1" opacity="${bOp('b-leg-r')*.65}"/>
+      <!-- TIBIA/FIBULA -->
+      <line x1="29" y1="117" x2="27" y2="140" stroke="${boneC('b-leg-l')}" stroke-width="1.3" stroke-linecap="round" opacity="${bOp('b-leg-l')*.6}"/>
+      <line x1="31" y1="117" x2="30" y2="140" stroke="${boneC('b-leg-l')}" stroke-width="1.3" stroke-linecap="round" opacity="${bOp('b-leg-l')*.6}"/>
+      <line x1="49" y1="117" x2="50" y2="140" stroke="${boneC('b-leg-r')}" stroke-width="1.3" stroke-linecap="round" opacity="${bOp('b-leg-r')*.6}"/>
+      <line x1="51" y1="117" x2="53" y2="140" stroke="${boneC('b-leg-r')}" stroke-width="1.3" stroke-linecap="round" opacity="${bOp('b-leg-r')*.6}"/>
+      <!-- FEET -->
+      <path d="M25,140 L22,144 L33,144 L31,140" fill="${boneC('b-leg-l')}" fill-opacity=".12" stroke="${boneC('b-leg-l')}" stroke-width="1" stroke-linejoin="round" opacity="${bOp('b-leg-l')*.6}"/>
+      <path d="M49,140 L47,144 L58,144 L56,140" fill="${boneC('b-leg-r')}" fill-opacity=".12" stroke="${boneC('b-leg-r')}" stroke-width="1" stroke-linejoin="round" opacity="${bOp('b-leg-r')*.6}"/>
+    </g>
   </svg>`;
 
   const legend=SYSTEMS.map(s=>{
