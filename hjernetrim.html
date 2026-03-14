@@ -784,30 +784,30 @@ function startBackwards() {
 
 /* ===== MODE 5: MONSTERET (Pattern Recognition) ===== */
 var PATTERNS = [
-  {seq:['\u{1f534}','\u{1f535}','\u{1f534}','\u{1f535}','\u{1f534}'],ans:'\u{1f535}',alts:['\u{1f534}','\u{1f7e2}','\u{1f7e1}']},
-  {seq:['1','2','3','4'],ans:'5',alts:['6','4','3']},
-  {seq:['\u2b1c','\u2b1b','\u2b1c','\u2b1b','\u2b1c'],ans:'\u2b1b',alts:['\u2b1c','\u{1f532}','\u{1f533}']},
-  {seq:['\u{1f319}','\u2b50','\u{1f319}','\u2b50','\u{1f319}'],ans:'\u2b50',alts:['\u{1f319}','\u2600\ufe0f','\u{1f31f}']},
-  {seq:['2','4','6','8'],ans:'10',alts:['9','12','7']},
-  {seq:['\u{1f534}','\u{1f534}','\u{1f535}','\u{1f534}','\u{1f534}','\u{1f535}'],ans:'\u{1f534}',alts:['\u{1f535}','\u{1f7e2}','\u{1f7e1}']},
-  {seq:['5','10','15','20'],ans:'25',alts:['22','30','21']},
-  {seq:['\u{1f7e2}','\u{1f535}','\u{1f534}','\u{1f7e2}','\u{1f535}','\u{1f534}'],ans:'\u{1f7e2}',alts:['\u{1f535}','\u{1f534}','\u{1f7e1}']},
-  {seq:['1','2','4','8'],ans:'16',alts:['10','12','15']},
-  {seq:['\u2b50','\u2b50','\u{1f319}','\u2b50','\u2b50','\u{1f319}'],ans:'\u2b50',alts:['\u{1f319}','\u2600\ufe0f','\u{1f31f}']},
-  {seq:['3','6','9','12'],ans:'15',alts:['13','14','18']},
-  {seq:['\u{1f535}','\u{1f535}','\u{1f534}','\u{1f535}','\u{1f535}','\u{1f534}','\u{1f535}','\u{1f535}'],ans:'\u{1f534}',alts:['\u{1f535}','\u{1f7e2}','\u{1f7e1}']},
-  {seq:['10','20','30','40'],ans:'50',alts:['45','60','35']},
-  {seq:['\u{1f53a}','\u{1f53b}','\u{1f53a}','\u{1f53b}'],ans:'\u{1f53a}',alts:['\u{1f53b}','\u2b1c','\u{1f532}']},
-  {seq:['1','3','5','7'],ans:'9',alts:['8','10','11']},
-  {seq:['\u{1f308}','\u2600\ufe0f','\u{1f308}','\u2600\ufe0f','\u{1f308}'],ans:'\u2600\ufe0f',alts:['\u{1f308}','\u{1f319}','\u2b50']},
-  {seq:['2','4','8','16'],ans:'32',alts:['20','24','18']},
-  {seq:['\u{1f534}','\u{1f535}','\u{1f7e2}','\u{1f534}','\u{1f535}','\u{1f7e2}'],ans:'\u{1f534}',alts:['\u{1f535}','\u{1f7e2}','\u{1f7e1}']},
-  {seq:['1','4','9','16'],ans:'25',alts:['20','21','36']},
-  {seq:['\u2744\ufe0f','\u2744\ufe0f','\u2600\ufe0f','\u2600\ufe0f','\u2744\ufe0f','\u2744\ufe0f','\u2600\ufe0f','\u2600\ufe0f'],ans:'\u2744\ufe0f',alts:['\u2600\ufe0f','\u{1f319}','\u{1f308}']},
-  {seq:['100','90','80','70'],ans:'60',alts:['65','50','75']},
-  {seq:['\u{1f535}','\u{1f534}','\u{1f534}','\u{1f535}','\u{1f534}','\u{1f534}'],ans:'\u{1f535}',alts:['\u{1f534}','\u{1f7e2}','\u{1f7e1}']},
-  {seq:['1','1','2','3','5'],ans:'8',alts:['6','7','10']},
-  {seq:['\u{1f7e1}','\u{1f7e1}','\u{1f7e1}','\u{1f535}','\u{1f7e1}','\u{1f7e1}','\u{1f7e1}','\u{1f535}'],ans:'\u{1f7e1}',alts:['\u{1f535}','\u{1f534}','\u{1f7e2}']}
+  {seq:['\u{1f534}','\u{1f535}','\u{1f534}','\u{1f535}','\u{1f534}'],ans:'\u{1f535}',alts:['\u{1f534}','\u{1f7e2}','\u{1f7e1}'],exp:'Annenhver! Rød og blå veksler: A B A B A → B'},
+  {seq:['1','2','3','4'],ans:'5',alts:['6','4','3'],exp:'Teller opp med 1: Hvert tall er én mer enn det forrige.'},
+  {seq:['\u2b1c','\u2b1b','\u2b1c','\u2b1b','\u2b1c'],ans:'\u2b1b',alts:['\u2b1c','\u{1f532}','\u{1f533}'],exp:'Annenhver! Hvit og svart veksler: A B A B A → B'},
+  {seq:['\u{1f319}','\u2b50','\u{1f319}','\u2b50','\u{1f319}'],ans:'\u2b50',alts:['\u{1f319}','\u2600\ufe0f','\u{1f31f}'],exp:'Annenhver! Måne og stjerne veksler: A B A B A → B'},
+  {seq:['2','4','6','8'],ans:'10',alts:['9','12','7'],exp:'Teller opp med 2: Hvert tall øker med 2 (partall).'},
+  {seq:['\u{1f534}','\u{1f534}','\u{1f535}','\u{1f534}','\u{1f534}','\u{1f535}'],ans:'\u{1f534}',alts:['\u{1f535}','\u{1f7e2}','\u{1f7e1}'],exp:'Gruppe på tre! To røde + én blå gjentas: A A B · A A B → A'},
+  {seq:['5','10','15','20'],ans:'25',alts:['22','30','21'],exp:'Teller opp med 5: 5-gangen — hvert tall øker med 5.'},
+  {seq:['\u{1f7e2}','\u{1f535}','\u{1f534}','\u{1f7e2}','\u{1f535}','\u{1f534}'],ans:'\u{1f7e2}',alts:['\u{1f535}','\u{1f534}','\u{1f7e1}'],exp:'Tre farger som gjentas! A B C · A B C → A'},
+  {seq:['1','2','4','8'],ans:'16',alts:['10','12','15'],exp:'Dobling! Hvert tall er det dobbelte av forrige: ×2 hver gang.'},
+  {seq:['\u2b50','\u2b50','\u{1f319}','\u2b50','\u2b50','\u{1f319}'],ans:'\u2b50',alts:['\u{1f319}','\u2600\ufe0f','\u{1f31f}'],exp:'Gruppe på tre! To stjerner + én måne: A A B · A A B → A'},
+  {seq:['3','6','9','12'],ans:'15',alts:['13','14','18'],exp:'Teller opp med 3: 3-gangen — hvert tall øker med 3.'},
+  {seq:['\u{1f535}','\u{1f535}','\u{1f534}','\u{1f535}','\u{1f535}','\u{1f534}','\u{1f535}','\u{1f535}'],ans:'\u{1f534}',alts:['\u{1f535}','\u{1f7e2}','\u{1f7e1}'],exp:'Gruppe på tre! To blå + én rød gjentas: A A B · A A B · A A → B'},
+  {seq:['10','20','30','40'],ans:'50',alts:['45','60','35'],exp:'Teller opp med 10: Hvert tall øker med 10.'},
+  {seq:['\u{1f53a}','\u{1f53b}','\u{1f53a}','\u{1f53b}'],ans:'\u{1f53a}',alts:['\u{1f53b}','\u2b1c','\u{1f532}'],exp:'Annenhver! Opp-trekant og ned-trekant veksler: A B A B → A'},
+  {seq:['1','3','5','7'],ans:'9',alts:['8','10','11'],exp:'Teller opp med 2: Oddetall — hvert tall øker med 2.'},
+  {seq:['\u{1f308}','\u2600\ufe0f','\u{1f308}','\u2600\ufe0f','\u{1f308}'],ans:'\u2600\ufe0f',alts:['\u{1f308}','\u{1f319}','\u2b50'],exp:'Annenhver! Regnbue og sol veksler: A B A B A → B'},
+  {seq:['2','4','8','16'],ans:'32',alts:['20','24','18'],exp:'Dobling! Hvert tall er det dobbelte: 2→4→8→16→32 (×2).'},
+  {seq:['\u{1f534}','\u{1f535}','\u{1f7e2}','\u{1f534}','\u{1f535}','\u{1f7e2}'],ans:'\u{1f534}',alts:['\u{1f535}','\u{1f7e2}','\u{1f7e1}'],exp:'Tre farger som gjentas! Rød, blå, grønn: A B C · A B C → A'},
+  {seq:['1','4','9','16'],ans:'25',alts:['20','21','36'],exp:'Kvadrattall! 1²=1, 2²=4, 3²=9, 4²=16 → 5²=25'},
+  {seq:['\u2744\ufe0f','\u2744\ufe0f','\u2600\ufe0f','\u2600\ufe0f','\u2744\ufe0f','\u2744\ufe0f','\u2600\ufe0f','\u2600\ufe0f'],ans:'\u2744\ufe0f',alts:['\u2600\ufe0f','\u{1f319}','\u{1f308}'],exp:'Par som gjentas! To snø + to soler: A A B B · A A B B → A'},
+  {seq:['100','90','80','70'],ans:'60',alts:['65','50','75'],exp:'Teller ned med 10! Hvert tall minker med 10.'},
+  {seq:['\u{1f535}','\u{1f534}','\u{1f534}','\u{1f535}','\u{1f534}','\u{1f534}'],ans:'\u{1f535}',alts:['\u{1f534}','\u{1f7e2}','\u{1f7e1}'],exp:'Gruppe på tre! Én blå + to røde: A B B · A B B → A'},
+  {seq:['1','1','2','3','5'],ans:'8',alts:['6','7','10'],exp:'Fibonacci! Hvert tall er summen av de to forrige: 3+5=8'},
+  {seq:['\u{1f7e1}','\u{1f7e1}','\u{1f7e1}','\u{1f535}','\u{1f7e1}','\u{1f7e1}','\u{1f7e1}','\u{1f535}'],ans:'\u{1f7e1}',alts:['\u{1f535}','\u{1f534}','\u{1f7e2}'],exp:'Gruppe på fire! Tre gule + én blå: A A A B · A A A B → A'}
 ];
 
 function startPattern() {
@@ -858,7 +858,14 @@ function startPattern() {
           b.classList.add('wrong'); sndWrong(); showFeedback('\u274c');
           og.querySelectorAll('.option-btn').forEach(function(x) { if (x.textContent === p.ans) x.classList.add('correct'); });
         }
-        round++; setTimeout(playRound, 900);
+        // Show pattern explanation
+        if (p.exp) {
+          var expDiv = document.createElement('div');
+          expDiv.style.cssText = 'margin:0.7rem auto;max-width:340px;padding:0.6rem 1rem;border-radius:12px;background:rgba(139,92,246,0.18);border:1px solid rgba(139,92,246,0.4);color:var(--purple-l);font-size:clamp(0.82rem,2.5vw,0.95rem);text-align:center;animation:fadeIn .3s;';
+          expDiv.innerHTML = '\ud83d\udca1 ' + p.exp;
+          og.parentNode.appendChild(expDiv);
+        }
+        round++; setTimeout(playRound, 2200);
       };
       og.appendChild(b);
     });
