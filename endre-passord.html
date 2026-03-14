@@ -47,6 +47,30 @@
     }
     .feil { color: red; }
     .ok { color: green; }
+    .pw-wrap {
+      position: relative;
+      display: block;
+      width: 200px;
+      margin: 0.5rem auto;
+    }
+    .pw-wrap input {
+      width: 100%;
+      padding-right: 2.2rem;
+      margin: 0;
+    }
+    .pw-toggle {
+      position: absolute;
+      right: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.1rem;
+      padding: 4px;
+      color: #888;
+      line-height: 1;
+    }
     a {
       display: inline-block;
       margin-top: 1rem;
@@ -60,9 +84,18 @@
     <h2>Endre passord</h2>
     <p class="melding" id="pliktig" style="color:orange;">Du må bytte passord før du kan fortsette</p>
     <form id="passord-skjema">
-      <input type="password" id="gammelt" placeholder="Nåværende passord" autocomplete="current-password" required />
-      <input type="password" id="nytt" placeholder="Nytt passord" autocomplete="new-password" required />
-      <input type="password" id="bekreft" placeholder="Bekreft nytt passord" autocomplete="new-password" required />
+      <div class="pw-wrap">
+        <input type="password" id="gammelt" placeholder="Nåværende passord" autocomplete="current-password" required />
+        <button type="button" class="pw-toggle" onclick="togglePw('gammelt', this)">&#128065;</button>
+      </div>
+      <div class="pw-wrap">
+        <input type="password" id="nytt" placeholder="Nytt passord" autocomplete="new-password" required />
+        <button type="button" class="pw-toggle" onclick="togglePw('nytt', this)">&#128065;</button>
+      </div>
+      <div class="pw-wrap">
+        <input type="password" id="bekreft" placeholder="Bekreft nytt passord" autocomplete="new-password" required />
+        <button type="button" class="pw-toggle" onclick="togglePw('bekreft', this)">&#128065;</button>
+      </div>
       <button type="submit">Endre passord</button>
     </form>
     <p class="melding feil" id="feilmelding"></p>
@@ -71,6 +104,12 @@
   </div>
 
   <script>
+    function togglePw(id, btn) {
+      const inp = document.getElementById(id);
+      if (inp.type === "password") { inp.type = "text"; btn.style.color = "#4a90e2"; }
+      else { inp.type = "password"; btn.style.color = "#888"; }
+    }
+
     // Vis "må bytte"-melding hvis brukeren ble tvunget hit av middleware
     if (new URLSearchParams(window.location.search).get("pliktig") === "1") {
       document.getElementById("pliktig").style.display = "block";

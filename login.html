@@ -40,6 +40,26 @@
       color: red;
       display: none;
     }
+    .pw-wrap {
+      position: relative;
+      display: inline-block;
+    }
+    .pw-wrap input {
+      padding-right: 2.2rem;
+    }
+    .pw-toggle {
+      position: absolute;
+      right: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.1rem;
+      padding: 4px;
+      color: #888;
+      line-height: 1;
+    }
   </style>
 </head>
 <body>
@@ -48,7 +68,10 @@
     <form method="POST" action="/api/login">
       <input type="text" name="brukernavn" placeholder="Brukernavn" autocomplete="username" />
       <br>
-      <input type="password" name="passord" placeholder="Passord" autocomplete="current-password" />
+      <div class="pw-wrap">
+        <input type="password" name="passord" id="passord" placeholder="Passord" autocomplete="current-password" />
+        <button type="button" class="pw-toggle" onclick="togglePw('passord', this)">&#128065;</button>
+      </div>
       <br>
       <button type="submit">Logg inn</button>
     </form>
@@ -58,6 +81,12 @@
   </div>
 
   <script>
+    function togglePw(id, btn) {
+      const inp = document.getElementById(id);
+      if (inp.type === "password") { inp.type = "text"; btn.style.color = "#4a90e2"; }
+      else { inp.type = "password"; btn.style.color = "#888"; }
+    }
+
     const params = new URLSearchParams(window.location.search);
     if (params.get("feil") === "1") {
       document.getElementById("feilmelding").style.display = "block";
