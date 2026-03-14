@@ -110,6 +110,12 @@ button,a,.sys-card,.seq-item,.match-item,.bone-btn,.quiz-opt,.doc-sys-btn,.muscl
 
 /* SKELETON */
 .skel-wrap{display:flex;flex-direction:column;align-items:center}
+.skel-diagram{width:100%;max-width:480px;margin:0 auto}
+.skel-diagram svg{width:100%;height:auto;display:block}
+.skel-diagram svg .bone-label{cursor:pointer;transition:opacity .2s}
+.skel-diagram svg .bone-label:hover .bl-bg{opacity:.85}
+.skel-diagram svg .bone-label.wrong-flash{animation:shake .3s ease}
+.skel-diagram svg .bone-label.wrong-flash .bl-bg{fill:#EF4444!important}
 .body-stage{position:relative;width:clamp(150px,38vw,220px);height:clamp(272px,69vw,400px);flex-shrink:0}
 .body-stage svg{width:100%;height:100%;pointer-events:none}
 .bone-btn{position:absolute;width:clamp(34px,8vw,48px);height:clamp(34px,8vw,48px);border-radius:50%;border:3px solid #fff;cursor:pointer;font-size:clamp(.65rem,.14vw+.6rem,.85rem);font-weight:900;display:flex;align-items:center;justify-content:center;transition:transform .2s,background .2s;box-shadow:0 2px 8px rgba(0,0,0,.2)}
@@ -742,14 +748,14 @@ const CASES = [
 ];
 
 const BONES=[
-  {id:'hode',  name:'Hodeskallen', top:'2.5%', left:'40%'},
-  {id:'krave', name:'Kravebenet',  top:'12%',  left:'16%'},
-  {id:'ribb',  name:'Ribbeina',   top:'18%',  left:'23%'},
-  {id:'rygg',  name:'Ryggraden',  top:'31%',  left:'55%'},
-  {id:'albue', name:'Albuen',     top:'30%',  left:'72%'},
-  {id:'lar',   name:'Lårbenet',   top:'53%',  left:'27%'},
-  {id:'kne',   name:'Kneskålen',  top:'43%',  left:'46%'},
-  {id:'hael',  name:'Hælen',      top:'66%',  left:'53%'},
+  {id:'hode',  name:'Hodeskallen', bx:60, by:24,  side:'R', rank:0},
+  {id:'krave', name:'Kravebenet',  bx:38, by:54,  side:'L', rank:0},
+  {id:'ribb',  name:'Ribbeina',    bx:48, by:80,  side:'L', rank:1},
+  {id:'rygg',  name:'Ryggraden',   bx:60, by:110, side:'R', rank:1},
+  {id:'albue', name:'Albuen',      bx:99, by:89,  side:'R', rank:2},
+  {id:'lar',   name:'Lårbenet',    bx:44, by:155, side:'L', rank:2},
+  {id:'kne',   name:'Kneskålen',   bx:56, by:175, side:'L', rank:3},
+  {id:'hael',  name:'Hælen',       bx:76, by:212, side:'R', rank:3},
 ];
 const DIGESTION=[
   {id:'munn',    name:'Munnen',    emoji:'👄',fact:'Tygging starter det hele!'},
@@ -1040,33 +1046,65 @@ function buildSkel(s){
   const g=S.gs.skel;
   if(g.done) return gameDone('🦴','Alle bein funnet!','Du kjenner skjelettet!',s);
   const cur=g.order[g.idx];
-  const svg=`<svg viewBox="0 0 120 300" xmlns="http://www.w3.org/2000/svg">
-    <ellipse cx="60" cy="24" rx="21" ry="22" fill="#F5D5B0" stroke="#C9956A" stroke-width="1.8"/>
-    <rect x="53" y="44" width="14" height="14" rx="4" fill="#F5D5B0" stroke="#C9956A" stroke-width="1.5"/>
-    <rect x="32" y="56" width="56" height="76" rx="10" fill="#F5D5B0" stroke="#C9956A" stroke-width="1.8"/>
-    <rect x="9" y="58" width="23" height="62" rx="10" fill="#F5D5B0" stroke="#C9956A" stroke-width="1.5"/>
-    <rect x="88" y="58" width="23" height="62" rx="10" fill="#F5D5B0" stroke="#C9956A" stroke-width="1.5"/>
-    <rect x="32" y="134" width="24" height="84" rx="10" fill="#F5D5B0" stroke="#C9956A" stroke-width="1.5"/>
-    <rect x="64" y="134" width="24" height="84" rx="10" fill="#F5D5B0" stroke="#C9956A" stroke-width="1.5"/>
-    <path d="M40,72 Q60,84 80,72" fill="none" stroke="#C9956A" stroke-width="1.4"/>
-    <path d="M37,84 Q60,96 83,84" fill="none" stroke="#C9956A" stroke-width="1.4"/>
-    <path d="M37,96 Q60,108 83,96" fill="none" stroke="#C9956A" stroke-width="1.4"/>
-    <circle cx="60" cy="74" r="2.5" fill="#A06840"/>
-    <circle cx="60" cy="86" r="2.5" fill="#A06840"/>
-    <circle cx="60" cy="98" r="2.5" fill="#A06840"/>
-    <circle cx="60" cy="110" r="2.5" fill="#A06840"/>
-    <circle cx="60" cy="122" r="2.5" fill="#A06840"/>
-  </svg>`;
-  const zones=g.order.map(b=>{
+  /* Body offset: body is drawn at x=9..111, shifted right by 120 to center in 360-wide viewBox */
+  const ox=120;
+  /* Left label positions (rank 0-3), right label positions */
+  const lyMap={L:[30,80,150,195],R:[30,85,140,210]};
+  const lw=90,lh=24,lr=6;
+  /* Build labels, lines, and dots */
+  let labels='',lines='',dots='';
+  g.order.forEach(b=>{
     const done=g.correct.includes(b.id),isCur=b.id===cur.id;
-    return `<div class="bone-btn" data-a="boneClick" data-bone="${b.id}"
-      style="top:${b.top};left:${b.left};background:${done?'#22C55E':isCur?'#FCD34D':'#D8C8E8'};
-      ${isCur?'box-shadow:0 0 0 6px rgba(251,191,36,.45)':''}">
-      ${done?'✓':'?'}</div>`;
-  }).join('');
+    const fill=done?'#22C55E':isCur?'#FCD34D':'#D8C8E8';
+    const textFill=done?'#fff':isCur?'#78350F':'#4A3560';
+    const ly=lyMap[b.side][b.rank];
+    const lx=b.side==='L'?5:265;
+    const labelCx=lx+lw/2, labelCy=ly+lh/2;
+    /* Arrow endpoint: edge of label closest to body */
+    const lineStartX=b.side==='L'?lx+lw:lx;
+    const lineEndX=b.bx+ox;
+    const lineEndY=b.by;
+    /* Dot on body */
+    dots+=`<circle cx="${lineEndX}" cy="${lineEndY}" r="4" fill="${done?'#22C55E':isCur?'#FBBF24':'#C9956A'}" stroke="#fff" stroke-width="1.5" opacity="${done?1:0.8}"/>`;
+    /* Connecting line */
+    const midX=b.side==='L'?lineStartX+12:lineStartX-12;
+    lines+=`<path d="M${lineStartX},${labelCy} L${midX},${labelCy} L${lineEndX},${lineEndY}" fill="none" stroke="${done?'#22C55E88':isCur?'#FBBF2488':'#C9956A44'}" stroke-width="${isCur?2:1.2}" stroke-dasharray="${done?'none':'4 3'}"/>`;
+    /* Label button */
+    const glow=isCur?`<rect x="${lx-3}" y="${ly-3}" width="${lw+6}" height="${lh+6}" rx="${lr+2}" fill="none" stroke="#FBBF24" stroke-width="2" opacity=".5"/>`:'' ;
+    labels+=`<g class="bone-label${done?' done':''}" data-a="boneClick" data-bone="${b.id}" style="pointer-events:all;cursor:pointer">
+      ${glow}<rect class="bl-bg" x="${lx}" y="${ly}" width="${lw}" height="${lh}" rx="${lr}" fill="${fill}" stroke="${done?'#16A34A':isCur?'#F59E0B':'#B8A8D0'}" stroke-width="1.5"/>
+      <text x="${labelCx}" y="${labelCy+1}" text-anchor="middle" dominant-baseline="central" fill="${textFill}" font-size="9.5" font-weight="800" font-family="'Fredoka One',cursive" style="pointer-events:none">${done?'✓ '+b.name:b.name}</text>
+    </g>`;
+  });
+  const diagram=`<svg viewBox="0 0 360 240" xmlns="http://www.w3.org/2000/svg" style="max-height:55vh">
+    <!-- Body figure -->
+    <g transform="translate(${ox},0) scale(1,0.88)">
+      <ellipse cx="60" cy="24" rx="21" ry="22" fill="#F5D5B0" stroke="#C9956A" stroke-width="1.8"/>
+      <rect x="53" y="44" width="14" height="14" rx="4" fill="#F5D5B0" stroke="#C9956A" stroke-width="1.5"/>
+      <rect x="32" y="56" width="56" height="76" rx="10" fill="#F5D5B0" stroke="#C9956A" stroke-width="1.8"/>
+      <rect x="9" y="58" width="23" height="62" rx="10" fill="#F5D5B0" stroke="#C9956A" stroke-width="1.5"/>
+      <rect x="88" y="58" width="23" height="62" rx="10" fill="#F5D5B0" stroke="#C9956A" stroke-width="1.5"/>
+      <rect x="32" y="134" width="24" height="84" rx="10" fill="#F5D5B0" stroke="#C9956A" stroke-width="1.5"/>
+      <rect x="64" y="134" width="24" height="84" rx="10" fill="#F5D5B0" stroke="#C9956A" stroke-width="1.5"/>
+      <path d="M40,72 Q60,84 80,72" fill="none" stroke="#C9956A" stroke-width="1.4"/>
+      <path d="M37,84 Q60,96 83,84" fill="none" stroke="#C9956A" stroke-width="1.4"/>
+      <path d="M37,96 Q60,108 83,96" fill="none" stroke="#C9956A" stroke-width="1.4"/>
+      <circle cx="60" cy="74" r="2.5" fill="#A06840"/>
+      <circle cx="60" cy="86" r="2.5" fill="#A06840"/>
+      <circle cx="60" cy="98" r="2.5" fill="#A06840"/>
+      <circle cx="60" cy="110" r="2.5" fill="#A06840"/>
+      <circle cx="60" cy="122" r="2.5" fill="#A06840"/>
+    </g>
+    <!-- Connecting lines -->
+    ${lines}
+    <!-- Target dots on body -->
+    ${dots}
+    <!-- Clickable labels -->
+    ${labels}
+  </svg>`;
   return `<div class="skel-wrap">
-    <div class="game-prompt">Trykk på <strong>${cur.name}</strong> på kroppen!</div>
-    <div class="body-stage" style="margin:0 auto">${svg}${zones}</div>
+    <div class="game-prompt">Trykk på <strong>${cur.name}</strong>!</div>
+    <div class="skel-diagram">${diagram}</div>
     <div class="skel-question">
       <div class="skel-q-label">Finn dette beinet:</div>
       <div class="skel-q-name" style="color:${s.color}">${cur.name}</div>
