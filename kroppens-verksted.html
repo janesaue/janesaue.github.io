@@ -1276,11 +1276,34 @@ function buildHeart(s){
 }
 
 // LUNG
+const LUNG_FACTS=[
+  '🫁 Lungene har over 300 millioner små luftblærer (alveoler)!',
+  '🎾 Alle alveoler brettet ut dekker en hel tennisbane!',
+  '🎈 Høyre lunge er større enn venstre — hjertet tar plass!',
+  '🏊 Du puster ca. 20 000 ganger om dagen!',
+  '🌬️ Når du nyser, kan luften nå 160 km/t!',
+  '💨 Lungene rommer 6 liter, men du puster bare ½ liter om gangen!',
+  '🩸 Blodet bruker bare 1 sekund gjennom lungene!',
+  '🤿 Diafragma er formet som en kuppel!',
+  '🧒 Barn puster raskere enn voksne — 20–30 ganger i minuttet!',
+  '🌊 Lungene er det eneste organet som kan flyte på vann!',
+  '🏃 Når du løper puster du dobbelt så fort!',
+  '🔴 Oksygen gjør blodet rødt!',
+  '🌳 Ett stort tre lager oksygen til to mennesker i et år!',
+  '🫁 Venstre lunge har 2 lapper, høyre har 3!',
+  '😮 Et gjesp gir hjernen ekstra oksygen!',
+  '🎵 Du trenger lungene for å snakke og synge!',
+  '🐋 En blåhval fyller 2500 liter luft per pust!',
+  '🦎 Salamandere puster gjennom huden!',
+  '💧 Du puster ut ½ liter vann hver dag!',
+  '🏔️ I fjellene lager kroppen flere røde blodceller!',
+  '🤧 Et host sender luft ut med 80 km/t!',
+  '🧠 Hjernen styrer pustingen, men du kan overta litt selv!',
+];
 function buildLung(s){
-  if(!S.gs.lung) S.gs.lung={phase:'out',count:0};
+  if(!S.gs.lung) S.gs.lung={phase:'out',count:0,factIdx:0};
   const l=S.gs.lung;
   const isIn=l.phase==='in';
-  const facts=['🫁 Lungene har over 300 millioner små luftblærer (alveoler) der oksygen byttes med CO₂!','🌬️ Du puster inn oksygen (O₂) — det gir kroppen energi!','💨 Du puster ut karbondioksid (CO₂) — avfallsgass fra cellene!','🌳 Planter tar opp CO₂ og lager nytt oksygen til oss!','🏊 Du puster ca. 20 000 ganger om dagen — helt automatisk!'];
 
   // fill % based on phase: inhale = full, exhale = empty
   const fillPct = isIn ? 90 : 10;
@@ -1297,7 +1320,11 @@ function buildLung(s){
   const o2px  = [88,102,116,96,108];
   const co2px = [88,102,116,96,108];
 
-  const svg = `<svg viewBox="0 0 220 270" xmlns="http://www.w3.org/2000/svg">
+  // Pick current fact — alternate left/right side
+  const curFact = LUNG_FACTS[l.factIdx % LUNG_FACTS.length];
+  const factSide = l.factIdx % 2 === 0 ? 'left' : 'right';
+
+  const svg = `<svg viewBox="0 0 420 270" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <!-- clip paths for left and right lung -->
       <clipPath id="clipL">
@@ -1312,6 +1339,29 @@ function buildLung(s){
       </clipPath>
     </defs>
 
+    <!-- ── FACT BUBBLE LEFT ── -->
+    ${factSide==='left'?`
+    <g class="lung-fact-bubble">
+      <rect x="2" y="65" width="94" height="130" rx="12" fill="#EFF6FF" stroke="#93C5FD" stroke-width="1.5" opacity=".95"/>
+      <polygon points="96,120 104,132 96,140" fill="#EFF6FF" stroke="#93C5FD" stroke-width="1.5" stroke-linejoin="round"/>
+      <rect x="94" y="121" width="3" height="18" fill="#EFF6FF"/>
+      <foreignObject x="6" y="69" width="86" height="122">
+        <div xmlns="http://www.w3.org/1999/xhtml" style="font-family:Nunito,sans-serif;font-size:10.5px;font-weight:700;color:#1E40AF;line-height:1.35;padding:5px;text-align:center;overflow:hidden;display:flex;align-items:center;justify-content:center;height:100%">${curFact}</div>
+      </foreignObject>
+    </g>`:''}
+
+    <!-- ── FACT BUBBLE RIGHT ── -->
+    ${factSide==='right'?`
+    <g class="lung-fact-bubble">
+      <rect x="324" y="65" width="94" height="130" rx="12" fill="#FFF7ED" stroke="#FDBA74" stroke-width="1.5" opacity=".95"/>
+      <polygon points="324,120 316,132 324,140" fill="#FFF7ED" stroke="#FDBA74" stroke-width="1.5" stroke-linejoin="round"/>
+      <rect x="323" y="121" width="3" height="18" fill="#FFF7ED"/>
+      <foreignObject x="328" y="69" width="86" height="122">
+        <div xmlns="http://www.w3.org/1999/xhtml" style="font-family:Nunito,sans-serif;font-size:10.5px;font-weight:700;color:#92400E;line-height:1.35;padding:5px;text-align:center;overflow:hidden;display:flex;align-items:center;justify-content:center;height:100%">${curFact}</div>
+      </foreignObject>
+    </g>`:''}
+
+    <g transform="translate(100,0)">
     <!-- ── RIBCAGE ── -->
     <g class="ribcage">
       <!-- 5 rib pairs, arcing outward -->
@@ -1403,6 +1453,7 @@ function buildLung(s){
     <text x="110" y="18" text-anchor="middle"
       font-family="Nunito,sans-serif" font-size="18" font-weight="900"
       fill="${isIn?'#3B82F6':'#F97316'}">${isIn?'⬇️':'⬆️'}</text>
+    </g>
   </svg>`;
 
   return `<div class="lung-game ${stateClass}">
@@ -1414,7 +1465,6 @@ function buildLung(s){
       <span class="gas-chip" style="background:#EFF6FF;color:#1D4ED8">🔵 O₂ inn</span>
       <span class="gas-chip" style="background:#FFF7ED;color:#C2410C">🟠 CO₂ ut</span>
     </div>
-    ${facts[l.count]?`<div class="fact-pop" style="background:${s.colorBg};color:#1E40AF">${facts[l.count]}</div>`:''}
     ${l.count<4
       ?`<button class="breath-main-btn" data-a="${isIn?'lungOut':'lungIn'}" style="background:${s.color}">${isIn?'🟠 Pust UT — tøm lungene':'🔵 Pust INN — fyll lungene'}</button>`
       :`<button class="cta" data-a="gameNext" style="background:${s.color}">Kjempebra! Videre →</button>`}
@@ -1847,11 +1897,11 @@ function onClick(e){
     }
     case 'lungIn':{
       SFX.breathIn();
-      const l=S.gs.lung||{count:0}; l.phase='in'; l.count++; S.gs.lung=l; render(); break;
+      const l=S.gs.lung||{count:0,factIdx:0}; l.phase='in'; l.count++; l.factIdx=(l.factIdx||0)+1; S.gs.lung=l; render(); break;
     }
     case 'lungOut':{
       SFX.breathOut();
-      const l=S.gs.lung||{}; l.phase='out'; S.gs.lung=l; render(); break;
+      const l=S.gs.lung||{factIdx:0}; l.phase='out'; l.factIdx=(l.factIdx||0)+1; S.gs.lung=l; render(); break;
     }
 
     case 'seqClick':{
