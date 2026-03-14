@@ -98,6 +98,7 @@
     .tag-reaksjon { border-color: #ffbe0b55; color: #ffbe0b; background: #ffbe0b0d; }
     .tag-minne    { border-color: #06d6a055; color: #06d6a0; background: #06d6a00d; }
     .tag-ord      { border-color: #8338ec55; color: #8338ec; background: #8338ec0d; }
+    .tag-naturfag { border-color: #10b98155; color: #10b981; background: #10b9810d; }
     .level { display: flex; align-items: center; gap: 4px; font-size: 10px; color: var(--text-dim); }
     .level-dots { display: flex; gap: 2px; }
     .dot { width: 6px; height: 6px; background: var(--border); }
@@ -174,6 +175,7 @@
       <button class="filter-btn" data-filter="reaksjon">[reaksjon]</button>
       <button class="filter-btn" data-filter="minne">[minne]</button>
       <button class="filter-btn" data-filter="ord">[ord]</button>
+      <button class="filter-btn" data-filter="naturfag">[naturfag]</button>
     </div>
   </div>
 
@@ -235,6 +237,22 @@
         <div class="card-footer">
           <span class="tag tag-logikk">logikk</span>
           <div class="level"><span class="level-dots"><span class="dot active"></span><span class="dot active"></span><span class="dot active"></span></span></div>
+        </div>
+        <span class="card-launch">[ START ]</span>
+      </a>
+      <a class="card" href="/kroppens-verksted.html" data-cat="naturfag" data-title="Kroppens Verksted" onclick="trackVisit('Kroppens Verksted')">
+        <div class="card-header">
+          <div class="card-icon">🔧</div>
+          <div class="card-meta">
+            <span class="card-id">PRG-004</span>
+            <span class="badge-new">NYTT</span>
+          </div>
+        </div>
+        <div class="card-title">Kroppens Verksted</div>
+        <div class="card-desc">Utforsk kroppens organsystemer! Lær om hjertet, lungene, skjelettet og mer gjennom quiz og interaktive oppgaver.</div>
+        <div class="card-footer">
+          <span class="tag tag-naturfag">naturfag</span>
+          <div class="level"><span class="level-dots"><span class="dot active"></span><span class="dot active"></span><span class="dot"></span></span></div>
         </div>
         <span class="card-launch">[ START ]</span>
       </a>

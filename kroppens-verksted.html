@@ -1,0 +1,1810 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Kroppens Verksted 🔧</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--cream:#FFF8F0;--card:#fff;--border:#E8D8C8;--text:#2D1B00;--muted:#8A7060;--warm:#F5EDE0;}
+body{background:var(--cream);font-family:'Nunito',sans-serif;min-height:100vh;color:var(--text);-webkit-tap-highlight-color:transparent;overflow-x:hidden}
+button,a,.sys-card,.seq-item,.match-item,.bone-btn,.quiz-opt,.doc-sys-btn,.muscle-opt{touch-action:manipulation}
+#app{max-width:760px;margin:0 auto;padding:14px;padding-bottom:56px}
+.screen{animation:slideUp .3s ease both}
+@keyframes slideUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+@keyframes hb{0%,100%{transform:scale(1)}14%{transform:scale(1.18)}28%{transform:scale(1)}42%{transform:scale(1.1)}56%{transform:scale(1)}}
+
+/* MENU */
+.menu-header{text-align:center;padding:22px 0 14px}
+.menu-header h1{font-family:'Fredoka One',cursive;font-size:clamp(1.9rem,7vw,2.8rem);line-height:1.1}
+.menu-header p{color:var(--muted);font-size:.9rem;font-weight:700;margin-top:4px}
+
+/* BODY HERO */
+.body-hero{display:flex;align-items:center;justify-content:center;gap:18px;background:var(--card);border:2px solid var(--border);border-radius:20px;padding:16px 18px;margin-bottom:16px}
+.body-svg-wrap{flex-shrink:0;width:88px;height:158px}
+.body-svg-wrap svg{width:100%;height:100%}
+.hero-legend{flex:1}
+.hero-legend-title{font-weight:900;font-size:.88rem;margin-bottom:7px;color:var(--muted)}
+.legend-row{display:flex;align-items:center;gap:6px;margin-bottom:4px;font-size:.77rem;font-weight:700}
+.legend-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.pbar-label{display:flex;justify-content:space-between;font-weight:700;font-size:.77rem;color:var(--muted);margin-bottom:3px;margin-top:8px}
+.pbar{height:9px;background:#F0E0D0;border-radius:99px;overflow:hidden}
+.pbar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#F59E0B,#EF4444);transition:width .7s ease}
+
+/* GRID */
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px;margin-bottom:12px}
+@media(min-width:520px){.grid{grid-template-columns:repeat(3,1fr)}}
+.sys-card{background:var(--card);border-radius:18px;padding:18px 10px 14px;text-align:center;cursor:pointer;border:3px solid transparent;position:relative;transition:transform .15s,box-shadow .15s;user-select:none}
+.sys-card:hover{transform:translateY(-4px);box-shadow:0 10px 26px rgba(0,0,0,.11)}
+.sys-card:active{transform:translateY(-1px)}
+.sys-card .se{font-size:2.5rem;display:block;margin-bottom:6px}
+.sys-card .sn{font-weight:900;font-size:.88rem;line-height:1.2}
+.sys-card .ss{margin-top:6px;font-size:.95rem;letter-spacing:2px}
+.ck-badge{position:absolute;top:8px;right:8px;width:20px;height:20px;border-radius:50%;background:#22C55E;color:#fff;font-size:.65rem;font-weight:900;display:flex;align-items:center;justify-content:center}
+
+/* DOCTOR CARD */
+.doc-card{background:linear-gradient(135deg,#1E1B4B,#312E81);border-radius:18px;padding:18px;cursor:pointer;display:flex;align-items:center;gap:14px;margin-bottom:12px;transition:transform .15s,box-shadow .15s;border:3px solid #4F46E5}
+.doc-card.locked{opacity:.7;cursor:default}
+.doc-card:not(.locked):hover{transform:translateY(-3px);box-shadow:0 10px 28px rgba(79,70,229,.3)}
+.doc-card-em{font-size:2.8rem;flex-shrink:0}
+.doc-card-text h3{font-family:'Fredoka One',cursive;font-size:1.3rem;color:#fff}
+.doc-card-text p{font-size:.82rem;font-weight:700;color:#A5B4FC;margin-top:3px}
+.doc-lock{font-size:.78rem;font-weight:800;color:#6366F1;background:#EEF2FF;padding:3px 10px;border-radius:20px;margin-top:6px;display:inline-block}
+.doc-unlock{font-size:.78rem;font-weight:800;color:#A5B4FC;background:#312E81;padding:3px 10px;border-radius:20px;margin-top:6px;display:inline-block}
+
+/* SYSTEM */
+.sys-hdr{border-radius:20px;padding:18px;color:#fff;margin-bottom:14px}
+.sys-hdr-inner{display:flex;align-items:center;gap:12px}
+.sys-hdr-em{font-size:3rem}
+.sys-hdr-text h2{font-family:'Fredoka One',cursive;font-size:1.7rem;line-height:1.1}
+.sys-hdr-text .analogy{font-size:.85rem;font-weight:600;opacity:.9;margin-top:3px}
+.tab-bar{display:flex;background:var(--card);border-radius:14px;padding:4px;margin-bottom:12px;border:2px solid var(--border);gap:4px}
+.tab-btn{flex:1;padding:9px 6px;border:none;border-radius:10px;background:transparent;font-family:'Nunito',sans-serif;font-weight:800;font-size:.82rem;cursor:pointer;color:var(--muted);transition:all .15s}
+.tab-btn .ti{display:block;font-size:1rem;margin-bottom:2px}
+.tab-btn.active{color:#fff}
+.panel{background:var(--card);border-radius:20px;padding:18px 16px;border:2px solid var(--border);min-height:260px}
+.back-btn{display:inline-flex;align-items:center;gap:5px;background:none;border:none;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:700;color:var(--muted);cursor:pointer;padding:6px 0;margin-bottom:10px}
+.back-btn:hover{color:var(--text)}
+
+/* FACTS */
+.fact-list{display:flex;flex-direction:column;gap:9px;margin-bottom:16px}
+.fact-item{display:flex;align-items:flex-start;gap:12px;background:var(--warm);border-radius:12px;padding:11px 13px}
+.fact-item .fi{font-size:1.5rem;flex-shrink:0}
+.fact-item .ft{font-weight:700;font-size:.88rem;line-height:1.45}
+.done-badge{display:inline-flex;align-items:center;gap:6px;background:#DCFCE7;color:#166534;border-radius:20px;padding:6px 14px;font-weight:800;font-size:.88rem;margin-top:6px}
+
+/* LATIN & DETAILS */
+.section-hdr{font-weight:900;font-size:.78rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin:16px 0 8px;display:flex;align-items:center;gap:6px}
+.latin-cards{display:flex;flex-direction:column;gap:8px;margin-bottom:4px}
+.latin-card{background:var(--card);border:2px solid var(--border);border-radius:14px;padding:11px 13px;position:relative;overflow:hidden}
+.latin-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px}
+.latin-word{font-family:'Fredoka One',cursive;font-size:1.1rem;line-height:1}
+.latin-no{font-weight:900;font-size:.78rem;color:var(--muted);margin:1px 0 0}
+.latin-meaning{display:inline-block;background:#F0E8FF;color:#6D28D9;font-size:.72rem;font-weight:800;padding:2px 8px;border-radius:20px;margin:5px 0 4px}
+.latin-desc{font-size:.83rem;font-weight:700;line-height:1.45;color:var(--text)}
+
+/* FUN FACTS */
+.fun-facts{display:flex;flex-direction:column;gap:7px;margin-bottom:4px}
+.fun-fact{display:flex;align-items:flex-start;gap:10px;background:linear-gradient(135deg,#FFFBEB,#FEF3C7);border:2px solid #FDE68A;border-radius:12px;padding:10px 12px}
+.fun-fact-em{font-size:1.4rem;flex-shrink:0}
+.fun-fact-txt{font-size:.83rem;font-weight:700;line-height:1.45}
+
+/* BUTTONS */
+.cta{display:block;width:100%;padding:13px;border:none;border-radius:14px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:900;cursor:pointer;color:#fff;transition:transform .12s,box-shadow .12s;margin-top:8px}
+.cta:hover{transform:translateY(-2px);box-shadow:0 5px 16px rgba(0,0,0,.18)}
+.cta:active{transform:none}
+.cta.outline{background:#fff!important;border:3px solid}
+.next-btn{display:block;width:100%;padding:12px;border:none;border-radius:14px;font-family:'Nunito',sans-serif;font-size:.92rem;font-weight:900;cursor:pointer;color:#fff;margin-top:11px;transition:transform .12s}
+.next-btn:hover{transform:translateY(-2px)}
+
+/* GAME COMMON */
+.game-prompt{text-align:center;font-size:.95rem;font-weight:800;color:var(--muted);margin-bottom:14px;line-height:1.4}
+.game-prompt strong{color:var(--text)}
+.game-done{text-align:center;padding:18px 0}
+.game-done .gd-em{font-size:3.8rem;display:block;margin-bottom:8px;animation:pop .5s cubic-bezier(.3,1.5,.5,1) both}
+.game-done .gd-title{font-family:'Fredoka One',cursive;font-size:1.6rem;margin-bottom:5px}
+.game-done .gd-sub{color:var(--muted);font-weight:700;font-size:.88rem;margin-bottom:16px}
+
+/* SKELETON */
+.skel-wrap{display:flex;flex-direction:column;align-items:center}
+.body-stage{position:relative;width:clamp(150px,38vw,220px);height:clamp(272px,69vw,400px);flex-shrink:0}
+.body-stage svg{width:100%;height:100%;pointer-events:none}
+.bone-btn{position:absolute;width:clamp(34px,8vw,48px);height:clamp(34px,8vw,48px);border-radius:50%;border:3px solid #fff;cursor:pointer;font-size:clamp(.65rem,.14vw+.6rem,.85rem);font-weight:900;display:flex;align-items:center;justify-content:center;transition:transform .2s,background .2s;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.bone-btn:hover{transform:scale(1.15)}
+.bone-btn.wrong-flash{background:#EF4444!important;animation:shake .3s ease}
+.skel-question{background:var(--warm);border-radius:14px;padding:13px 16px;text-align:center;margin-top:12px;width:100%;max-width:320px}
+.skel-q-label{color:var(--muted);font-size:.78rem;font-weight:700;margin-bottom:3px}
+.skel-q-name{font-weight:900;font-size:1.15rem}
+.skel-count{color:var(--muted);font-size:.82rem;font-weight:700;margin-top:3px}
+
+/* SYNERGY CARDS */
+.synergy-cards{display:flex;flex-direction:column;gap:10px;margin-bottom:4px}
+.synergy-card{display:flex;align-items:flex-start;gap:12px;background:var(--warm);border-left:4px solid var(--border);border-radius:14px;padding:12px 14px}
+.syn-em{font-size:1.6rem;flex-shrink:0;margin-top:1px}
+.syn-name{font-weight:800;font-size:.9rem;margin-bottom:3px}
+.syn-desc{font-size:.8rem;color:var(--muted);font-weight:600;line-height:1.45}
+
+/* TIMER */
+.timer-bar-wrap{position:relative;height:10px;background:var(--border);border-radius:8px;margin:6px 0 12px;overflow:visible}
+.timer-bar{height:10px;border-radius:8px;transition:width .9s linear,background .3s}
+.timer-lbl{position:absolute;right:0;top:-18px;font-size:.72rem;font-weight:800;color:var(--muted)}
+.timer-toggle{background:none;border:2px solid var(--border);border-radius:8px;padding:3px 7px;cursor:pointer;font-size:.85rem;line-height:1}
+
+/* STREAK */
+.streak-badge{background:#FEF3C7;border:2px solid #FCD34D;color:#92400E;font-weight:800;font-size:.78rem;padding:3px 10px;border-radius:20px;animation:streakPop .3s cubic-bezier(.34,1.56,.64,1)}
+@keyframes streakPop{from{transform:scale(.7)}to{transform:scale(1)}}
+
+/* WRONG LOG */
+.wrong-log{background:#FEF9C3;border:2px solid #FDE68A;border-radius:16px;padding:14px;margin:10px 0}
+.wrong-log-hdr{font-weight:800;font-size:.85rem;color:#92400E;margin-bottom:10px}
+.wrong-log-item{background:#fff;border-radius:10px;padding:8px 11px;margin-bottom:7px}
+.wrong-log-item:last-child{margin-bottom:0}
+.wli-q{font-size:.8rem;font-weight:700;color:var(--text);margin-bottom:3px}
+.wli-a{font-size:.8rem;font-weight:800;color:#166534}
+.ob-screen{min-height:85vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px}
+.ob-dots{display:flex;gap:8px;justify-content:center;margin-bottom:28px}
+.ob-dot{width:10px;height:10px;border-radius:50%;background:var(--border);transition:background .2s}
+.ob-dot.ob-active{background:#F59E0B;transform:scale(1.2)}
+.ob-em{font-size:3.6rem;margin-bottom:16px;line-height:1.2}
+.ob-title{font-family:'Fredoka One',cursive;font-size:clamp(1.4rem,5vw,1.8rem);margin-bottom:12px;line-height:1.2}
+.ob-desc{color:var(--muted);font-weight:700;font-size:clamp(.88rem,2.5vw,1rem);max-width:320px;line-height:1.65;margin-bottom:28px}
+
+/* HEART */
+.heart-game{text-align:center;padding:4px 0}
+.heart-phase-chip{display:inline-block;padding:5px 16px;border-radius:20px;font-weight:800;font-size:.85rem;margin-bottom:14px}
+.heart-ring-wrap{position:relative;display:inline-flex;align-items:center;justify-content:center;width:130px;height:130px;margin:4px 0 8px}
+.heart-ring{position:absolute;width:72px;height:72px;border-radius:50%;border:3px solid #FCA5A5;animation:ringPulse 1s ease-out infinite}
+@keyframes ringPulse{0%{transform:scale(1);opacity:.9}100%{transform:scale(2.4);opacity:0}}
+.heart-em{font-size:5rem;display:inline-block;animation:hb 1s ease-in-out infinite;position:relative;z-index:1}
+.bpm-big{font-family:'Fredoka One',cursive;font-size:2.6rem;line-height:1}
+.bpm-lbl{color:var(--muted);font-size:.82rem;font-weight:700;margin:3px 0 12px}
+.heart-dots-row{display:flex;gap:9px;justify-content:center;margin:10px 0 14px}
+.heart-dot{width:14px;height:14px;border-radius:50%;background:var(--border);transition:background .25s,transform .25s}
+.heart-dot.done{background:#EF4444;transform:scale(1.15)}
+.heart-tap-btn{display:block;width:clamp(160px,50%,200px);margin:0 auto;padding:18px;border:none;border-radius:50px;font-family:'Nunito',sans-serif;font-size:1.2rem;font-weight:900;color:#fff;cursor:pointer;box-shadow:0 5px 22px rgba(0,0,0,.18);transition:transform .1s}
+.heart-tap-btn:active{transform:scale(.93)}
+.hint-text{color:var(--muted);font-size:.82rem;font-weight:600;text-align:center;margin-top:10px}
+.bpm-compare{display:flex;align-items:center;justify-content:center;gap:14px;margin:16px 0}
+.bpm-cmp-card{background:var(--warm);border:3px solid var(--border);border-radius:18px;padding:14px 18px;text-align:center;min-width:110px}
+.bpm-cmp-lbl{font-size:.78rem;font-weight:800;color:var(--muted);margin-bottom:6px}
+.bpm-cmp-num{font-family:'Fredoka One',cursive;font-size:2.2rem;line-height:1}
+.bpm-cmp-unit{font-size:.7rem;font-weight:700;color:var(--muted);margin-top:2px}
+.bpm-cmp-vs{font-size:1.5rem;color:var(--muted)}
+
+/* LUNG */
+.lung-game{text-align:center;padding:4px 0}
+.lung-svg-wrap{display:flex;justify-content:center;margin:4px 0}
+.lung-svg-wrap svg{width:min(92vw,320px);height:auto}
+
+/* fill-rect inside each lung: scaleY from bottom — iOS Safari safe */
+@keyframes lungFillIn{
+  from{transform:scaleY(0);-webkit-transform:scaleY(0)}
+  to  {transform:scaleY(1);-webkit-transform:scaleY(1)}
+}
+@keyframes lungFillOut{
+  from{transform:scaleY(1);-webkit-transform:scaleY(1)}
+  to  {transform:scaleY(0);-webkit-transform:scaleY(0)}
+}
+@keyframes diaphDown{
+  from{transform:translateY(0px)}
+  to{transform:translateY(14px)}
+}
+@keyframes diaphUp{
+  from{transform:translateY(14px)}
+  to{transform:translateY(0px)}
+}
+@keyframes ribExp{
+  from{transform:scaleX(1)}
+  to{transform:scaleX(1.07)}
+}
+@keyframes ribRest{
+  from{transform:scaleX(1.07)}
+  to{transform:scaleX(1)}
+}
+@keyframes particleIn{
+  0%  {opacity:0;transform:translateY(-32px) scale(.5)}
+  30% {opacity:1}
+  100%{opacity:0;transform:translateY(32px) scale(1)}
+}
+@keyframes particleOut{
+  0%  {opacity:0;transform:translateY(22px) scale(1)}
+  30% {opacity:1}
+  100%{opacity:0;transform:translateY(-38px) scale(.5)}
+}
+
+.lf-in  .lung-fill{animation:lungFillIn  .8s cubic-bezier(.45,0,.55,1) forwards;transform-box:fill-box;transform-origin:bottom center;-webkit-transform-box:fill-box;-webkit-transform-origin:bottom center}
+.lf-out .lung-fill{animation:lungFillOut .8s cubic-bezier(.45,0,.55,1) forwards;transform-box:fill-box;transform-origin:bottom center;-webkit-transform-box:fill-box;-webkit-transform-origin:bottom center}
+.lf-in  .diaphragm{animation:diaphDown .8s ease forwards}
+.lf-out .diaphragm{animation:diaphUp   .8s ease forwards}
+.lf-in  .ribcage{animation:ribExp .8s ease forwards;transform-origin:50% 50%}
+.lf-out .ribcage{animation:ribRest .8s ease forwards;transform-origin:50% 50%}
+
+.particle{animation-duration:.9s;animation-fill-mode:both}
+.lf-in  .p-o2{animation-name:particleIn}
+.lf-out .p-co2{animation-name:particleOut}
+
+.breath-status{font-size:1.05rem;font-weight:900;margin-bottom:3px}
+.breath-sub{color:var(--muted);font-size:.82rem;font-weight:600;margin-bottom:10px}
+.gas-bar{display:flex;justify-content:center;gap:16px;margin:8px 0 12px}
+.gas-chip{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:20px;font-size:.78rem;font-weight:800}
+.fact-pop{border-radius:10px;padding:9px 12px;font-weight:700;font-size:.85rem;margin:0 auto 12px;max-width:290px;animation:slideUp .3s ease}
+.breath-main-btn{display:block;width:100%;max-width:210px;margin:0 auto;padding:13px;border:none;border-radius:14px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:900;color:#fff;cursor:pointer;transition:transform .12s}
+.breath-main-btn:hover{transform:translateY(-2px)}
+
+/* SEQUENCE */
+.seq-wrap{display:flex;flex-direction:column;gap:7px}
+.seq-item{display:flex;align-items:center;gap:10px;background:var(--warm);border:2.5px solid transparent;border-radius:12px;padding:10px 12px;cursor:pointer;font-weight:700;font-size:.88rem;transition:all .15s}
+.seq-item:hover{border-color:var(--border);background:#fff}
+.seq-item.placed{cursor:default;background:#DCFCE7;border-color:#86EFAC}
+.seq-item.wf{background:#FEE2E2;border-color:#FCA5A5}
+.seq-num{width:26px;height:26px;border-radius:50%;background:#fff;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.82rem;flex-shrink:0;transition:all .2s}
+.seq-item.placed .seq-num{background:#22C55E;color:#fff;border-color:#22C55E}
+.seq-fact{margin-left:auto;color:#166534;font-size:.73rem;font-weight:700;max-width:105px;text-align:right;line-height:1.3}
+.seq-emoji{font-size:1.25rem;flex-shrink:0}
+
+/* MATCH */
+.match-cols{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.match-side{display:flex;flex-direction:column;gap:6px}
+.match-item{background:var(--warm);border:2.5px solid transparent;border-radius:12px;padding:11px 7px;cursor:pointer;font-weight:700;text-align:center;font-size:.82rem;transition:all .15s;line-height:1.3}
+.match-item:hover{border-color:var(--border);background:#fff}
+.match-item.sel{background:#EFF6FF;border-color:#3B82F6}
+.match-item.matched{background:#DCFCE7;border-color:#86EFAC;pointer-events:none}
+.match-em{font-size:1.4rem;display:block;margin-bottom:3px}
+
+/* MUSCLE */
+.muscle-scenario{background:var(--warm);border-radius:14px;padding:16px;text-align:center;margin-bottom:12px}
+.muscle-big-em{font-size:3.2rem;display:block;margin-bottom:6px}
+.muscle-scene-txt{color:var(--muted);font-weight:700;font-size:.85rem}
+.muscle-scene-q{font-weight:900;font-size:1rem;margin-top:4px}
+.muscle-opts{display:flex;flex-direction:column;gap:7px}
+.muscle-opt{background:var(--warm);border:2.5px solid transparent;border-radius:12px;padding:11px 14px;cursor:pointer;font-weight:700;font-size:.88rem;text-align:left;transition:all .15s;font-family:'Nunito',sans-serif}
+.muscle-opt:hover{border-color:var(--border);background:#fff}
+.muscle-opt.cor{background:#DCFCE7;border-color:#86EFAC;color:#166534;pointer-events:none}
+.muscle-opt.wrg{background:#FEE2E2;border-color:#FCA5A5;color:#991B1B;pointer-events:none}
+
+/* QUIZ */
+.quiz-progress{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.quiz-num{font-size:.78rem;font-weight:700;color:var(--muted)}
+.quiz-dots{display:flex;gap:5px}
+.qdot{width:9px;height:9px;border-radius:50%;background:var(--border);transition:background .2s}
+.quiz-q{font-size:1.05rem;font-weight:900;text-align:center;line-height:1.4;margin-bottom:16px}
+.quiz-opts{display:flex;flex-direction:column;gap:7px}
+.quiz-opt{background:var(--warm);border:2.5px solid transparent;border-radius:12px;padding:12px 15px;cursor:pointer;font-weight:700;font-size:.88rem;text-align:left;transition:all .15s;font-family:'Nunito',sans-serif}
+.quiz-opt:hover{border-color:var(--border);background:#fff}
+.quiz-opt.cor{background:#DCFCE7;border-color:#86EFAC;color:#166534;pointer-events:none}
+.quiz-opt.wrg{background:#FEE2E2;border-color:#FCA5A5;color:#991B1B;pointer-events:none}
+.quiz-fb{margin-top:9px;padding:9px 13px;border-radius:10px;font-weight:700;font-size:.88rem;text-align:center;display:none;animation:slideUp .25s ease}
+.quiz-fb.show{display:block}
+.qresult{text-align:center;padding:14px 0}
+.qresult-score{font-family:'Fredoka One',cursive;font-size:2rem;margin:8px 0 4px}
+.qresult-msg{color:var(--muted);font-weight:700;font-size:.88rem;margin-bottom:12px}
+.star-row{font-size:2rem;letter-spacing:4px;margin-bottom:16px}
+.qr-btns{display:flex;flex-direction:column;gap:7px}
+
+/* DOCTOR */
+.doc-header{text-align:center;margin-bottom:14px}
+.doc-header h2{font-family:'Fredoka One',cursive;font-size:1.5rem;color:#4F46E5}
+.doc-header p{color:var(--muted);font-size:.82rem;font-weight:700;margin-top:2px}
+.doc-score-bar{background:var(--card);border:2px solid var(--border);border-radius:14px;padding:11px 15px;margin-bottom:12px}
+.doc-score-inner{display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:.88rem}
+.doc-score-big{font-family:'Fredoka One',cursive;font-size:1.8rem;color:#4F46E5}
+.doc-dots{display:flex;gap:5px;margin-top:5px}
+.doc-dot{width:10px;height:10px;border-radius:50%;background:var(--border)}
+.doc-dot.cor{background:#22C55E}
+.doc-dot.wrg{background:#EF4444}
+.doc-case-box{background:linear-gradient(135deg,#1E1B4B,#312E81);border-radius:18px;padding:18px;margin-bottom:14px;color:#fff}
+.doc-case-num{font-size:.73rem;font-weight:700;color:#A5B4FC;margin-bottom:7px;text-transform:uppercase;letter-spacing:.06em}
+.doc-case-title{font-family:'Fredoka One',cursive;font-size:1.35rem;margin-bottom:10px}
+.doc-symptoms{display:flex;flex-direction:column;gap:5px}
+.doc-symptom{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.1);border-radius:9px;padding:7px 11px;font-size:.86rem;font-weight:700}
+.doc-question{font-weight:900;font-size:.98rem;margin-bottom:11px}
+.doc-sys-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:13px}
+.doc-sys-btn{background:var(--warm);border:2.5px solid transparent;border-radius:12px;padding:11px 8px;cursor:pointer;font-weight:800;text-align:center;font-size:.83rem;font-family:'Nunito',sans-serif;transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:3px}
+.doc-sys-btn:hover{border-color:var(--border);background:#fff}
+.doc-sys-btn.sel{border-color:#4F46E5;background:#EEF2FF}
+.doc-sys-btn.cor{background:#DCFCE7;border-color:#86EFAC;color:#166534;pointer-events:none}
+.doc-sys-btn.wrg{background:#FEE2E2;border-color:#FCA5A5;color:#991B1B;pointer-events:none}
+.doc-sys-btn.rev{background:#DCFCE7;border-color:#86EFAC;color:#166534;opacity:.6;pointer-events:none}
+.doc-sys-em{font-size:1.55rem}
+.doc-check-btn{display:block;width:100%;padding:13px;border:none;border-radius:14px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:900;cursor:pointer;color:#fff;background:#4F46E5;transition:transform .12s}
+.doc-check-btn:hover{transform:translateY(-2px)}
+.doc-check-btn:disabled{opacity:.4;cursor:default;transform:none}
+.doc-result{border-radius:12px;padding:11px 14px;font-weight:700;font-size:.88rem;margin-top:10px;display:none;line-height:1.5}
+.doc-result.show{display:block;animation:slideUp .25s ease}
+.doc-done{text-align:center;padding:24px 0}
+.doc-done-em{font-size:4.5rem;display:block;margin-bottom:10px;animation:pop .5s cubic-bezier(.3,1.5,.5,1) both}
+.doc-done-score{font-family:'Fredoka One',cursive;font-size:2.8rem;color:#4F46E5;margin:4px 0}
+.doc-done-sub{color:var(--muted);font-weight:700;font-size:.9rem;margin-bottom:20px}
+.doc-dots-big{display:flex;gap:8px;justify-content:center;margin:10px 0 20px}
+.doc-dot-big{width:16px;height:16px;border-radius:50%}
+
+.footer{text-align:center;color:var(--muted);font-size:.72rem;font-weight:600;margin-top:22px}
+
+/* ══════════════════════════════════════════════════════
+   RESPONSIVE — iPad og større skjermer
+   iPad portrait  : 768px+
+   iPad landscape : 1024px+
+   ══════════════════════════════════════════════════════ */
+
+/* ── Alle interaktive elementer: 44px minimum touch-target ── */
+@media(min-width:768px){
+  #app{max-width:860px;padding:20px 24px 72px}
+
+  /* header */
+  .menu-header{padding:28px 0 18px}
+  .menu-header p{font-size:1rem}
+
+  /* body hero */
+  .body-svg-wrap{width:112px;height:200px}
+  .hero-legend-title{font-size:1rem}
+  .legend-row{font-size:.88rem;gap:8px}
+  .legend-dot{width:11px;height:11px}
+  .pbar{height:11px}
+  .pbar-label{font-size:.85rem}
+
+  /* system cards */
+  .grid{gap:14px}
+  .sys-card{padding:22px 14px 18px;border-radius:22px}
+  .sys-card .se{font-size:3rem;margin-bottom:8px}
+  .sys-card .sn{font-size:1rem}
+  .sys-card .ss{font-size:1.1rem}
+  .ck-badge{width:24px;height:24px;font-size:.75rem}
+
+  /* doctor card */
+  .doc-card{padding:22px;gap:18px;border-radius:22px}
+  .doc-card-em{font-size:3.2rem}
+  .doc-card-text h3{font-size:1.55rem}
+  .doc-card-text p{font-size:.95rem}
+
+  /* system header */
+  .sys-hdr{padding:22px;border-radius:24px;margin-bottom:18px}
+  .sys-hdr-em{font-size:3.6rem}
+  .sys-hdr-text h2{font-size:2rem}
+  .sys-hdr-text .analogy{font-size:.95rem}
+
+  /* tab bar */
+  .tab-bar{padding:5px;gap:6px;border-radius:16px}
+  .tab-btn{padding:12px 10px;border-radius:12px;font-size:.92rem}
+  .tab-btn .ti{font-size:1.2rem;margin-bottom:3px}
+
+  /* panel */
+  .panel{padding:22px 20px;border-radius:24px;min-height:320px}
+  .back-btn{font-size:1rem;padding:8px 0;margin-bottom:14px}
+
+  /* facts / latin / fun */
+  .fact-item{padding:14px 16px;border-radius:14px;gap:14px}
+  .fact-item .fi{font-size:1.8rem}
+  .fact-item .ft{font-size:.96rem}
+  .section-hdr{font-size:.86rem;margin:20px 0 10px}
+  .latin-card{padding:14px 16px;border-radius:16px}
+  .latin-word{font-size:1.25rem}
+  .latin-no{font-size:.86rem}
+  .latin-meaning{font-size:.8rem;padding:3px 10px}
+  .latin-desc{font-size:.92rem}
+  .fun-fact{padding:13px 15px;border-radius:14px;gap:12px}
+  .fun-fact-em{font-size:1.7rem}
+  .fun-fact-txt{font-size:.92rem}
+  .done-badge{font-size:.96rem;padding:8px 18px}
+
+  /* buttons */
+  .cta{padding:16px;font-size:1.05rem;border-radius:16px}
+  .next-btn{padding:15px;font-size:1rem;border-radius:16px}
+
+  /* game common */
+  .game-prompt{font-size:1.08rem;margin-bottom:18px}
+  .game-done .gd-em{font-size:4.5rem}
+  .game-done .gd-title{font-size:1.9rem}
+  .game-done .gd-sub{font-size:.96rem}
+
+  /* skeleton */
+  .skel-question{padding:16px 20px;border-radius:18px}
+  .skel-q-label{font-size:.86rem}
+  .skel-q-name{font-size:1.35rem}
+  .skel-count{font-size:.92rem}
+
+  /* heart */
+  .heart-em{font-size:6.5rem}
+  .bpm-big{font-size:3.2rem}
+  .bpm-lbl{font-size:.92rem}
+  .state-chip{font-size:.92rem;padding:7px 18px}
+  .act-btn{padding:15px 28px;font-size:1rem;border-radius:14px;min-width:130px}
+  .hint-text{font-size:.92rem}
+
+  /* lung */
+  .lung-svg-wrap svg{width:min(70vw,380px)}
+  .breath-status{font-size:1.15rem}
+  .breath-sub{font-size:.92rem}
+  .gas-chip{font-size:.88rem;padding:6px 16px}
+  .breath-main-btn{padding:16px;font-size:1.05rem;max-width:260px;border-radius:16px}
+
+  /* sequence */
+  .seq-item{padding:13px 16px;font-size:.96rem;border-radius:14px}
+  .seq-num{width:32px;height:32px;font-size:.92rem}
+  .seq-emoji{font-size:1.5rem}
+  .seq-fact{font-size:.82rem}
+
+  /* match */
+  .match-item{padding:14px 10px;font-size:.92rem;border-radius:14px}
+  .match-em{font-size:1.7rem}
+
+  /* muscle */
+  .muscle-scenario{padding:20px;border-radius:18px;margin-bottom:16px}
+  .muscle-big-em{font-size:4rem}
+  .muscle-scene-txt{font-size:.95rem}
+  .muscle-scene-q{font-size:1.1rem}
+  .muscle-opt{padding:14px 18px;font-size:.96rem;border-radius:14px}
+
+  /* quiz */
+  .quiz-num{font-size:.88rem}
+  .qdot{width:11px;height:11px}
+  .quiz-q{font-size:1.2rem;margin-bottom:20px}
+  .quiz-opt{padding:15px 18px;font-size:.96rem;border-radius:14px}
+  .quiz-fb{font-size:.96rem;padding:11px 16px}
+  .qresult-score{font-size:2.4rem}
+  .qresult-msg{font-size:.96rem}
+  .star-row{font-size:2.4rem}
+
+  /* doctor */
+  .doc-header h2{font-size:1.8rem}
+  .doc-header p{font-size:.92rem}
+  .doc-case-title{font-size:1.55rem}
+  .doc-symptom{font-size:.95rem;padding:9px 14px}
+  .doc-question{font-size:1.1rem}
+  .doc-sys-grid{grid-template-columns:repeat(3,1fr);gap:10px}
+  .doc-sys-btn{padding:14px 10px;font-size:.92rem;border-radius:14px}
+  .doc-sys-em{font-size:1.8rem}
+  .doc-check-btn{padding:16px;font-size:1.05rem;border-radius:16px}
+  .doc-done-em{font-size:5.5rem}
+  .doc-done-score{font-size:3.4rem}
+  .doc-done-sub{font-size:1rem}
+  .doc-dot-big{width:20px;height:20px}
+
+  .footer{font-size:.82rem;margin-top:32px}
+}
+
+/* ── iPad landscape + iPad Pro ── */
+@media(min-width:1024px){
+  #app{max-width:960px;padding:24px 32px 80px}
+
+  /* 3-col grid from a bit earlier */
+  .grid{grid-template-columns:repeat(3,1fr)}
+
+  /* Slightly larger system card emoji on big screens */
+  .sys-card .se{font-size:3.4rem}
+
+  /* Side-by-side layout on system screen: panel gets more height */
+  .panel{min-height:380px}
+
+  /* Doctor grid: 3 col */
+  .doc-sys-grid{grid-template-columns:repeat(3,1fr)}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+// ════════════════════════════════════════════
+// DATA — 8 spørsmål per system, 4 trekkes tilfeldig
+// ════════════════════════════════════════════
+const SYSTEMS = [
+  {
+    id:'skjelett', name:'Skjelettet', emoji:'🦴',
+    color:'#7C3AED', colorBg:'#EDE9FE',
+    analogy:'«Som stålbjelkene i et bygg»',
+    bodyParts:['b-skull','b-torso','b-spine','b-leg-l','b-leg-r'],
+    facts:[
+      {icon:'🔢',text:'Kroppen din har 206 bein!'},
+      {icon:'🛡️',text:'Ribbeina beskytter hjertet og lungene — som et rustningsskjold.'},
+      {icon:'📏',text:'Lårbenet er det lengste beinet i kroppen.'},
+      {icon:'🔴',text:'Inne i de store beinene lages det blodceller!'},
+    ],
+    quizBank:[
+      {q:'Hvor mange bein har et voksent menneske?',opts:['106','206','306','56'],a:1},
+      {q:'Hva beskytter ribbeina?',opts:['Hjernen','Nyrene','Hjertet og lungene','Leveren'],a:2},
+      {q:'Hva er skjelettet viktig for?',opts:['Bare utseende','Støtte, beskyttelse og bevegelse','Fordøyelse','Puste'],a:1},
+      {q:'Hvilken del av skjelettet beskytter hjernen?',opts:['Ribbeina','Lårbenet','Hodeskallen','Ryggraden'],a:2},
+      {q:'Hva lages inne i de store beinene?',opts:['Muskler','Blodceller','Nerver','Hormoner'],a:1},
+      {q:'Hva heter det lengste beinet i kroppen?',opts:['Skeggbeinet','Skulderbeinet','Lårbenet','Knokkelet'],a:2},
+      {q:'Hva gjør ledd i skjelettet?',opts:['Pumper blod','Lar beinene bevege seg','Fordøyer mat','Sender signaler'],a:1},
+      {q:'Hva kalles beinene som beskytter hjertet?',opts:['Ryggraden','Ribbeina','Hodeskallen','Bekkenet'],a:1},
+    ],
+    details:[
+      {latin:'Cranium',no:'Hodeskallen',meaning:'"Hjelm" på latin',desc:'Cranium er laget av 22 bein som har grodd sammen til én solid hjelm rundt hjernen din. Den er utrolig sterk!'},
+      {latin:'Femur',no:'Lårbenet',meaning:'"Lår" på latin',desc:'Femur er kroppens lengste og sterkeste bein. Det tåler krefter tilsvarende 30 ganger vekten din uten å knekke!'},
+      {latin:'Vertebra',no:'Ryggvirvel',meaning:'"Det som snur" på latin',desc:'Ryggraden er bygget av 33 vertebrae stablet på rad — som en tårn av klosser. De gjør at du kan bøye og snu deg.'},
+    ],
+    funFacts:[
+      {em:'👶',txt:'Babyer fødes med ca. 270 bein — mange smelter sakte sammen mens du vokser, til du har 206 som voksen!'},
+      {em:'💎',txt:'Bein er sterkere enn betong per gram, men mye lettere. Det er fordi de har en smart, svampaktig struktur inni!'},
+    ],
+    synergies:[
+      {id:'muskler',    desc:'Musklene fester seg til beinene og trekker i dem for å gi bevegelse'},
+      {id:'nervesystem',desc:'Ryggraden er nervesystemets beskyttende kanal mellom hjerne og kropp'},
+    ]
+  },
+  {
+    id:'hjerte', name:'Hjertet', emoji:'❤️',
+    color:'#DC2626', colorBg:'#FEE2E2',
+    analogy:'«En pumpe som aldri hviler»',
+    bodyParts:['b-heart'],
+    facts:[
+      {icon:'💓',text:'Hjertet slår ca. 70 ganger i minuttet — og tar aldri pause!'},
+      {icon:'🏃',text:'Når du løper, kan hjertet slå opp til 200 ganger i minuttet.'},
+      {icon:'🔴',text:'Blodet frakter oksygen og næringsstoffer til alle celler i kroppen.'},
+      {icon:'👊',text:'Hjertet er omtrent like stort som knyttneven din.'},
+    ],
+    quizBank:[
+      {q:'Hva er hjertets viktigste jobb?',opts:['Tenke','Pumpe blod','Fordøye mat','Filtrere luft'],a:1},
+      {q:'Hva skjer med pulsen din når du løper?',opts:['Den stopper','Den går ned','Den øker','Ingenting'],a:2},
+      {q:'Hva frakter blodet rundt i kroppen?',opts:['Kun vann','Oksygen og næring','Bare CO₂','Luft'],a:1},
+      {q:'Hvor stor er hjertet ditt omtrent?',opts:['Som et eple','Som en vannmelon','Som knyttneven din','Som en ert'],a:2},
+      {q:'Hvor mange ganger slår hjertet i minuttet i hvile?',opts:['10–20','40–50','60–80','150–180'],a:2},
+      {q:'Hva kalles blodårene som fører blod bort fra hjertet?',opts:['Vener','Pulsårer (arterier)','Lymfebaner','Kapillærer'],a:1},
+      {q:'Hva pumper hjertet rundt i kroppen?',opts:['Luft','Vann','Blod','Hormoner'],a:2},
+      {q:'Hva er sirkulasjonssystemet?',opts:['Systemet for å puste','Hjerte og blodårer som frakter blod','Fordøyelsessystemet','Tenkesystemet'],a:1},
+    ],
+    details:[
+      {latin:'Aorta',no:'Den store pulsåren',meaning:'Fra gresk "aorte" — "å bære"',desc:'Aorta er like tykk som en hageslange og bærer blodet ut til hele kroppen. Det er den tykkeste blodåren du har!'},
+      {latin:'Atrium',no:'Forkammer',meaning:'"Forrom" eller "hall" på latin',desc:'Hjertet har to atria (flertall!) som tar imot blodet og sender det videre — akkurat som et inngangsrom i et hus.'},
+      {latin:'Ventrikkel',no:'Hjertekammer',meaning:'"Lite rom" på latin',desc:'Ventriklene er hjertets kraftige pumper. Venstre ventrikkel er sterkest — den sender blodet helt ut til tærne!'},
+    ],
+    funFacts:[
+      {em:'🔢',txt:'Hjertet ditt slår over 100 000 ganger HVER DAG. I løpet av et helt liv er det over 3 milliarder slag!'},
+      {em:'🩸',txt:'Hjertet pumper all blodet i kroppen din rundt én full runde hvert minutt. Blodet reiser ca. 19 000 km per dag!'},
+    ],
+    synergies:[
+      {id:'lungene',  desc:'Lungene gir blodet oksygen — hjertet pumper det ut til hele kroppen'},
+      {id:'muskler',  desc:'Musklene krever mer blod når de jobber — hjertet slår raskere'},
+    ]
+  },
+  {
+    id:'lungene', name:'Lungene', emoji:'🫁',
+    color:'#2563EB', colorBg:'#DBEAFE',
+    analogy:'«Ballonger som fylles og tømmes»',
+    bodyParts:['b-lung-l','b-lung-r'],
+    facts:[
+      {icon:'💨',text:'Du puster ca. 15–20 ganger i minuttet uten å tenke på det!'},
+      {icon:'⬆️',text:'Du puster inn oksygen (O₂) som kroppen trenger for energi.'},
+      {icon:'⬇️',text:'Du puster ut karbondioksid (CO₂) — kroppens avfallsgass.'},
+      {icon:'🌳',text:'Planter gjør det omvendte — de tar opp CO₂ og lager oksygen!'},
+    ],
+    quizBank:[
+      {q:'Hva er lungens viktigste jobb?',opts:['Pumpe blod','Ta opp oksygen','Fordøye mat','Sende signaler'],a:1},
+      {q:'Hva puster du UT?',opts:['Oksygen','Nitrogen','Karbondioksid (CO₂)','Hydrogen'],a:2},
+      {q:'Ca. hvor mange ganger puster du i minuttet?',opts:['1–2','5–8','15–20','50–60'],a:2},
+      {q:'Hva lager trær som lungene trenger?',opts:['Karbondioksid','Nitrogen','Oksygen','Vann'],a:2},
+      {q:'Hva heter muskelen under lungene som hjelper deg å puste?',opts:['Biceps','Mellomgulvet','Hjerteveggen','Ryggmuskelen'],a:1},
+      {q:'Hva skjer med lungene når du puster inn?',opts:['De trekker seg sammen','De utvider seg','De stopper','De pumper blod'],a:1},
+      {q:'Hva er det kjemiske symbolet for oksygen?',opts:['CO₂','H₂O','O₂','N₂'],a:2},
+      {q:'Hva skjer med pusten din når du løper?',opts:['Den stopper','Ingenting','Den blir raskere og dypere','Den blir saktere'],a:2},
+    ],
+    details:[
+      {latin:'Alveoli',no:'Luftblærer',meaning:'"Lite hulrom" på latin',desc:'Du har 300 MILLIONER alveoler i lungene — de er bittesmå, men samlet overflate er like stor som en hel tennisbane!'},
+      {latin:'Diafragma',no:'Mellomgulvet',meaning:'"Skillevegg" på gresk',desc:'Diafragma er muskelen rett under lungene. Når den trekker seg ned, suger den luft inn. Den gjør at du puster — uten å tenke på det!'},
+      {latin:'Bronkier',no:'Luftrørsgrener',meaning:'Fra gresk "bronkhos" — luftrør',desc:'Bronkiene greiner seg ut som et tre inne i lungene og leder luften hele veien ut til alveolene.'},
+    ],
+    funFacts:[
+      {em:'🎾',txt:'Hvis du brettet ut alle 300 millioner alveolene dine, ville de dekke en hel tennisbane. Alt det, inni brystet ditt!'},
+      {em:'💨',txt:'Du puster inn ca. 11 000 liter luft hver dag — nesten helt uten å tenke på det. Kroppen gjør det automatisk!'},
+    ],
+    synergies:[
+      {id:'hjerte',     desc:'Hjertet pumper blodet til lungene for å hente nytt oksygen'},
+      {id:'nervesystem',desc:'Nervesystemet styrer pusten automatisk — selv når du sover'},
+    ]
+  },
+  {
+    id:'fordoyelse', name:'Fordøyelsen', emoji:'🥗',
+    color:'#16A34A', colorBg:'#DCFCE7',
+    analogy:'«En 7 meter lang matfabrikk»',
+    bodyParts:['b-stomach','b-intestine'],
+    facts:[
+      {icon:'📏',text:'Tynntarmen er ca. 7 meter lang — lengre enn et klasserom!'},
+      {icon:'⏱️',text:'Det tar 1–3 dager fra du spiser til maten er ferdig fordøyd.'},
+      {icon:'🔥',text:'Magesekken bruker syre og muskler til å mose ned maten.'},
+      {icon:'💧',text:'Tykktarmen tar opp vann fra det som er igjen av maten.'},
+    ],
+    quizBank:[
+      {q:'Hvor starter fordøyelsen?',opts:['I magen','I munnen','I tarmen','I leveren'],a:1},
+      {q:'Hva er riktig rekkefølge?',opts:['Mage→munn→tarm','Munn→mage→tarm','Tarm→mage→munn','Mage→tarm→munn'],a:1},
+      {q:'Hvor lang er tynntarmen omtrent?',opts:['30 cm','1 meter','7 meter','20 meter'],a:2},
+      {q:'Hva bruker magesekken til å bryte ned mat?',opts:['Vann og luft','Syre og muskler','Sukker og salt','Blod'],a:1},
+      {q:'Hva tar tykktarmen opp fra maten?',opts:['Proteiner','Vitaminer','Vann','Fett'],a:2},
+      {q:'Hva er fordøyelsens oppgave?',opts:['Pumpe blod','Bryte ned mat og ta opp næring','Puste inn oksygen','Sende signaler'],a:1},
+      {q:'Hva heter røret fra munnen ned til magen?',opts:['Tynntarmen','Luftrøret','Spiserøret','Tykktarmen'],a:2},
+      {q:'Hva skjer med maten i munnen?',opts:['Den fordøyes ferdig','Den tygges og blandes med spytt','Den pumpes ned med blod','Den brytes ned av syre'],a:1},
+    ],
+    details:[
+      {latin:'Villi',no:'Tarmtotter',meaning:'"Hårstrå" på latin',desc:'Inne i tynntarmen er det millioner av villi — bittesmå "fingre" som suger næringsstoffer over i blodet. De gjør overflaten 600 ganger større!'},
+      {latin:'Saliva',no:'Spytt',meaning:'"Spytt" på latin',desc:'Saliva inneholder enzymer som begynner å bryte ned maten allerede mens du tygger. Du lager ca. 1,5 liter spytt hver eneste dag!'},
+      {latin:'Enzymer',no:'Fordøyelsesverktøy',meaning:'Fra gresk "en zyme" — i gjær',desc:'Enzymer er kroppens kjemiske sakser — de klipper opp mat i bittesmå biter som kan gå inn i blodet og gi deg energi.'},
+    ],
+    funFacts:[
+      {em:'⚗️',txt:'Magesyren er så sterk at den kan løse opp metall — men en tykk slimhinne beskytter mageveggene dine helt!'},
+      {em:'🔄',txt:'Hele slimhinnen i magen din fornyer seg fullstendig på bare 3–4 dager. Kroppen er en byggemester!'},
+    ],
+    synergies:[
+      {id:'muskler',    desc:'Magemusklene og tarmmusklene skyver maten gjennom systemet'},
+      {id:'nervesystem',desc:'Nervesystemet styrer sult, metthet og fordøyelseshormoner'},
+    ]
+  },
+  {
+    id:'nervesystem', name:'Nervesystemet', emoji:'🧠',
+    color:'#D97706', colorBg:'#FEF3C7',
+    analogy:'«Hjernen er sjefen — nervene er telefontråder»',
+    bodyParts:['b-brain','b-spine'],
+    facts:[
+      {icon:'⚡',text:'Nervesignaler reiser med opptil 430 km/t gjennom kroppen!'},
+      {icon:'👁️',text:'Vi har fem sanser: syn, hørsel, lukt, smak og berøring.'},
+      {icon:'🧠',text:'Hjernen er omtrent 85 % vann og veier ca. 1,4 kg.'},
+      {icon:'🦾',text:'Hjernen styrer alt du gjør — også det du ikke tenker over!'},
+    ],
+    quizBank:[
+      {q:'Hva er hjernens rolle i nervesystemet?',opts:['Pumpe blod','Ta opp oksygen','Styre kroppen og bearbeide sanser','Fordøye mat'],a:2},
+      {q:'Hvilken sans hjelper deg å høre?',opts:['Synet','Hørselen','Luktesansen','Smakssansen'],a:1},
+      {q:'Hvor fort kan nervesignaler reise?',opts:['5 km/t','50 km/t','430 km/t','1 km/t'],a:2},
+      {q:'Hva er nervenes jobb?',opts:['Frakte blod','Sende signaler mellom hjernen og kroppen','Lage hormoner','Puste'],a:1},
+      {q:'Hvor mange sanser har mennesker?',opts:['3','4','5','7'],a:2},
+      {q:'Hva er ryggraden viktig for i nervesystemet?',opts:['Den pumper blod','Den er nervenes vei mellom hjerne og kropp','Den fordøyer mat','Den lager blod'],a:1},
+      {q:'Hva skjer hvis du rører en varm komfyr?',opts:['Ingenting','Hjernen sender signal — du trekker hånden til deg','Magen reagerer','Lungene puster raskere'],a:1},
+      {q:'Hva veier hjernen omtrent?',opts:['0,2 kg','0,7 kg','1,4 kg','3 kg'],a:2},
+    ],
+    details:[
+      {latin:'Nevron',no:'Nervecelle',meaning:'"Tråd" på gresk',desc:'Hjernen har 86 MILLIARDER nevroner, og hver kan koble seg til tusenvis av andre. Til sammen finnes det flere koblinger enn stjerner i Melkeveien!'},
+      {latin:'Cerebrum',no:'Storhjerne',meaning:'"Hjerne" på latin',desc:'Cerebrum tar opp 85 % av hjernens vekt. Den er delt i to halvdeler som snakker med hverandre — og styrer alt fra tanker til bevegelse.'},
+      {latin:'Synapse',no:'Nervekontakt',meaning:'"Kontaktpunkt" på gresk',desc:'Synapser er de bittesmå gapene mellom nevroner. Signaler "hopper" over ved hjelp av kjemiske stoffer — det skjer på millisekunder!'},
+    ],
+    funFacts:[
+      {em:'🦢',txt:'Gåsehud! Når du fryser eller blir redd, trekker bittesmå muskler rundt hårene seg sammen. Nervesystemet styrer det — et arv fra da vi var lodne!'},
+      {em:'💡',txt:'Hjernen din bruker like mye strøm som en 20-watt lyspære. Men den er kraftigere enn alle verdens datamaskiner til sammen!'},
+    ],
+    synergies:[
+      {id:'skjelett',   desc:'Ryggraden er beinstrukturen som beskytter nervesystemets viktigste ledning'},
+      {id:'muskler',    desc:'Nervesystemet sender kommandoer til alle muskler — uten det, ingen bevegelse'},
+    ]
+  },
+  {
+    id:'muskler', name:'Musklene', emoji:'💪',
+    color:'#EA580C', colorBg:'#FFEDD5',
+    analogy:'«Motorer som skaper bevegelse»',
+    bodyParts:['b-arm-l','b-arm-r','b-leg-l','b-leg-r'],
+    facts:[
+      {icon:'🔢',text:'Kroppen har over 600 muskler!'},
+      {icon:'🤝',text:'Muskler jobber alltid i par — én bøyer, én retter ut.'},
+      {icon:'😊',text:'Det tar 17 muskler å smile, men 43 å rynke pannen!'},
+      {icon:'❤️',text:'Hjertet er også en muskel — kanskje den sterkeste i kroppen.'},
+    ],
+    quizBank:[
+      {q:'Hva er musklenes viktigste jobb?',opts:['Pumpe blod','Skape bevegelse','Fordøye mat','Tenke'],a:1},
+      {q:'Hvilken muskel bøyer armen din?',opts:['Triceps','Biceps','Quadriceps','Hamstring'],a:1},
+      {q:'Hvordan jobber muskler?',opts:['De sprer seg ut','De trekker seg sammen og slapper av','De pumper blod','De sender signaler'],a:1},
+      {q:'Hva er hjertet?',opts:['Et bein','En nerve','En spesiell muskel','Et hult organ uten muskel'],a:2},
+      {q:'Hvor mange muskler har kroppen omtrent?',opts:['Over 60','Over 200','Over 600','Over 6000'],a:2},
+      {q:'Hva gjør triceps?',opts:['Bøyer armen','Retter ut armen','Bøyer kneet','Pumper hjertet'],a:1},
+      {q:'Hva skjer med muskler som trenes mye?',opts:['De forsvinner','De blir svakere','De vokser og blir sterkere','De blir sykere'],a:2},
+      {q:'Hva menes med at muskler jobber i par?',opts:['To muskler gjør det samme','Én bøyer, én retter ut','De slår seg sammen til én','De bytter på å hvile'],a:1},
+    ],
+    details:[
+      {latin:'Musculus',no:'Muskel',meaning:'"Liten mus" på latin',desc:'Romerne synes biceps-muskelen lignet en liten mus under huden! Prøv å bøye armen og kjenn — kan du se "musen" bevege seg?'},
+      {latin:'Biceps / Triceps',no:'To-hode / Tre-hode',meaning:'"Bi"=to, "tri"=tre, "ceps"=hode',desc:'Biceps har to festepunkter øverst, triceps har tre. De jobber alltid i par: biceps bøyer armen, triceps retter den ut.'},
+      {latin:'Tendo',no:'Sene',meaning:'"Å strekke" på latin',desc:'Sener er de sterke "tauene" som fester muskler til bein. Achillessenen bak ankelen er den tykkeste i hele kroppen!'},
+    ],
+    funFacts:[
+      {em:'🦢',txt:'Gåsehud er faktisk muskler! Bittesmå muskler rundt hårsekkene trekker seg sammen og reiser hårene. Det latinske navnet er piloereksjon — "pilus" betyr hår!'},
+      {em:'👅',txt:'Tungen er egentlig 8 muskler i én! Den er aldri helt avslappet — den holder deg fra å svelge under søvn.'},
+    ],
+    synergies:[
+      {id:'skjelett',   desc:'Sener fester musklene til beinene — muskler og skjelett er et uatskillelig par'},
+      {id:'hjerte',     desc:'Aktive muskler trenger mye oksygen — hjertet pumper raskere for å levere'},
+    ]
+  },
+];
+
+// ── DOKTOR-KASUS ──
+const CASES = [
+  {
+    emoji:'🏃', title:'Mats løper 400 meter',
+    symptoms:['😮‍💨 Han puster veldig fort','❤️ Pulsen er 160 slag/min','💪 Leggmusklene gjør vondt','🔴 Ansiktet er rødt og varmt'],
+    q:'Hvilke systemer jobber ekstra hardt nå?',
+    correct:['hjerte','lungene','muskler'],
+    explain:'Musklene trenger mer oksygen → hjertet pumper raskere → lungene puster fortere. Alle tre samarbeider!'
+  },
+  {
+    emoji:'🥪', title:'Lena spiser lunsj',
+    symptoms:['👄 Hun tygger maten grundig','🫗 Magesekken rumler','😊 Hun smiler til kompisen sin','💧 Hun drikker vann til maten'],
+    q:'Hvilke systemer er aktive nå?',
+    correct:['fordoyelse','nervesystem','muskler'],
+    explain:'Fordøyelsen bryter ned maten. Nervesystemet sender smakssignaler og styrer smilet. Muskler tygger og svelger!'
+  },
+  {
+    emoji:'🤕', title:'Noah faller og slår kneet',
+    symptoms:['⚡ Smerte sendes til hjernen momentant','🦴 Kneet smeller hardt i bakken','😭 Han gråter — hjernen reagerer','💪 Musklene rundt kneet spenner seg'],
+    q:'Hvilke systemer reagerer?',
+    correct:['nervesystem','skjelett','muskler'],
+    explain:'Nervesystemet sender smertesignaler lynraskt. Skjelettet er utsatt for støt. Muskler spenner seg for å beskytte kneet!'
+  },
+  {
+    emoji:'🤒', title:'Sofie har vært syk og er slapp',
+    symptoms:['😮‍💨 Hun puster tyngre enn vanlig','💤 Musklene er trøtte og slitne','❤️ Pulsen er litt forhøyet','🤧 Kroppen kjemper mot viruset'],
+    q:'Hvilke systemer er påvirket?',
+    correct:['lungene','hjerte','muskler'],
+    explain:'Sykdom påvirker pusten (lungene). Hjertet slår raskere fordi kroppen jobber hardt. Musklene er trøtte av kampen!'
+  },
+  {
+    emoji:'📦', title:'Tobias løfter en tung eske',
+    symptoms:['💪 Armmusklene spenner seg hardt','🦴 Ryggraden bærer all vekten','❤️ Hjertet slår litt raskere','🧠 Hjernen styrer balansen'],
+    q:'Hvilke systemer samarbeider?',
+    correct:['muskler','skjelett','nervesystem'],
+    explain:'Muskler gir kraften. Skjelettet bærer vekten. Nervesystemet styrer bevegelsen og balansen — et perfekt lag!'
+  },
+];
+
+const BONES=[
+  {id:'hode',  name:'Hodeskallen', top:'2.5%', left:'40%'},
+  {id:'krave', name:'Kravebenet',  top:'12%',  left:'16%'},
+  {id:'ribb',  name:'Ribbeina',   top:'18%',  left:'23%'},
+  {id:'rygg',  name:'Ryggraden',  top:'31%',  left:'55%'},
+  {id:'albue', name:'Albuen',     top:'30%',  left:'72%'},
+  {id:'lar',   name:'Lårbenet',   top:'53%',  left:'27%'},
+  {id:'kne',   name:'Kneskålen',  top:'43%',  left:'46%'},
+  {id:'hael',  name:'Hælen',      top:'66%',  left:'53%'},
+];
+const DIGESTION=[
+  {id:'munn',    name:'Munnen',    emoji:'👄',fact:'Tygging starter det hele!'},
+  {id:'spisero', name:'Spiserøret',emoji:'🌊',fact:'Maten glir ned hit'},
+  {id:'mage',    name:'Magesekken',emoji:'🫗',fact:'Syre moser ned maten'},
+  {id:'tynntarm',name:'Tynntarmen',emoji:'〰️',fact:'Næring tas opp i blodet'},
+  {id:'tykktarm',name:'Tykktarmen',emoji:'💧',fact:'Vann tas opp her'},
+  {id:'ende',    name:'Endetarmen',emoji:'🚪',fact:'Resten forlater kroppen'},
+];
+const SENSES=[
+  {sense:'Syn',     organ:'Øyet', sEmoji:'👁️',oEmoji:'👁️'},
+  {sense:'Hørsel',  organ:'Øret', sEmoji:'👂',oEmoji:'👂'},
+  {sense:'Smak',    organ:'Tunga',sEmoji:'😋',oEmoji:'👅'},
+  {sense:'Lukt',    organ:'Nesen',sEmoji:'🌸',oEmoji:'👃'},
+  {sense:'Berøring',organ:'Huden',sEmoji:'🤚',oEmoji:'🤚'},
+];
+const MUSCLE_Qs=[
+  {emoji:'💪',scene:'Du bøyer armen!',q:'Hvilken muskel jobber?',opts:['Triceps','Biceps','Kjevemuskelen','Ryggmuskelen'],a:1},
+  {emoji:'🏃',scene:'Du løper raskt!',q:'Hva gjør musklene dine?',opts:['Slapper av','Trekker seg sammen og slapper av','Ingenting','Pumper blod'],a:1},
+  {emoji:'😊',scene:'Du smiler bredt!',q:'Ca. hvor mange muskler bruker du?',opts:['2','5','17','100'],a:2},
+  {emoji:'🫀',scene:'Hjertet slår!',q:'Hva er hjertet?',opts:['Et bein','En nerve','En spesiell muskel','Ikke en muskel'],a:2},
+];
+
+// ════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════
+let S={
+  ob:{step:0,done:false},
+  screen:'menu',
+  sysId:null, tab:'learn', gs:{},
+  qs:{q:0,score:0,answered:false,chosen:null,bank:[],streak:0,wrongLog:[],timerOn:true,timeLeft:15},
+  ds:{case:0,sel:[],checked:false,results:[],done:false,score:0},
+  progress:{}
+};
+let _timerInterval=null;
+function clearTimer(){ if(_timerInterval){clearInterval(_timerInterval);_timerInterval=null;} }
+const sys=()=>SYSTEMS.find(s=>s.id===S.sysId);
+const prog=id=>S.progress[id]||{};
+const stars=id=>{const p=prog(id);return (p.learned?1:0)+(p.gameDone?1:0)+((p.quizScore||0)>=3?1:0);};
+const totalStars=()=>SYSTEMS.reduce((n,s)=>n+stars(s.id),0);
+const allDone=()=>SYSTEMS.every(s=>stars(s.id)===3);
+const setP=(id,k,v)=>{if(!S.progress[id])S.progress[id]={};S.progress[id][k]=v;};
+
+function shuf(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function makeQuizRound(bank){
+  const picked=shuf(bank).slice(0,4);
+  return picked.map(q=>{
+    const correct=q.opts[q.a];
+    const shuffled=shuf(q.opts);
+    return {q:q.q,opts:shuffled,a:shuffled.indexOf(correct)};
+  });
+}
+
+// ════════════════════════════════════════════
+// RENDER
+// ════════════════════════════════════════════
+const render=()=>{
+  document.getElementById('app').innerHTML=buildApp();
+  if(S.screen==='system'&&S.tab==='game'){
+    const s=sys();
+    if(s&&s.id==='hjerte'){
+      const h=S.gs.heart||{phase:'rest'};
+      const bpm=h.phase==='run'?130:72;
+      const dur=(60000/bpm/2)+'ms';
+      const ringDur=(60000/bpm)+'ms';
+      const heartEl=document.getElementById('heartAnim');
+      const ringEl=document.getElementById('heartRing');
+      if(heartEl) heartEl.style.animationDuration=dur;
+      if(ringEl)  ringEl.style.animationDuration=ringDur;
+    }
+  }
+};
+const buildApp=()=>{
+  if(!S.ob.done)       return buildOnboarding();
+  if(S.screen==='menu')   return buildMenu();
+  if(S.screen==='system') return buildSystem();
+  if(S.screen==='doctor') return buildDoctor();
+  return '';
+};
+
+// ════════════════════════════════════════════
+// ONBOARDING
+// ════════════════════════════════════════════
+function buildOnboarding(){
+  const steps=[
+    {em:'🔧',title:'Velkommen til Kroppens Verksted!',
+     desc:'Her utforsker du kroppen din — organer, bein, muskler og mer. Klar?'},
+    {em:'📖 → 🎮 → ❓',title:'Slik fungerer det',
+     desc:'Hvert kroppssystem har tre deler: Les fakta, spill et spill, og ta en quiz. Fullfør alle tre for å få ⭐⭐⭐!'},
+    {em:'🩺',title:'Lås opp Doktor-modus',
+     desc:'Klarer du alle 6 systemer med 3 stjerner? Da åpner Doktor-modus seg — og du kan diagnostisere pasienter!'},
+  ];
+  const st=steps[S.ob.step];
+  const isLast=S.ob.step===steps.length-1;
+  const dots=steps.map((_,i)=>`<div class="ob-dot ${i===S.ob.step?'ob-active':''}"></div>`).join('');
+  return `<div class="screen ob-screen">
+    <div class="ob-dots">${dots}</div>
+    <div class="ob-em">${st.em}</div>
+    <h2 class="ob-title">${st.title}</h2>
+    <p class="ob-desc">${st.desc}</p>
+    <button class="cta" data-a="${isLast?'obDone':'obNext'}"
+      style="background:${isLast?'#22C55E':'#F59E0B'};max-width:240px;margin:0 auto">
+      ${isLast?'🚀 La oss begynne!':'Neste →'}</button>
+    ${S.ob.step>0?`<button class="back-btn" data-a="obBack" style="margin-top:12px;display:block;text-align:center;width:100%">← Tilbake</button>`:''}
+  </div>`;
+}
+
+// ════════════════════════════════════════════
+// MENU
+// ════════════════════════════════════════════
+function buildMenu(){
+  const ts=totalStars(),max=SYSTEMS.length*3,pct=Math.round(ts/max*100);
+  const unlocked=allDone();
+  const doneSys=SYSTEMS.filter(s=>stars(s.id)===3).map(s=>s.id);
+
+  // A body part lights up if ANY system that claims it is done
+  const ownersOf=id=>SYSTEMS.filter(s=>s.bodyParts&&s.bodyParts.includes(id));
+  const fill=id=>{const owners=ownersOf(id);const done=owners.find(o=>doneSys.includes(o.id));return done?done.color:'#E8D8C8';};
+  const op=id=>ownersOf(id).some(o=>doneSys.includes(o.id))?'.85':'.25';
+
+  const svg=`<svg viewBox="0 0 80 160" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="40" cy="14" rx="14" ry="13" fill="${fill('b-skull')}" opacity="${op('b-skull')}" stroke="#C9956A" stroke-width="1"/>
+    <rect x="36" y="27" width="8" height="6" rx="2" fill="#F5D5B0" stroke="#C9956A" stroke-width=".7"/>
+    <ellipse cx="27" cy="52" rx="9" ry="13" fill="${fill('b-lung-l')}" opacity="${op('b-lung-l')}" stroke="#C9956A" stroke-width=".9"/>
+    <ellipse cx="53" cy="52" rx="9" ry="13" fill="${fill('b-lung-r')}" opacity="${op('b-lung-r')}" stroke="#C9956A" stroke-width=".9"/>
+    <rect x="22" y="33" width="36" height="40" rx="8" fill="none" stroke="${fill('b-torso')}" stroke-width="1.5" opacity="${op('b-torso')}"/>
+    <ellipse cx="37" cy="48" rx="5.5" ry="5" fill="${fill('b-heart')}" opacity="${op('b-heart')}" stroke="#C9956A" stroke-width=".8"/>
+    <ellipse cx="40" cy="67" rx="8" ry="6" fill="${fill('b-stomach')}" opacity="${op('b-stomach')}" stroke="#C9956A" stroke-width=".8"/>
+    <rect x="26" y="74" width="28" height="10" rx="5" fill="${fill('b-intestine')}" opacity="${op('b-intestine')}" stroke="#C9956A" stroke-width=".8"/>
+    <ellipse cx="40" cy="13" rx="9" ry="8" fill="${fill('b-brain')}" opacity="${op('b-brain')}" stroke="#C9956A" stroke-width=".6"/>
+    <line x1="40" y1="33" x2="40" y2="87" stroke="${fill('b-spine')}" stroke-width="3" stroke-linecap="round" opacity="${op('b-spine')}"/>
+    <rect x="8"  y="35" width="13" height="36" rx="6" fill="${fill('b-arm-l')}" opacity="${op('b-arm-l')}" stroke="#C9956A" stroke-width=".8"/>
+    <rect x="59" y="35" width="13" height="36" rx="6" fill="${fill('b-arm-r')}" opacity="${op('b-arm-r')}" stroke="#C9956A" stroke-width=".8"/>
+    <ellipse cx="40" cy="87" rx="16" ry="5" fill="#F5D5B0" stroke="#C9956A" stroke-width=".8"/>
+    <rect x="24" y="88" width="14" height="48" rx="6" fill="${fill('b-leg-l')}" opacity="${op('b-leg-l')}" stroke="#C9956A" stroke-width=".8"/>
+    <rect x="42" y="88" width="14" height="48" rx="6" fill="${fill('b-leg-r')}" opacity="${op('b-leg-r')}" stroke="#C9956A" stroke-width=".8"/>
+  </svg>`;
+
+  const legend=SYSTEMS.map(s=>{
+    const done=doneSys.includes(s.id);
+    return `<div class="legend-row">
+      <div class="legend-dot" style="background:${done?s.color:'#D8C8B8'}"></div>
+      <span style="color:${done?s.color:'#B8A898'}">${s.emoji} ${s.name}${done?' ✓':''}</span>
+    </div>`;
+  }).join('');
+
+  const cards=SYSTEMS.map(s=>{
+    const st=stars(s.id);
+    return `<div class="sys-card" data-a="openSys" data-id="${s.id}"
+      style="border-color:${s.color}30;background:linear-gradient(150deg,#fff,${s.colorBg}50)">
+      ${st===3?'<div class="ck-badge">✓</div>':''}
+      <span class="se">${s.emoji}</span>
+      <div class="sn" style="color:${s.color}">${s.name}</div>
+      <div class="ss">${'⭐'.repeat(st)}${'☆'.repeat(3-st)}</div>
+    </div>`;
+  }).join('');
+
+  return `<div class="screen">
+    <div class="menu-header"><h1>🔧 Kroppens Verksted</h1><p>Velg et system og lær om kroppen din!</p></div>
+    <div class="body-hero">
+      <div class="body-svg-wrap">${svg}</div>
+      <div class="hero-legend">
+        <div class="hero-legend-title">Systemer fullført</div>
+        ${legend}
+        <div class="pbar-label"><span>Fremgang</span><span>${ts}/${max} ⭐</span></div>
+        <div class="pbar"><div class="pbar-fill" style="width:${pct}%"></div></div>
+      </div>
+    </div>
+    <div class="grid">${cards}</div>
+    <div class="doc-card ${unlocked?'':'locked'}" data-a="${unlocked?'openDoctor':''}">
+      <span class="doc-card-em">🩺</span>
+      <div class="doc-card-text">
+        <h3>Doktor-modus</h3>
+        <p>Diagnoser med alle systemene på én gang!</p>
+        ${unlocked
+          ?'<span class="doc-unlock">🔓 Låst opp — klar til å spille!</span>'
+          :'<span class="doc-lock">🔒 Fullfør alle 6 systemer for å låse opp</span>'}
+      </div>
+    </div>
+    <p style="text-align:center;margin-top:12px"><a href="/" style="font-size:.82rem;font-weight:700;color:var(--muted);text-decoration:none;transition:color .2s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--muted)'">← Tilbake til Kodebasen</a></p>
+    <p class="footer">Laget av Jan Erling Saue &middot; Claude Sonnet 4.6 (Anthropic) generativ AI &middot; Gratis til skolebruk &middot; © 2026</p>
+  </div>`;
+}
+
+// ════════════════════════════════════════════
+// SYSTEM
+// ════════════════════════════════════════════
+function buildSystem(){
+  const s=sys();
+  const tabs=[{id:'learn',icon:'📖',lbl:'Lær'},{id:'game',icon:'🎮',lbl:'Spill'},{id:'quiz',icon:'❓',lbl:'Quiz'}]
+    .map(t=>`<button class="tab-btn ${S.tab===t.id?'active':''}" data-a="tab" data-tab="${t.id}"
+      style="${S.tab===t.id?`background:${s.color};`:''}"><span class="ti">${t.icon}</span>${t.lbl}</button>`).join('');
+  const content=S.tab==='learn'?buildLearn(s):S.tab==='game'?buildGame(s):buildQuiz(s);
+  return `<div class="screen">
+    <button class="back-btn" data-a="goMenu">← Tilbake</button>
+    <div class="sys-hdr" style="background:linear-gradient(135deg,${s.color},${s.color}CC)">
+      <div class="sys-hdr-inner">
+        <span class="sys-hdr-em">${s.emoji}</span>
+        <div class="sys-hdr-text"><h2>${s.name}</h2><div class="analogy">${s.analogy}</div></div>
+      </div>
+    </div>
+    <div class="tab-bar">${tabs}</div>
+    <div class="panel">${content}</div>
+  </div>`;
+}
+
+function buildLearn(s){
+  const done=prog(s.id).learned;
+  const facts=s.facts.map(f=>`<div class="fact-item"><span class="fi">${f.icon}</span><span class="ft">${f.text}</span></div>`).join('');
+
+  const latinCards=s.details.map(d=>`
+    <div class="latin-card" style="border-left-color:${s.color}">
+      <div style="border-left:4px solid ${s.color};position:absolute;left:0;top:0;bottom:0;border-radius:2px 0 0 2px"></div>
+      <div class="latin-word" style="color:${s.color}">${d.latin}</div>
+      <div class="latin-no">${d.no}</div>
+      <div class="latin-meaning">📖 ${d.meaning}</div>
+      <div class="latin-desc">${d.desc}</div>
+    </div>`).join('');
+
+  const funFactItems=s.funFacts.map(f=>`
+    <div class="fun-fact">
+      <span class="fun-fact-em">${f.em}</span>
+      <span class="fun-fact-txt">${f.txt}</span>
+    </div>`).join('');
+
+  const synHTML=s.synergies?`
+    <div class="section-hdr">🔗 Samarbeider med</div>
+    <div class="synergy-cards">
+      ${s.synergies.map(sy=>{
+        const other=SYSTEMS.find(x=>x.id===sy.id);
+        return `<div class="synergy-card" style="border-left-color:${other.color}">
+          <span class="syn-em">${other.emoji}</span>
+          <div class="syn-body">
+            <div class="syn-name" style="color:${other.color}">${other.name}</div>
+            <div class="syn-desc">${sy.desc}</div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`:'';
+
+  return `
+    <div class="fact-list">${facts}</div>
+    <div class="section-hdr">🔬 Latinord og detaljer</div>
+    <div class="latin-cards">${latinCards}</div>
+    <div class="section-hdr">💡 Visste du at…</div>
+    <div class="fun-facts">${funFactItems}</div>
+    ${synHTML}
+    <div style="margin-top:14px">
+      ${done
+        ?`<div class="done-badge">✅ Lest! Gå til 🎮 Spill</div>`
+        :`<button class="cta" data-a="markLearned" style="background:${s.color}">✅ Jeg har lært dette! Gå til spill →</button>`}
+    </div>`;
+}
+
+// ════════════════════════════════════════════
+// GAMES
+// ════════════════════════════════════════════
+function buildGame(s){
+  if(prog(s.id).gameDone&&!S.gs.replay){
+    return `<div class="game-done"><span class="gd-em">🎉</span>
+      <div class="gd-title">Spillet er fullført!</div>
+      <div class="gd-sub">Flott jobbet!</div>
+      <button class="cta" data-a="replayGame" style="background:${s.color}">🔄 Spill igjen</button>
+      <button class="cta" data-a="tab" data-tab="quiz" style="background:${s.color};margin-top:7px">Gå til quiz →</button>
+    </div>`;
+  }
+  if(s.id==='skjelett')    return buildSkel(s);
+  if(s.id==='hjerte')      return buildHeart(s);
+  if(s.id==='lungene')     return buildLung(s);
+  if(s.id==='fordoyelse')  return buildSeq(s);
+  if(s.id==='nervesystem') return buildMatch(s);
+  if(s.id==='muskler')     return buildMuscle(s);
+  return '';
+}
+function gameDone(em,title,sub,s){
+  return `<div class="game-done"><span class="gd-em">${em}</span>
+    <div class="gd-title">${title}</div>${sub?`<div class="gd-sub">${sub}</div>`:''}
+    <button class="cta" data-a="gameNext" style="background:${s.color}">Videre til quiz →</button>
+  </div>`;
+}
+
+// SKELETON
+function buildSkel(s){
+  if(!S.gs.skel){
+    const shuffled=shuf(BONES);
+    S.gs.skel={idx:0,done:false,correct:[],order:shuffled};
+  }
+  const g=S.gs.skel;
+  if(g.done) return gameDone('🦴','Alle bein funnet!','Du kjenner skjelettet!',s);
+  const cur=g.order[g.idx];
+  const svg=`<svg viewBox="0 0 120 300" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="60" cy="24" rx="21" ry="22" fill="#F5D5B0" stroke="#C9956A" stroke-width="1.8"/>
+    <rect x="53" y="44" width="14" height="14" rx="4" fill="#F5D5B0" stroke="#C9956A" stroke-width="1.5"/>
+    <rect x="32" y="56" width="56" height="76" rx="10" fill="#F5D5B0" stroke="#C9956A" stroke-width="1.8"/>
+    <rect x="9" y="58" width="23" height="62" rx="10" fill="#F5D5B0" stroke="#C9956A" stroke-width="1.5"/>
+    <rect x="88" y="58" width="23" height="62" rx="10" fill="#F5D5B0" stroke="#C9956A" stroke-width="1.5"/>
+    <rect x="32" y="134" width="24" height="84" rx="10" fill="#F5D5B0" stroke="#C9956A" stroke-width="1.5"/>
+    <rect x="64" y="134" width="24" height="84" rx="10" fill="#F5D5B0" stroke="#C9956A" stroke-width="1.5"/>
+    <path d="M40,72 Q60,84 80,72" fill="none" stroke="#C9956A" stroke-width="1.4"/>
+    <path d="M37,84 Q60,96 83,84" fill="none" stroke="#C9956A" stroke-width="1.4"/>
+    <path d="M37,96 Q60,108 83,96" fill="none" stroke="#C9956A" stroke-width="1.4"/>
+    <circle cx="60" cy="74" r="2.5" fill="#A06840"/>
+    <circle cx="60" cy="86" r="2.5" fill="#A06840"/>
+    <circle cx="60" cy="98" r="2.5" fill="#A06840"/>
+    <circle cx="60" cy="110" r="2.5" fill="#A06840"/>
+    <circle cx="60" cy="122" r="2.5" fill="#A06840"/>
+  </svg>`;
+  const zones=g.order.map(b=>{
+    const done=g.correct.includes(b.id),isCur=b.id===cur.id;
+    return `<div class="bone-btn" data-a="boneClick" data-bone="${b.id}"
+      style="top:${b.top};left:${b.left};background:${done?'#22C55E':isCur?'#FCD34D':'#D8C8E8'};
+      ${isCur?'box-shadow:0 0 0 6px rgba(251,191,36,.45)':''}">
+      ${done?'✓':'?'}</div>`;
+  }).join('');
+  return `<div class="skel-wrap">
+    <div class="game-prompt">Trykk på <strong>${cur.name}</strong> på kroppen!</div>
+    <div class="body-stage" style="margin:0 auto">${svg}${zones}</div>
+    <div class="skel-question">
+      <div class="skel-q-label">Finn dette beinet:</div>
+      <div class="skel-q-name" style="color:${s.color}">${cur.name}</div>
+      <div class="skel-count">${g.idx+1} av ${g.order.length}</div>
+    </div>
+  </div>`;
+}
+
+// HEART — rytmespill
+function buildHeart(s){
+  if(!S.gs.heart) S.gs.heart={phase:'rest',taps:0};
+  const h=S.gs.heart;
+  const TAPS_NEEDED=5;
+
+  // ── Done: comparison screen ──
+  if(h.phase==='done'){
+    return `<div class="game-done">
+      <span class="gd-em">❤️</span>
+      <div class="gd-title">Du kjenner pulsen!</div>
+      <div class="bpm-compare">
+        <div class="bpm-cmp-card" style="border-color:#86EFAC">
+          <div class="bpm-cmp-lbl">😴 I hvile</div>
+          <div class="bpm-cmp-num" style="color:#166534">72</div>
+          <div class="bpm-cmp-unit">slag/min</div>
+        </div>
+        <div class="bpm-cmp-vs">→</div>
+        <div class="bpm-cmp-card" style="border-color:#FCA5A5">
+          <div class="bpm-cmp-lbl">🏃 Etter løping</div>
+          <div class="bpm-cmp-num" style="color:#DC2626">130</div>
+          <div class="bpm-cmp-unit">slag/min</div>
+        </div>
+      </div>
+      <div class="gd-sub">Hjertet pumper raskere fordi musklene trenger mer oksygen! 🩸</div>
+      <button class="cta" data-a="gameNext" style="background:${s.color}">Videre til quiz →</button>
+    </div>`;
+  }
+
+  const bpm  = h.phase==='rest' ? 72 : 130;
+  const isRun= h.phase==='run';
+  const dots = Array.from({length:TAPS_NEEDED},(_,i)=>
+    `<div class="heart-dot ${i<h.taps?'done':''}"></div>`).join('');
+
+  return `<div class="heart-game">
+    <div class="heart-phase-chip" style="background:${isRun?'#FEE2E2':'#DCFCE7'};color:${isRun?'#DC2626':'#166534'}">
+      ${isRun?'🏃 Etter løping':'😴 I hvile'}
+    </div>
+    <div class="heart-ring-wrap">
+      <div id="heartRing" class="heart-ring" style="border-color:${s.color}66"></div>
+      <div id="heartAnim" class="heart-em">❤️</div>
+    </div>
+    <div class="bpm-big" style="color:${s.color}">${bpm}</div>
+    <div class="bpm-lbl">slag per minutt</div>
+    <div class="heart-dots-row">${dots}</div>
+    <p class="hint-text">${isRun?'Hjertet pumper raskere — tapp i takt!':'Kjenn hjerterytmen — tapp i takt! 👆'}</p>
+    <button class="heart-tap-btn" data-a="heartTap" style="background:${s.color}">
+      💓 TAPP!
+    </button>
+    ${h.taps===0&&!isRun?`<p style="color:var(--muted);font-size:.75rem;font-weight:600;text-align:center;margin-top:10px">Trykk ${TAPS_NEEDED} ganger i takt med hjertet</p>`:''}
+  </div>`;
+}
+
+// LUNG
+function buildLung(s){
+  if(!S.gs.lung) S.gs.lung={phase:'out',count:0};
+  const l=S.gs.lung;
+  const isIn=l.phase==='in';
+  const facts=[null,'🌬️ Du puster inn oksygen (O₂) — det gir kroppen energi!','💨 Du puster ut karbondioksid (CO₂) — avfallsgass fra cellene!','🌳 Planter tar opp CO₂ og lager nytt oksygen til oss!',null];
+
+  // fill % based on phase: inhale = full, exhale = empty
+  const fillPct = isIn ? 90 : 10;
+  // For the static SVG (non-animated state), we position the fill rect
+  // Animation classes drive the transition
+  const stateClass = isIn ? 'lf-in' : 'lf-out';
+
+  // Particles: 5 O2 bubbles on inhale, 5 CO2 bubbles on exhale
+  const makeParticles=(cls,col,xPositions)=>xPositions.map((x,i)=>`
+    <circle class="particle ${cls}" cx="${x}" cy="110" r="4.5"
+      fill="${col}" opacity="0"
+      style="animation-delay:${i*.12}s"/>`).join('');
+
+  const o2px  = [88,102,116,96,108];
+  const co2px = [88,102,116,96,108];
+
+  const svg = `<svg viewBox="0 0 220 270" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <!-- clip paths for left and right lung -->
+      <clipPath id="clipL">
+        <path d="M110,68 C110,68 82,72 68,90 C54,108 50,128 52,148
+                 C54,168 60,188 72,198 C84,208 96,208 104,202
+                 C108,199 110,195 110,190 Z"/>
+      </clipPath>
+      <clipPath id="clipR">
+        <path d="M110,68 C110,68 138,72 152,90 C166,108 170,128 168,148
+                 C166,168 160,188 148,198 C136,208 124,208 116,202
+                 C112,199 110,195 110,190 Z"/>
+      </clipPath>
+    </defs>
+
+    <!-- ── RIBCAGE ── -->
+    <g class="ribcage">
+      <!-- 5 rib pairs, arcing outward -->
+      ${[0,1,2,3,4].map(i=>{
+        const y=88+i*22, rx=48+i*2, ry=9+i;
+        return `<ellipse cx="110" cy="${y}" rx="${rx}" ry="${ry}"
+          fill="none" stroke="#D4A882" stroke-width="3.5"
+          stroke-dasharray="0 ${Math.round(rx*.55)} 999"
+          stroke-linecap="round" opacity=".75"/>`;
+      }).join('')}
+    </g>
+
+    <!-- ── LUNG OUTLINES ── -->
+    <!-- Left lung -->
+    <path d="M110,68 C110,68 82,72 68,90 C54,108 50,128 52,148
+             C54,168 60,188 72,198 C84,208 96,208 104,202
+             C108,199 110,195 110,190 Z"
+      fill="#EFF6FF" stroke="#93C5FD" stroke-width="2.5"/>
+    <!-- Right lung -->
+    <path d="M110,68 C110,68 138,72 152,90 C166,108 170,128 168,148
+             C166,168 160,188 148,198 C136,208 124,208 116,202
+             C112,199 110,195 110,190 Z"
+      fill="#EFF6FF" stroke="#93C5FD" stroke-width="2.5"/>
+
+    <!-- ── FILL LAYERS (clipped to lung shapes) ── -->
+    <!-- Left fill -->
+    <g clip-path="url(#clipL)">
+      <g class="lung-fill" style="transform:translateY(${isIn?0:100}%)">
+        <rect x="44" y="68" width="68" height="145"
+          fill="${isIn?'#BFDBFE':'#DBEAFE'}" opacity=".85"/>
+        <!-- subtle wave on top of fill -->
+        <path d="M44,68 Q60,62 78,68 Q96,74 112,68" fill="#93C5FD" opacity=".5"/>
+      </g>
+    </g>
+    <!-- Right fill -->
+    <g clip-path="url(#clipR)">
+      <g class="lung-fill" style="transform:translateY(${isIn?0:100}%)">
+        <rect x="108" y="68" width="68" height="145"
+          fill="${isIn?'#BFDBFE':'#DBEAFE'}" opacity=".85"/>
+        <path d="M108,68 Q126,62 144,68 Q162,74 176,68" fill="#93C5FD" opacity=".5"/>
+      </g>
+    </g>
+
+    <!-- ── LUNG OUTLINES on top (so fill stays inside) ── -->
+    <path d="M110,68 C110,68 82,72 68,90 C54,108 50,128 52,148
+             C54,168 60,188 72,198 C84,208 96,208 104,202
+             C108,199 110,195 110,190 Z"
+      fill="none" stroke="#60A5FA" stroke-width="2.5"/>
+    <path d="M110,68 C110,68 138,72 152,90 C166,108 170,128 168,148
+             C166,168 160,188 148,198 C136,208 124,208 116,202
+             C112,199 110,195 110,190 Z"
+      fill="none" stroke="#60A5FA" stroke-width="2.5"/>
+
+    <!-- ── TRACHEA + BRONCHI ── -->
+    <line x1="110" y1="28" x2="110" y2="68" stroke="#94A3B8" stroke-width="5" stroke-linecap="round"/>
+    <path d="M110,68 Q96,74 88,84" fill="none" stroke="#94A3B8" stroke-width="4" stroke-linecap="round"/>
+    <path d="M110,68 Q124,74 132,84" fill="none" stroke="#94A3B8" stroke-width="4" stroke-linecap="round"/>
+    <!-- trachea rings -->
+    ${[36,44,52,60].map(y=>`<line x1="105" y1="${y}" x2="115" y2="${y}" stroke="#CBD5E1" stroke-width="2" stroke-linecap="round"/>`).join('')}
+
+    <!-- ── DIAPHRAGM ── -->
+    <path class="diaphragm" d="M52,205 Q110,${isIn?226:210} 168,205"
+      fill="none" stroke="#F97316" stroke-width="4" stroke-linecap="round"
+      style="transform:translateY(${isIn?0:0}px)"/>
+    <!-- diaphragm label -->
+    <text x="110" y="${isIn?248:234}" text-anchor="middle"
+      font-family="Nunito,sans-serif" font-size="10" font-weight="700"
+      fill="#F97316" opacity=".8">diafragma</text>
+
+    <!-- ── PARTICLES ── -->
+    ${isIn  ? makeParticles('p-o2', '#3B82F6', o2px)  : ''}
+    ${!isIn ? makeParticles('p-co2','#FB923C', co2px) : ''}
+
+    <!-- ── GAS LABELS inside lungs ── -->
+    <text x="78"  y="${isIn?155:175}" text-anchor="middle"
+      font-family="Fredoka One,cursive" font-size="13"
+      fill="${isIn?'#1D4ED8':'#64748B'}" opacity="${isIn?.9:.35}">O₂</text>
+    <text x="142" y="${isIn?155:175}" text-anchor="middle"
+      font-family="Fredoka One,cursive" font-size="13"
+      fill="${isIn?'#1D4ED8':'#64748B'}" opacity="${isIn?.9:.35}">O₂</text>
+    <text x="78"  y="${!isIn?145:175}" text-anchor="middle"
+      font-family="Fredoka One,cursive" font-size="13"
+      fill="${!isIn?'#EA580C':'#64748B'}" opacity="${!isIn?.9:.25}">CO₂</text>
+    <text x="142" y="${!isIn?145:175}" text-anchor="middle"
+      font-family="Fredoka One,cursive" font-size="13"
+      fill="${!isIn?'#EA580C':'#64748B'}" opacity="${!isIn?.9:.25}">CO₂</text>
+
+    <!-- ── ARROW indicator ── -->
+    <text x="110" y="18" text-anchor="middle"
+      font-family="Nunito,sans-serif" font-size="18" font-weight="900"
+      fill="${isIn?'#3B82F6':'#F97316'}">${isIn?'⬇️':'⬆️'}</text>
+  </svg>`;
+
+  return `<div class="lung-game ${stateClass}">
+    <div class="game-prompt">Du har pustet: <strong>${l.count} ganger</strong> (mål: 4)</div>
+    <div class="lung-svg-wrap">${svg}</div>
+    <div class="breath-status" style="color:${s.color}">${isIn?'Lungene er fulle — oksygen tas opp! 🫁':'Lungene tømt — CO₂ pustet ut! 💨'}</div>
+    <div class="breath-sub">${isIn?'Diafragma trekker seg ned og gjør plass':'Diafragma skyver luften ut igjen'}</div>
+    <div class="gas-bar">
+      <span class="gas-chip" style="background:#EFF6FF;color:#1D4ED8">🔵 O₂ inn</span>
+      <span class="gas-chip" style="background:#FFF7ED;color:#C2410C">🟠 CO₂ ut</span>
+    </div>
+    ${facts[l.count]?`<div class="fact-pop" style="background:${s.colorBg};color:#1E40AF">${facts[l.count]}</div>`:''}
+    ${l.count<4
+      ?`<button class="breath-main-btn" data-a="${isIn?'lungOut':'lungIn'}" style="background:${s.color}">${isIn?'🟠 Pust UT — tøm lungene':'🔵 Pust INN — fyll lungene'}</button>`
+      :`<button class="cta" data-a="gameNext" style="background:${s.color}">Kjempebra! Videre →</button>`}
+  </div>`;
+}
+
+// SEQUENCE
+function buildSeq(s){
+  if(!S.gs.seq) S.gs.seq={items:shuf(DIGESTION),placed:[]};
+  const g=S.gs.seq;
+  if(g.done) return gameDone('🥗','Riktig rekkefølge!','Du kjenner matens reise!',s);
+  return `<div>
+    <div class="game-prompt">Trykk organene i riktig rekkefølge — fra munn til ende! 👆</div>
+    <div class="seq-wrap">${g.items.map(item=>{
+      const pi=g.placed.indexOf(item.id),placed=pi!==-1;
+      return `<div class="seq-item ${placed?'placed':''}" data-a="${placed?'':'seqClick'}" data-id="${item.id}">
+        <div class="seq-num">${placed?pi+1:'?'}</div>
+        <span class="seq-emoji">${item.emoji}</span>
+        <span>${item.name}</span>
+        ${placed?`<span class="seq-fact">${item.fact}</span>`:''}
+      </div>`;
+    }).join('')}</div>
+  </div>`;
+}
+
+// MATCH
+function buildMatch(s){
+  if(!S.gs.match) S.gs.match={right:shuf(SENSES),selLeft:null,selRight:null,matched:[]};
+  const m=S.gs.match;
+  if(m.done) return gameDone('🧠','Alle sanser koblet til!','Du kjenner alle de fem sansene!',s);
+  const left=SENSES.map(s2=>{
+    const matched=m.matched.includes(s2.sense);
+    return `<div class="match-item ${matched?'matched':m.selLeft===s2.sense?'sel':''}"
+      data-a="${matched?'':'matchL'}" data-val="${s2.sense}">
+      <span class="match-em">${s2.sEmoji}</span>${s2.sense}</div>`;
+  }).join('');
+  const right=m.right.map(s2=>{
+    const matched=m.matched.includes(s2.sense);
+    return `<div class="match-item ${matched?'matched':m.selRight===s2.organ?'sel':''}"
+      data-a="${matched?'':'matchR'}" data-val="${s2.organ}" data-sense="${s2.sense}">
+      <span class="match-em">${s2.oEmoji}</span>${s2.organ}</div>`;
+  }).join('');
+  return `<div>
+    <div class="game-prompt">Koble sansen til riktig organ! <strong>${m.matched.length}/5</strong></div>
+    <div class="match-cols"><div class="match-side">${left}</div><div class="match-side">${right}</div></div>
+  </div>`;
+}
+
+// MUSCLE
+function buildMuscle(s){
+  if(!S.gs.muscle) S.gs.muscle={q:0,answered:false,chosen:null,correct:0};
+  const m=S.gs.muscle;
+  if(m.done) return gameDone('💪',`${m.correct}/${MUSCLE_Qs.length} riktige!`,m.correct>=3?'Muskelekspert! 💪':'Bra forsøkt!',s);
+  const q=MUSCLE_Qs[m.q];
+  const opts=q.opts.map((o,i)=>{
+    let cls=''; if(m.answered){cls=i===q.a?'cor':m.chosen===i?'wrg':'';}
+    return `<button class="muscle-opt ${cls}" data-a="${m.answered?'':'muscleAns'}" data-i="${i}">${o}</button>`;
+  }).join('');
+  return `<div>
+    <div class="game-prompt">${m.q+1} / ${MUSCLE_Qs.length}</div>
+    <div class="muscle-scenario">
+      <span class="muscle-big-em">${q.emoji}</span>
+      <div class="muscle-scene-txt">${q.scene}</div>
+      <div class="muscle-scene-q">${q.q}</div>
+    </div>
+    <div class="muscle-opts">${opts}</div>
+    ${m.answered?`<button class="next-btn" data-a="muscleNext" style="background:${s.color}">${m.q+1<MUSCLE_Qs.length?'Neste →':'Se resultat →'}</button>`:''}
+  </div>`;
+}
+
+// ════════════════════════════════════════════
+// QUIZ
+// ════════════════════════════════════════════
+function startTimer(){
+  clearTimer();
+  if(!S.qs.timerOn||S.qs.answered) return;
+  _timerInterval=setInterval(()=>{
+    if(S.qs.answered){ clearTimer(); return; }
+    S.qs.timeLeft--;
+    // Update bar visually without full re-render
+    const bar=document.getElementById('qTimerBar');
+    const lbl=document.getElementById('qTimerLbl');
+    if(bar) bar.style.width=(S.qs.timeLeft/15*100)+'%';
+    if(lbl) lbl.textContent=S.qs.timeLeft+'s';
+    if(bar) bar.style.background=S.qs.timeLeft<=5?'#EF4444':'#22C55E';
+    if(S.qs.timeLeft<=0){
+      clearTimer();
+      // Time's up — mark as wrong
+      const q=S.qs.bank[S.qs.q];
+      S.qs.answered=true; S.qs.chosen=-1; S.qs.streak=0;
+      S.qs.wrongLog.push({q:q.q,correct:q.opts[q.a]});
+      SFX.wrong(); render();
+    }
+  },1000);
+}
+
+function buildQuiz(s){
+  if(!S.qs.bank||!S.qs.bank.length){
+    S.qs.bank=makeQuizRound(s.quizBank);
+    S.qs.streak=0; S.qs.wrongLog=[];
+    S.qs.timeLeft=15;
+    setTimeout(startTimer,50);
+  }
+  const qs=S.qs;
+  if(qs.q>=qs.bank.length) return buildQuizResult(s);
+  const q=qs.bank[qs.q];
+  const dots=qs.bank.map((_,i)=>`<div class="qdot" style="background:${i<qs.q?s.color:i===qs.q?s.color+'99':'var(--border)'}"></div>`).join('');
+  const opts=q.opts.map((o,i)=>{
+    let cls=''; if(qs.answered){cls=i===q.a?'cor':qs.chosen===i&&i!==q.a?'wrg':'';}
+    return `<button class="quiz-opt ${cls}" data-a="${qs.answered?'':'quizAns'}" data-i="${i}">${o}</button>`;
+  }).join('');
+  const ok=qs.answered&&qs.chosen===q.a;
+  const timerPct=qs.timerOn?(qs.timeLeft/15*100):100;
+  const timerCol=qs.timeLeft<=5?'#EF4444':'#22C55E';
+  const streakHTML=qs.streak>=2?`<div class="streak-badge">🔥 ${qs.streak} på rad!</div>`:'';
+  return `<div>
+    <div class="quiz-progress">
+      <span class="quiz-num">Spørsmål ${qs.q+1} av ${qs.bank.length}</span>
+      <div style="display:flex;align-items:center;gap:8px">
+        ${streakHTML}
+        <div class="quiz-dots">${dots}</div>
+        <button class="timer-toggle" data-a="toggleTimer" title="${qs.timerOn?'Slå av tidtaker':'Slå på tidtaker'}">${qs.timerOn?'⏱️':'⏸️'}</button>
+      </div>
+    </div>
+    ${qs.timerOn&&!qs.answered?`<div class="timer-bar-wrap">
+      <div class="timer-bar" id="qTimerBar" style="width:${timerPct}%;background:${timerCol}"></div>
+      <span class="timer-lbl" id="qTimerLbl">${qs.timeLeft}s</span>
+    </div>`:''}
+    <div class="quiz-q">${q.q}</div>
+    <div class="quiz-opts">${opts}</div>
+    <div class="quiz-fb ${qs.answered?'show':''}" style="background:${ok?'#DCFCE7':qs.chosen===-1?'#FEF9C3':'#FEE2E2'};color:${ok?'#166534':qs.chosen===-1?'#713F12':'#991B1B'}">
+      ${ok?'✅ Riktig! Bra jobbet!':qs.chosen===-1?`⏰ Tiden er ute! Riktig svar: <strong>${q.opts[q.a]}</strong>`:`❌ Ikke helt — riktig svar: <strong>${q.opts[q.a]}</strong>`}
+    </div>
+    ${qs.answered?`<button class="next-btn" data-a="quizNext" style="background:${s.color}">${qs.q+1<qs.bank.length?'Neste spørsmål →':'Se resultater →'}</button>`:''}
+  </div>`;
+}
+
+function buildQuizResult(s){
+  const score=S.qs.score,tot=S.qs.bank.length;
+  const best=Math.max(score, prog(s.id).quizScore||0);
+  const st=best===tot?3:best>=3?2:best>=2?1:0;
+  const isNewBest=score>=(prog(s.id).quizScore||0);
+  const msg=score===tot?'Perfekt! Du er en ekte ekspert! 🏆':score>=3?'Veldig bra! Du kan masse!':score>=2?'Bra forsøkt! Ta en ny runde!':'Les litt mer og prøv på nytt!';
+  const wrongLog=S.qs.wrongLog||[];
+  const wrongHTML=wrongLog.length?`
+    <div class="wrong-log">
+      <div class="wrong-log-hdr">📋 Disse kan du øve mer på:</div>
+      ${wrongLog.map(w=>`<div class="wrong-log-item">
+        <div class="wli-q">${w.q}</div>
+        <div class="wli-a">✅ ${w.correct}</div>
+      </div>`).join('')}
+    </div>`:'';
+  return `<div class="qresult">
+    <div style="font-size:2.8rem">${score===tot?'🏆':score>=3?'🌟':'📖'}</div>
+    <div class="qresult-score" style="color:${s.color}">${score} / ${tot} riktige</div>
+    ${!isNewBest?`<div style="font-size:.78rem;font-weight:700;color:var(--muted);margin-top:-4px">Beste: ${best}/${tot}</div>`:''}
+    <div class="qresult-msg">${msg}</div>
+    <div class="star-row">${'⭐'.repeat(st)}${'☆'.repeat(3-st)}</div>
+    ${wrongHTML}
+    <div class="qr-btns">
+      <button class="cta outline" data-a="retakeQuiz" style="color:${s.color};border-color:${s.color}">🔄 Ny runde — nye spørsmål!</button>
+      <button class="cta" data-a="goMenu" style="background:${s.color}">← Tilbake til oversikten</button>
+    </div>
+  </div>`;
+}
+
+// ════════════════════════════════════════════
+// DOCTOR MODE
+// ════════════════════════════════════════════
+function buildDoctor(){
+  const d=S.ds;
+  if(d.done) return buildDoctorDone();
+  const cas=CASES[d.case];
+
+  const scoreBar=d.case>0?`<div class="doc-score-bar">
+    <div class="doc-score-inner"><span>Poengsum</span><span class="doc-score-big">${d.score}/${d.case}</span></div>
+    <div class="doc-dots">${d.results.map(r=>`<div class="doc-dot ${r?'cor':'wrg'}"></div>`).join('')}</div>
+  </div>`:'';
+
+  const sysBtns=SYSTEMS.map(s=>{
+    const sel=d.sel.includes(s.id);
+    let cls='';
+    if(d.checked){
+      const shouldBe=cas.correct.includes(s.id);
+      cls=sel&&shouldBe?'cor':sel&&!shouldBe?'wrg':!sel&&shouldBe?'rev':'';
+    } else { cls=sel?'sel':''; }
+    return `<button class="doc-sys-btn ${cls}" data-a="${d.checked?'':'docToggle'}" data-id="${s.id}">
+      <span class="doc-sys-em">${s.emoji}</span>${s.name}</button>`;
+  }).join('');
+
+  const allRight=d.checked&&cas.correct.every(id=>d.sel.includes(id))&&d.sel.every(id=>cas.correct.includes(id));
+  const resultHTML=d.checked?`<div class="doc-result show" style="background:${allRight?'#DCFCE7':'#FEF9C3'};color:${allRight?'#166534':'#713F12'}">
+    ${allRight?'✅ Perfekt diagnose! ':'💡 Ikke helt — '}${cas.explain}
+  </div>`:'';
+
+  return `<div class="screen">
+    <button class="back-btn" data-a="goMenu">← Tilbake</button>
+    <div class="doc-header"><h2>🩺 Doktor-modus</h2><p>Kasus ${d.case+1} av ${CASES.length}</p></div>
+    ${scoreBar}
+    <div class="doc-case-box">
+      <div class="doc-case-num">🏥 Kasus ${d.case+1}</div>
+      <div class="doc-case-title">${cas.emoji} ${cas.title}</div>
+      <div class="doc-symptoms">${cas.symptoms.map(s=>`<div class="doc-symptom">⚕️ ${s}</div>`).join('')}</div>
+    </div>
+    <div class="doc-question">${cas.q}</div>
+    <div class="doc-sys-grid">${sysBtns}</div>
+    ${resultHTML}
+    ${!d.checked
+      ?`<button class="doc-check-btn" data-a="docCheck" ${d.sel.length===0?'disabled':''}>🔬 Sjekk diagnosen min</button>`
+      :`<button class="next-btn" data-a="docNext" style="background:#4F46E5">
+          ${d.case+1<CASES.length?'Neste kasus →':'Se totalresultat →'}</button>`}
+  </div>`;
+}
+
+function buildDoctorDone(){
+  const d=S.ds,tot=CASES.length;
+  const msg=d.score===tot?'Perfekt! Du er en ekte kroppsdoktor! 🏆':
+            d.score>=4?'Veldig bra! Du kan mye om kroppen!':
+            d.score>=3?'Bra jobbet! Litt mer øvelse!':
+            'Gå tilbake og les om systemene — prøv igjen!';
+  return `<div class="screen">
+    <div class="doc-done">
+      <span class="doc-done-em">🏆</span>
+      <div style="font-family:'Fredoka One',cursive;font-size:1.5rem;color:#4F46E5">Diagnoseresultat</div>
+      <div class="doc-done-score">${d.score} / ${tot}</div>
+      <div class="doc-done-sub">${msg}</div>
+      <div class="doc-dots-big">${d.results.map(r=>`<div class="doc-dot-big" style="background:${r?'#22C55E':'#EF4444'}"></div>`).join('')}</div>
+      <button class="cta" data-a="restartDoctor" style="background:#4F46E5">🔄 Spill doktor igjen</button>
+      <button class="cta outline" data-a="goMenu" style="color:#4F46E5;border-color:#4F46E5">← Tilbake til oversikten</button>
+    </div>
+  </div>`;
+}
+
+// ════════════════════════════════════════════
+// SOUND ENGINE — Web Audio API, ingen eksterne filer
+// ════════════════════════════════════════════
+const SFX = (() => {
+  let ctx = null;
+  let muted = false;
+
+  function ac() {
+    if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+    if (ctx.state === 'suspended') ctx.resume();
+    return ctx;
+  }
+
+  function osc(freq, type, start, dur, vol, freqEnd) {
+    const c = ac();
+    const o = c.createOscillator();
+    const g = c.createGain();
+    o.connect(g); g.connect(c.destination);
+    o.type = type || 'sine';
+    o.frequency.setValueAtTime(freq, c.currentTime + start);
+    if (freqEnd) o.frequency.exponentialRampToValueAtTime(freqEnd, c.currentTime + start + dur);
+    g.gain.setValueAtTime(0, c.currentTime + start);
+    g.gain.linearRampToValueAtTime(vol || 0.25, c.currentTime + start + 0.008);
+    g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + start + dur);
+    o.start(c.currentTime + start);
+    o.stop(c.currentTime + start + dur + 0.02);
+  }
+
+  function noise(durSec, freqStart, freqEnd, volStart, volEnd) {
+    const c = ac();
+    const buf = c.createBuffer(1, c.sampleRate * durSec, c.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    const src = c.createBufferSource();
+    src.buffer = buf;
+    const flt = c.createBiquadFilter();
+    flt.type = 'bandpass'; flt.Q.value = 0.6;
+    flt.frequency.setValueAtTime(freqStart, c.currentTime);
+    flt.frequency.linearRampToValueAtTime(freqEnd, c.currentTime + durSec);
+    const g = c.createGain();
+    g.gain.setValueAtTime(volStart, c.currentTime);
+    g.gain.linearRampToValueAtTime(volEnd, c.currentTime + durSec);
+    src.connect(flt); flt.connect(g); g.connect(c.destination);
+    src.start(); src.stop(c.currentTime + durSec + 0.02);
+  }
+
+  return {
+    get muted() { return muted; },
+    toggle() { muted = !muted; return muted; },
+
+    tap()       { if(muted)return; osc(600,'sine',0,.07,.12); },
+    select()    { if(muted)return; osc(800,'sine',0,.09,.18); },
+
+    correct()   {
+      if(muted)return;
+      [0,.13].forEach((t,i)=>osc([523,784][i],'sine',t,.28,.22));
+    },
+
+    wrong()     {
+      if(muted)return;
+      osc(220,'sawtooth',0,.22,.18,100);
+      osc(160,'sawtooth',0.05,.18,.1);
+    },
+
+    complete()  {
+      if(muted)return;
+      [523,659,784,1047].forEach((f,i)=>osc(f,'triangle',i*.1,.5,.22));
+    },
+
+    stars(n)    {
+      if(muted)return;
+      const seq=[[523,659],[523,659,784],[523,659,784,1047]][Math.min(n,3)-1]||[523];
+      seq.forEach((f,i)=>osc(f,'triangle',i*.13,.45,.25));
+    },
+
+    heartbeat() {
+      if(muted)return;
+      // lub-dub: two low thumps
+      [0,.2].forEach(t=>{
+        const c=ac();
+        const o=c.createOscillator(); const g=c.createGain();
+        o.connect(g); g.connect(c.destination);
+        o.type='sine';
+        o.frequency.setValueAtTime(90,c.currentTime+t);
+        o.frequency.exponentialRampToValueAtTime(35,c.currentTime+t+.12);
+        g.gain.setValueAtTime(0,c.currentTime+t);
+        g.gain.linearRampToValueAtTime(.45,c.currentTime+t+.015);
+        g.gain.exponentialRampToValueAtTime(.001,c.currentTime+t+.14);
+        o.start(c.currentTime+t); o.stop(c.currentTime+t+.18);
+      });
+    },
+
+    breathIn()  { if(muted)return; noise(.55, 350, 1100, .15, .06); },
+    breathOut() { if(muted)return; noise(.5, 1000, 280, .18, 0);    },
+
+    unlock()    {
+      if(muted)return;
+      // Rising arpeggio + shimmer
+      [392,523,659,784,1047].forEach((f,i)=>osc(f,'sine',i*.09,.55,.2));
+    },
+  };
+})();
+
+// ════════════════════════════════════════════
+// EVENTS
+// ════════════════════════════════════════════
+function onClick(e){
+  const el=e.target.closest('[data-a]'); if(!el) return;
+  const a=el.dataset.a;
+
+  // Mute toggle — handled separately, no render needed
+  if(a==='toggleMute'){
+    const m=SFX.toggle();
+    el.textContent=m?'🔇':'🔊';
+    return;
+  }
+
+  switch(a){
+    case 'obNext':
+      SFX.tap(); S.ob.step++; render(); break;
+    case 'obBack':
+      SFX.tap(); S.ob.step--; render(); break;
+    case 'obDone':
+      SFX.complete(); S.ob.done=true; render(); break;
+
+    case 'openSys':
+      SFX.tap(); clearTimer();
+      S.sysId=el.dataset.id; S.tab='learn'; S.gs={}; S.screen='system';
+      S.qs={q:0,score:0,answered:false,chosen:null,bank:[],streak:0,wrongLog:[],timerOn:S.qs.timerOn,timeLeft:15}; render(); break;
+    case 'openDoctor':
+      SFX.unlock(); clearTimer();
+      S.screen='doctor'; S.ds={case:0,sel:[],checked:false,results:[],done:false,score:0}; render(); break;
+    case 'goMenu':
+      SFX.tap(); clearTimer();
+      S.screen='menu'; S.sysId=null; render(); break;
+    case 'tab':
+      SFX.tap();
+      if(el.dataset.tab!=='quiz') clearTimer();
+      S.tab=el.dataset.tab;
+      if(S.tab==='quiz') S.qs={q:0,score:0,answered:false,chosen:null,bank:[],streak:0,wrongLog:[],timerOn:S.qs.timerOn,timeLeft:15};
+      render(); break;
+    case 'markLearned':
+      SFX.select();
+      setP(S.sysId,'learned',true); S.tab='game'; S.gs={}; render(); break;
+    case 'replayGame':
+      SFX.tap();
+      S.gs={replay:true}; render(); break;
+    case 'gameNext':
+      SFX.complete();
+      setP(S.sysId,'gameDone',true); S.tab='quiz';
+      S.qs={q:0,score:0,answered:false,chosen:null,bank:[],streak:0,wrongLog:[],timerOn:S.qs.timerOn,timeLeft:15}; S.gs={}; render(); break;
+
+    case 'boneClick':{
+      const g=S.gs.skel; if(!g) break;
+      if(el.dataset.bone===g.order[g.idx].id){
+        g.correct.push(el.dataset.bone); g.idx++;
+        if(g.idx>=g.order.length){ g.done=true; SFX.complete(); } else { SFX.correct(); }
+        render();
+      } else {
+        SFX.wrong();
+        el.classList.add('wrong-flash'); setTimeout(()=>render(),350);
+      }
+      break;
+    }
+
+    case 'heartTap':{
+      const h=S.gs.heart; if(!h) break;
+      SFX.heartbeat();
+      h.taps++;
+      if(h.taps>=5){
+        if(h.phase==='rest'){ h.phase='run'; h.taps=0; SFX.complete(); }
+        else { h.phase='done'; SFX.complete(); }
+      }
+      render(); break;
+    }
+    case 'lungIn':{
+      SFX.breathIn();
+      const l=S.gs.lung||{count:0}; l.phase='in'; l.count++; S.gs.lung=l; render(); break;
+    }
+    case 'lungOut':{
+      SFX.breathOut();
+      const l=S.gs.lung||{}; l.phase='out'; S.gs.lung=l; render(); break;
+    }
+
+    case 'seqClick':{
+      const g=S.gs.seq; if(!g) break;
+      if(el.dataset.id===DIGESTION[g.placed.length].id){
+        g.placed.push(el.dataset.id);
+        if(g.placed.length>=DIGESTION.length){ g.done=true; SFX.complete(); } else { SFX.correct(); }
+        render();
+      } else {
+        SFX.wrong();
+        el.classList.add('wf'); setTimeout(()=>render(),400);
+      }
+      break;
+    }
+
+    case 'matchL':{
+      SFX.select();
+      S.gs.match.selLeft=el.dataset.val; tryMatch(); render(); break;
+    }
+    case 'matchR':{
+      S.gs.match.selRight=el.dataset.val;
+      const beforeCount=S.gs.match.matched.length;
+      tryMatch();
+      const afterCount=S.gs.match.matched.length;
+      if(afterCount>beforeCount){
+        if(S.gs.match.done) SFX.complete(); else SFX.correct();
+      } else { SFX.wrong(); }
+      render(); break;
+    }
+
+    case 'muscleAns':{
+      const m=S.gs.muscle; if(!m||m.answered) break;
+      const i=parseInt(el.dataset.i); m.answered=true; m.chosen=i;
+      if(i===MUSCLE_Qs[m.q].a){ m.correct++; SFX.correct(); } else { SFX.wrong(); }
+      render(); break;
+    }
+    case 'muscleNext':{
+      SFX.tap();
+      const m=S.gs.muscle; m.q++; m.answered=false; m.chosen=null;
+      if(m.q>=MUSCLE_Qs.length) m.done=true; render(); break;
+    }
+
+    case 'quizAns':{
+      clearTimer();
+      const q=S.qs.bank[S.qs.q]; const i=parseInt(el.dataset.i);
+      S.qs.answered=true; S.qs.chosen=i;
+      if(i===q.a){
+        S.qs.score++; S.qs.streak++; SFX.correct();
+        if(S.qs.streak===3) setTimeout(()=>SFX.complete(),200);
+      } else {
+        S.qs.streak=0; SFX.wrong();
+        if(!S.qs.wrongLog) S.qs.wrongLog=[];
+        S.qs.wrongLog.push({q:q.q,correct:q.opts[q.a]});
+      }
+      render(); break;
+    }
+    case 'quizNext':{
+      SFX.tap();
+      S.qs.q++; S.qs.answered=false; S.qs.chosen=null; S.qs.timeLeft=15;
+      if(S.qs.q>=S.qs.bank.length){
+        clearTimer();
+        const best=Math.max(S.qs.score, prog(S.sysId).quizScore||0);
+        setP(S.sysId,'quizScore',best);
+        const st=best===S.qs.bank.length?3:best>=3?2:best>=2?1:0;
+        if(st>0) setTimeout(()=>SFX.stars(st),150);
+      } else {
+        setTimeout(startTimer,50);
+      }
+      render(); break;
+    }
+    case 'toggleTimer':
+      SFX.tap(); S.qs.timerOn=!S.qs.timerOn;
+      if(!S.qs.timerOn) clearTimer(); else { S.qs.timeLeft=15; setTimeout(startTimer,50); }
+      render(); break;
+    case 'retakeQuiz':
+      SFX.tap(); clearTimer();
+      S.qs={q:0,score:0,answered:false,chosen:null,bank:makeQuizRound(sys().quizBank),
+            streak:0,wrongLog:[],timerOn:S.qs.timerOn,timeLeft:15};
+      setTimeout(startTimer,50); render(); break;
+
+    case 'docToggle':{
+      SFX.select();
+      const id=el.dataset.id,idx=S.ds.sel.indexOf(id);
+      if(idx===-1) S.ds.sel.push(id); else S.ds.sel.splice(idx,1); render(); break;
+    }
+    case 'docCheck':{
+      const cas=CASES[S.ds.case];
+      const ok=cas.correct.every(id=>S.ds.sel.includes(id))&&S.ds.sel.every(id=>cas.correct.includes(id));
+      S.ds.checked=true; S.ds.results.push(ok); if(ok) S.ds.score++;
+      if(ok) SFX.correct(); else SFX.wrong();
+      render(); break;
+    }
+    case 'docNext':{
+      SFX.tap();
+      S.ds.case++; S.ds.sel=[]; S.ds.checked=false;
+      if(S.ds.case>=CASES.length){ S.ds.done=true; setTimeout(()=>SFX.complete(),200); }
+      render(); break;
+    }
+    case 'restartDoctor':
+      SFX.tap();
+      S.ds={case:0,sel:[],checked:false,results:[],done:false,score:0}; render(); break;
+  }
+}
+
+function tryMatch(){
+  const m=S.gs.match; if(!m.selLeft||!m.selRight) return;
+  if(SENSES.find(s=>s.sense===m.selLeft&&s.organ===m.selRight)){
+    m.matched.push(m.selLeft);
+    if(m.matched.length>=SENSES.length) m.done=true;
+  }
+  m.selLeft=null; m.selRight=null;
+}
+
+render();
+// Mute button — always visible, survives re-renders
+const muteBtn=document.createElement('button');
+muteBtn.dataset.a='toggleMute';
+muteBtn.textContent='🔊';
+muteBtn.style.cssText='position:fixed;bottom:16px;right:16px;z-index:999;width:42px;height:42px;border-radius:50%;border:2px solid var(--border);background:var(--card);font-size:1.2rem;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.12);display:flex;align-items:center;justify-content:center;';
+document.body.appendChild(muteBtn);
+document.getElementById('app').addEventListener('click',onClick);
+muteBtn.addEventListener('click',onClick);
+</script>
+</body>
+</html>
