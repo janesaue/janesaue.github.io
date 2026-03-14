@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Endre passord</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background: #f0f0f0;
+    }
+    .boks {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    input {
+      padding: 0.5rem;
+      font-size: 1rem;
+      margin: 0.5rem 0;
+      width: 200px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    button {
+      padding: 0.5rem 1.5rem;
+      font-size: 1rem;
+      background: #4a90e2;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
+    .melding {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      display: none;
+    }
+    .feil { color: red; }
+    .ok { color: green; }
+    a {
+      display: inline-block;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: #4a90e2;
+    }
+  </style>
+</head>
+<body>
+  <div class="boks">
+    <h2>Endre passord</h2>
+    <form id="passord-skjema">
+      <input type="password" id="gammelt" placeholder="Nåværende passord" autocomplete="current-password" required />
+      <input type="password" id="nytt" placeholder="Nytt passord" autocomplete="new-password" required />
+      <input type="password" id="bekreft" placeholder="Bekreft nytt passord" autocomplete="new-password" required />
+      <button type="submit">Endre passord</button>
+    </form>
+    <p class="melding feil" id="feilmelding"></p>
+    <p class="melding ok" id="okmelding"></p>
+    <a href="/">Tilbake til forsiden</a>
+  </div>
+
+  <script>
+    document.getElementById("passord-skjema").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const feil = document.getElementById("feilmelding");
+      const ok = document.getElementById("okmelding");
+      feil.style.display = "none";
+      ok.style.display = "none";
+
+      const gammelt = document.getElementById("gammelt").value;
+      const nytt = document.getElementById("nytt").value;
+      const bekreft = document.getElementById("bekreft").value;
+
+      if (nytt !== bekreft) {
+        feil.textContent = "De nye passordene er ikke like";
+        feil.style.display = "block";
+        return;
+      }
+
+      if (nytt.length < 6) {
+        feil.textContent = "Nytt passord må være minst 6 tegn";
+        feil.style.display = "block";
+        return;
+      }
+
+      try {
+        const res = await fetch("/api/change-password", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ gammeltPassord: gammelt, nyttPassord: nytt })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          ok.textContent = "Passordet er endret!";
+          ok.style.display = "block";
+          document.getElementById("passord-skjema").reset();
+        } else {
+          feil.textContent = data.error || "Noe gikk galt";
+          feil.style.display = "block";
+        }
+      } catch (err) {
+        feil.textContent = "Kunne ikke koble til serveren";
+        feil.style.display = "block";
+      }
+    });
+  </script>
+</body>
+</html>
