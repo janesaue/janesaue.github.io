@@ -14,6 +14,20 @@ export async function onRequest(context) {
     if (brukernavn) {
       // Slett engangs-token
       await env.PASSWORDS.delete("_tok_" + tok);
+
+      // Sjekk om brukeren må bytte passord
+      const mustChange = await env.PASSWORDS.get("mustchange:" + brukernavn);
+      if (mustChange) {
+        // Sett cookie og redirect til endre-passord
+        return new Response(null, {
+          status: 302,
+          headers: {
+            "Location": url.origin + "/endre-passord?pliktig=1",
+            "Set-Cookie": `pw=${encodeURIComponent(brukernavn)}; Path=/; Max-Age=2592000`
+          }
+        });
+      }
+
       // Server selve siden med Set-Cookie på 200-respons (Safari dropper cookies på 302)
       const cleanUrl = new URL(url);
       cleanUrl.searchParams.delete("tok");
