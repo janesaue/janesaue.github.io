@@ -9,16 +9,16 @@ export async function onRequestGet(context) {
     });
   }
 
-  const pw = match[1];
-  const count = await env.PASSWORDS.get(pw);
+  const brukernavn = decodeURIComponent(match[1]);
+  const bruker = await env.PASSWORDS.get("user:" + brukernavn);
 
-  if (count === null) {
+  if (bruker === null) {
     return new Response(JSON.stringify({ user: null }), {
       headers: { "Content-Type": "application/json" }
     });
   }
 
-  return new Response(JSON.stringify({ user: pw }), {
+  return new Response(JSON.stringify({ user: brukernavn }), {
     headers: { "Content-Type": "application/json" }
   });
 }
