@@ -45,6 +45,9 @@ export async function onRequestPost(context) {
 
   await env.PASSWORDS.put("user:" + brukernavn, nyHash);
 
+  // Fjern tvunget passordbytte-flagg
+  await env.PASSWORDS.delete("mustchange:" + brukernavn);
+
   return new Response(JSON.stringify({ ok: true }), {
     status: 200,
     headers: { "Content-Type": "application/json" }

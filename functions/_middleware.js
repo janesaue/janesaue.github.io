@@ -3,7 +3,7 @@ export async function onRequest(context) {
   const url = new URL(request.url);
 
   // Ikke sjekk passord på innloggingssiden og API-ruter
-  if (url.pathname === "/login" || url.pathname === "/api/login" || url.pathname === "/api/logout" || url.pathname === "/api/me") {
+  if (url.pathname === "/login" || url.pathname === "/api/login" || url.pathname === "/api/logout" || url.pathname === "/api/me" || url.pathname === "/api/change-password") {
     return next();
   }
 
@@ -32,6 +32,11 @@ export async function onRequest(context) {
     const brukernavn = decodeURIComponent(match[1]);
     const bruker = await env.PASSWORDS.get("user:" + brukernavn);
     if (bruker !== null) {
+      // Sjekk om brukeren må bytte passord
+      const mustChange = await env.PASSWORDS.get("mustchange:" + brukernavn);
+      if (mustChange && url.pathname !== "/endre-passord") {
+        return Response.redirect(url.origin + "/endre-passord?pliktig=1", 302);
+      }
       return next();
     }
     // Cookie finnes men er ugyldig — sesjonen har utløpt
