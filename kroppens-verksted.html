@@ -758,25 +758,26 @@ const BONES=[
   {id:'hael',  name:'Hælen',       latin:'Calcaneus', latinM:'«Hæl» på gresk',          bx:200, by:258, side:'R', rank:3, fact:'Hælbeinet tar imot hele kroppsvekten din når du går!',   hint:'Nederst på foten, bak'},
 ];
 const DIGESTION=[
-  {id:'munn',    name:'Munnen',    emoji:'👄',fact:'Spytt inneholder enzymer som begynner å bryte ned maten allerede i munnen!',hint:'Her begynner reisen — du tygger maten'},
-  {id:'spisero', name:'Spiserøret',emoji:'🌊',fact:'Spiserøret bruker muskelbølger (peristaltikk) til å presse maten ned — selv om du står på hodet!',hint:'Et rør fra munnen ned til magen'},
-  {id:'mage',    name:'Magesekken',emoji:'🫗',fact:'Magesyren er så sterk at den kan løse opp metall — heldigvis beskytter slim mageveggen!',hint:'Her blandes maten med syre'},
-  {id:'tynntarm',name:'Tynntarmen',emoji:'〰️',fact:'Tynntarmen er ca. 6 meter lang og har et overflatereal som en tennisbane!',hint:'Her tas næringen opp i blodet'},
-  {id:'tykktarm',name:'Tykktarmen',emoji:'💧',fact:'Tykktarmen har milliarder av nyttige bakterier som hjelper fordøyelsen!',hint:'Vann og salter suges opp her'},
-  {id:'ende',    name:'Endetarmen',emoji:'🚪',fact:'Mat bruker 24–72 timer på hele reisen fra munn til ende!',hint:'Siste stopp — resten forlater kroppen'},
+  {id:'munn',    name:'Munnen',    latin:'Cavum oris',   emoji:'👄',fact:'🔬 Saliva = «spytt» på latin. Det inneholder enzymer som bryter ned maten allerede i munnen!',hint:'Her begynner reisen — du tygger maten'},
+  {id:'spisero', name:'Spiserøret',latin:'Oesophagus',   emoji:'🌊',fact:'Spiserøret bruker muskelbølger (peristaltikk) til å presse maten ned — selv om du står på hodet!',hint:'Et rør fra munnen ned til magen'},
+  {id:'mage',    name:'Magesekken',latin:'Ventriculus',   emoji:'🫗',fact:'Magesyren er så sterk at den kan løse opp metall — men slim beskytter mageveggen. Hele slimhinnen fornyes på 3–4 dager!',hint:'Her blandes maten med syre'},
+  {id:'tynntarm',name:'Tynntarmen',latin:'Intestinum tenue',emoji:'〰️',fact:'🔬 Villi = «hårstrå» på latin. Millioner av bittesmå «fingre» suger næring inn i blodet — de gjør overflaten 600 ganger større!',hint:'Her tas næringen opp i blodet'},
+  {id:'tykktarm',name:'Tykktarmen',latin:'Colon',        emoji:'💧',fact:'Tykktarmen har milliarder av nyttige bakterier som hjelper fordøyelsen!',hint:'Vann og salter suges opp her'},
+  {id:'ende',    name:'Endetarmen',latin:'Rectum',        emoji:'🚪',fact:'🔬 Enzymer = fra gresk «i gjær». Kroppens kjemiske sakser klipper maten i biter hele veien fra munn til ende — en reise på 24–72 timer!',hint:'Siste stopp — resten forlater kroppen'},
 ];
 const SENSES=[
-  {sense:'Syn',     organ:'Øyet', sEmoji:'👁️',oEmoji:'👁️',fact:'Øyet kan skille mellom ca. 10 millioner farger!'},
-  {sense:'Hørsel',  organ:'Øret', sEmoji:'👂',oEmoji:'👂',fact:'De tre minste beina i kroppen sitter i øret!'},
-  {sense:'Smak',    organ:'Tunga',sEmoji:'😋',oEmoji:'👅',fact:'Tunga har ca. 10 000 smaksløker som skiftes ut hver 2. uke!'},
-  {sense:'Lukt',    organ:'Nesen',sEmoji:'🌸',oEmoji:'👃',fact:'Nesen kan gjenkjenne over 1 billion forskjellige lukter!'},
-  {sense:'Berøring',organ:'Huden',sEmoji:'🤚',oEmoji:'🤚',fact:'Huden er kroppens største organ — ca. 2 m² hos voksne!'},
+  {sense:'Syn',     organ:'Øyet', latin:'Oculus',    sEmoji:'👁️',oEmoji:'👁️',fact:'Øyet (Oculus) kan skille mellom ca. 10 millioner farger!'},
+  {sense:'Hørsel',  organ:'Øret', latin:'Auris',     sEmoji:'👂',oEmoji:'👂',fact:'Øret (Auris) har de tre minste beina i kroppen!'},
+  {sense:'Smak',    organ:'Tunga',latin:'Lingua',    sEmoji:'😋',oEmoji:'👅',fact:'Tunga (Lingua) har ca. 10 000 smaksløker som skiftes ut hver 2. uke!'},
+  {sense:'Lukt',    organ:'Nesen',latin:'Nasus',     sEmoji:'🌸',oEmoji:'👃',fact:'Nesen (Nasus) kan gjenkjenne over 1 billion forskjellige lukter!'},
+  {sense:'Berøring',organ:'Huden',latin:'Cutis',     sEmoji:'🤚',oEmoji:'🤚',fact:'Huden (Cutis) er kroppens største organ — ca. 2 m² hos voksne!'},
 ];
+const NERVE_FACTS=['🔬 Nevron = «tråd» på gresk. Hjernen har 86 milliarder nevroner med flere koblinger enn stjerner i Melkeveien!','🔬 Cerebrum = «hjerne» på latin. Storhjernen tar opp 85 % av hjernens vekt!','🔬 Synapse = «kontaktpunkt» på gresk. Signaler hopper over bittesmå gap på millisekunder!','🦢 Gåsehud! Nervesystemet trekker sammen muskler rundt hårene — et arv fra da vi var lodne!','💡 Hjernen bruker like mye strøm som en 20-watt lyspære, men er kraftigere enn alle verdens datamaskiner!'];
 const MUSCLE_Qs=[
-  {emoji:'💪',scene:'Du bøyer armen!',q:'Hvilken muskel jobber?',opts:['Triceps','Biceps','Kjevemuskelen','Ryggmuskelen'],a:1,fact:'Biceps og triceps jobber i par — når den ene trekker seg sammen, slapper den andre av!'},
-  {emoji:'🏃',scene:'Du løper raskt!',q:'Hva gjør musklene dine?',opts:['Slapper av','Trekker seg sammen og slapper av','Ingenting','Pumper blod'],a:1,fact:'Muskler kan bare trekke, aldri dytte — derfor jobber de alltid i par!'},
-  {emoji:'😊',scene:'Du smiler bredt!',q:'Ca. hvor mange muskler bruker du?',opts:['2','5','17','100'],a:2,fact:'Det tar 43 muskler å rynke pannen, men bare 17 å smile!'},
-  {emoji:'🫀',scene:'Hjertet slår!',q:'Hva er hjertet?',opts:['Et bein','En nerve','En spesiell muskel','Ikke en muskel'],a:2,fact:'Hjertemuskelen slår ca. 100 000 ganger om dagen uten at du tenker på det!'},
+  {emoji:'💪',scene:'Du bøyer armen!',q:'Hvilken muskel jobber?',opts:['Triceps','Biceps','Kjevemuskelen','Ryggmuskelen'],a:1,fact:'🔬 Musculus = «liten mus» på latin! Romerne synes biceps lignet en mus under huden. Biceps og triceps jobber alltid i par!'},
+  {emoji:'🏃',scene:'Du løper raskt!',q:'Hva gjør musklene dine?',opts:['Slapper av','Trekker seg sammen og slapper av','Ingenting','Pumper blod'],a:1,fact:'🔬 Tendo = «å strekke» på latin. Sener er sterke «tau» som fester muskler til bein. Achillessenen er den tykkeste!'},
+  {emoji:'😊',scene:'Du smiler bredt!',q:'Ca. hvor mange muskler bruker du?',opts:['2','5','17','100'],a:2,fact:'🔬 Biceps = «to hoder», Triceps = «tre hoder» (bi=to, tri=tre, ceps=hode). De jobber alltid i par!'},
+  {emoji:'🫀',scene:'Hjertet slår!',q:'Hva er hjertet?',opts:['Et bein','En nerve','En spesiell muskel','Ikke en muskel'],a:2,fact:'👅 Tunga er egentlig 8 muskler i én! Den er aldri helt avslappet — den holder deg fra å svelge under søvn.'},
 ];
 
 // ════════════════════════════════════════════
@@ -1013,21 +1014,6 @@ function buildLearn(s){
   const done=prog(s.id).learned;
   const facts=s.facts.map(f=>`<div class="fact-item"><span class="fi">${f.icon}</span><span class="ft">${f.text}</span></div>`).join('');
 
-  const latinCards=s.details.map(d=>`
-    <div class="latin-card" style="border-left-color:${s.color}">
-      <div style="border-left:4px solid ${s.color};position:absolute;left:0;top:0;bottom:0;border-radius:2px 0 0 2px"></div>
-      <div class="latin-word" style="color:${s.color}">${d.latin}</div>
-      <div class="latin-no">${d.no}</div>
-      <div class="latin-meaning">📖 ${d.meaning}</div>
-      <div class="latin-desc">${d.desc}</div>
-    </div>`).join('');
-
-  const funFactItems=s.funFacts.map(f=>`
-    <div class="fun-fact">
-      <span class="fun-fact-em">${f.em}</span>
-      <span class="fun-fact-txt">${f.txt}</span>
-    </div>`).join('');
-
   const synHTML=s.synergies?`
     <div class="section-hdr">🔗 Samarbeider med</div>
     <div class="synergy-cards">
@@ -1045,10 +1031,6 @@ function buildLearn(s){
 
   return `
     <div class="fact-list">${facts}</div>
-    <div class="section-hdr">🔬 Latinord og detaljer</div>
-    <div class="latin-cards">${latinCards}</div>
-    <div class="section-hdr">💡 Visste du at…</div>
-    <div class="fun-facts">${funFactItems}</div>
     ${synHTML}
     <div style="margin-top:14px">
       ${done
@@ -1259,9 +1241,12 @@ function buildSkel(s){
 
 // HEART — rytmespill
 const HEART_FACTS=[
-  '🧠 Hjertet ditt slår ca. 100 000 ganger hver eneste dag!',
-  '🩸 Blodet reiser gjennom 96 000 km blodårer — det er over to ganger rundt jorda!',
+  '🧠 Hjertet ditt slår over 100 000 ganger HVER DAG — over 3 milliarder slag i et helt liv!',
+  '🔬 Aorta (fra gresk «å bære») er den største pulsåren — tykk som en hageslange!',
+  '🩸 Hjertet pumper blodet én full runde hvert minutt — 19 000 km per dag!',
+  '🔬 Atrium = «forrom» på latin. Hjertet har to atria som tar imot blodet!',
   '💪 Hjertet pumper ca. 7 500 liter blod om dagen!',
+  '🔬 Ventrikkel = «lite rom» på latin. Venstre ventrikkel sender blodet helt til tærne!',
   '⚡ Hjertet har sitt eget elektriske system som styrer rytmen!',
   '🫀 Et barnehjerte slår raskere enn et voksenhjerte — ca. 80–100 slag/min!',
 ];
@@ -1288,7 +1273,7 @@ function buildHeart(s){
           <div class="bpm-cmp-unit">slag/min</div>
         </div>
       </div>
-      <div class="gd-sub">Hjertet pumper raskere fordi musklene trenger mer oksygen! 🩸</div>
+      <div class="gd-sub">Ventriklene <em style="font-size:.75rem;opacity:.7">(hjertekamrene)</em> pumper raskere fordi musklene trenger mer oksygen via Aorta! 🩸</div>
       <button class="cta" data-a="gameNext" style="background:${s.color}">Videre til quiz →</button>
     </div>`;
   }
@@ -1324,16 +1309,18 @@ function buildHeart(s){
 
 // LUNG
 const LUNG_FACTS=[
-  '🫁 Lungene har over 300 millioner små luftblærer (alveoler)!',
-  '🎾 Alle alveoler brettet ut dekker en hel tennisbane!',
-  '🎈 Høyre lunge er større enn venstre — hjertet tar plass!',
-  '🏊 Du puster ca. 20 000 ganger om dagen!',
+  '🔬 Alveoli = «lite hulrom» på latin. Du har 300 millioner av dem!',
+  '🎾 Alle alveoler brettet ut dekker en hel tennisbane — alt inni brystet ditt!',
+  '🔬 Diafragma = «skillevegg» på gresk. Den suger luft inn når den trekker seg ned!',
+  '🏊 Du puster ca. 20 000 ganger om dagen helt automatisk!',
+  '🔬 Bronkier = fra gresk «bronkhos» (luftrør). De greiner seg som et tre inne i lungene!',
   '🌬️ Når du nyser, kan luften nå 160 km/t!',
   '💨 Lungene rommer 6 liter, men du puster bare ½ liter om gangen!',
   '🩸 Blodet bruker bare 1 sekund gjennom lungene!',
-  '🤿 Diafragma er formet som en kuppel!',
+  '🎈 Høyre lunge er større enn venstre — hjertet tar plass!',
   '🧒 Barn puster raskere enn voksne — 20–30 ganger i minuttet!',
   '🌊 Lungene er det eneste organet som kan flyte på vann!',
+  '💨 Du puster inn ca. 11 000 liter luft hver dag!',
   '🏃 Når du løper puster du dobbelt så fort!',
   '🔴 Oksygen gjør blodet rødt!',
   '🌳 Ett stort tre lager oksygen til to mennesker i et år!',
@@ -1533,7 +1520,7 @@ function buildSeq(s){
       return `<div class="seq-item ${placed?'placed':''}" data-a="${placed?'':'seqClick'}" data-id="${item.id}">
         <div class="seq-num">${placed?pi+1:'?'}</div>
         <span class="seq-emoji">${item.emoji}</span>
-        <span>${item.name}</span>
+        <span>${item.name}${placed&&item.latin?` <em style="font-size:.75rem;color:#166534;font-style:italic">(${item.latin})</em>`:''}</span>
       </div>`;
     }).join('')}</div>
     ${g.showHint&&nextOrgan?`<div style="color:#92400E;font-size:.8rem;font-weight:600;text-align:center;margin:8px 0">💡 ${nextOrgan.hint}</div>`:''}
@@ -1545,7 +1532,7 @@ function buildSeq(s){
 
 // MATCH
 function buildMatch(s){
-  if(!S.gs.match) S.gs.match={right:shuf(SENSES),selLeft:null,selRight:null,matched:[],lastFact:null};
+  if(!S.gs.match) S.gs.match={right:shuf(SENSES),selLeft:null,selRight:null,matched:[],lastFact:null,nerveFact:null};
   const m=S.gs.match;
   if(m.done) return gameDone('🧠','Alle sanser koblet til!','Du kjenner alle de fem sansene!',s);
   const left=SENSES.map(s2=>{
@@ -1558,11 +1545,15 @@ function buildMatch(s){
     const matched=m.matched.includes(s2.sense);
     return `<div class="match-item ${matched?'matched':m.selRight===s2.organ?'sel':''}"
       data-a="${matched?'':'matchR'}" data-val="${s2.organ}" data-sense="${s2.sense}">
-      <span class="match-em">${s2.oEmoji}</span>${s2.organ}</div>`;
+      <span class="match-em">${s2.oEmoji}</span>${s2.organ}${matched&&s2.latin?` <em style="font-size:.7rem;font-style:italic;opacity:.7">(${s2.latin})</em>`:''}</div>`;
   }).join('');
+  // Alternate between sense fact and nerve system latin fact
+  const displayFact = m.lastFact || null;
+  const displayNerve = m.nerveFact || null;
   return `<div>
     <div class="game-prompt">Koble sansen til riktig organ! <strong>${m.matched.length}/5</strong></div>
-    ${m.lastFact?`<div style="background:${s.colorBg||'#EFF6FF'};color:#1E3A5F;padding:8px 12px;border-radius:10px;font-size:.8rem;font-weight:600;text-align:center;margin:6px 0">🧠 ${m.lastFact}</div>`:''}
+    ${displayFact?`<div style="background:${s.colorBg||'#FEF3C7'};color:#92400E;padding:8px 12px;border-radius:10px;font-size:.8rem;font-weight:600;text-align:center;margin:6px 0">🧠 ${displayFact}</div>`:''}
+    ${displayNerve?`<div style="background:#EDE9FE;color:#5B21B6;padding:8px 12px;border-radius:10px;font-size:.8rem;font-weight:600;text-align:center;margin:4px 0">${displayNerve}</div>`:''}
     <div class="match-cols"><div class="match-side">${left}</div><div class="match-side">${right}</div></div>
   </div>`;
 }
@@ -1979,12 +1970,13 @@ function onClick(e){
       tryMatch();
       const afterCount=S.gs.match.matched.length;
       if(afterCount>beforeCount){
-        // Find the sense that was just matched and show its fact
         const matchedSense=el.dataset.sense;
         const senseObj=SENSES.find(se=>se.sense===matchedSense);
         if(senseObj) S.gs.match.lastFact=senseObj.fact;
+        // Show a nerve system latin fact too
+        S.gs.match.nerveFact=NERVE_FACTS[(afterCount-1)%NERVE_FACTS.length];
         if(S.gs.match.done) SFX.complete(); else SFX.correct();
-      } else { SFX.wrong(); S.gs.match.lastFact=null; }
+      } else { SFX.wrong(); S.gs.match.lastFact=null; S.gs.match.nerveFact=null; }
       render(); break;
     }
 
