@@ -53,11 +53,16 @@
       <button type="submit">Logg inn</button>
     </form>
     <p class="feil" id="feilmelding">Feil brukernavn eller passord – prøv igjen</p>
+    <p class="feil" id="utloptmelding" style="color:orange;">Sesjonen din har utløpt – logg inn på nytt</p>
   </div>
 
   <script>
-    if (new URLSearchParams(window.location.search).get("feil") === "1") {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("feil") === "1") {
       document.getElementById("feilmelding").style.display = "block";
+    }
+    if (params.get("utlopt") === "1") {
+      document.getElementById("utloptmelding").style.display = "block";
     }
   </script>
 </body>

@@ -34,6 +34,8 @@ export async function onRequest(context) {
     if (bruker !== null) {
       return next();
     }
+    // Cookie finnes men er ugyldig — sesjonen har utløpt
+    return Response.redirect(url.origin + "/login?utlopt=1", 302);
   }
 
   // Ikke innlogget - send til innloggingsside
