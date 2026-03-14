@@ -748,14 +748,14 @@ const CASES = [
 ];
 
 const BONES=[
-  {id:'hode',  name:'Hodeskallen', latin:'Cranium',    bx:180, by:28,  side:'R', rank:0},
-  {id:'krave', name:'Kravebenet',  latin:'Clavicula',  bx:158, by:68,  side:'L', rank:0},
-  {id:'ribb',  name:'Ribbeina',    latin:'Costae',     bx:155, by:92,  side:'L', rank:1},
-  {id:'rygg',  name:'Ryggraden',   latin:'Vertebrae',  bx:180, by:125, side:'R', rank:1},
-  {id:'albue', name:'Albuen',      latin:'Ulna',       bx:218, by:120, side:'R', rank:2},
-  {id:'lar',   name:'Lårbenet',    latin:'Femur',      bx:170, by:192, side:'L', rank:2},
-  {id:'kne',   name:'Kneskålen',   latin:'Patella',    bx:167, by:218, side:'L', rank:3},
-  {id:'hael',  name:'Hælen',       latin:'Calcaneus',  bx:200, by:258, side:'R', rank:3},
+  {id:'hode',  name:'Hodeskallen', latin:'Cranium',   latinM:'«Hjelm» på latin',       bx:180, by:28,  side:'R', rank:0, fact:'Hodeskallen er laget av 22 bein grodd sammen!',         hint:'Beskytter hjernen din'},
+  {id:'krave', name:'Kravebenet',  latin:'Clavicula', latinM:'«Liten nøkkel» på latin', bx:158, by:68,  side:'L', rank:0, fact:'Kravebenet er det beinet som oftest brekkes!',           hint:'Forbinder skulderen til brystbeinet'},
+  {id:'ribb',  name:'Ribbeina',    latin:'Costae',    latinM:'«Ribbe» på latin',        bx:155, by:92,  side:'L', rank:1, fact:'Du har 12 par ribbein som beskytter hjertet og lungene!', hint:'Beskytter hjertet og lungene'},
+  {id:'rygg',  name:'Ryggraden',   latin:'Vertebrae', latinM:'«Å dreie» på latin',      bx:180, by:125, side:'R', rank:1, fact:'Ryggraden har 33 virvler og beskytter ryggmargen!',      hint:'Holder deg oppreist fra nakke til hale'},
+  {id:'albue', name:'Albuen',      latin:'Ulna',      latinM:'«Albue» på latin',        bx:218, by:120, side:'R', rank:2, fact:'Albuen låser armen slik at den bare bøyer én vei!',      hint:'Der armen bøyer seg'},
+  {id:'lar',   name:'Lårbenet',    latin:'Femur',     latinM:'«Lår» på latin',          bx:170, by:192, side:'L', rank:2, fact:'Lårbenet er det lengste og sterkeste beinet i kroppen!',  hint:'Det lengste beinet i kroppen'},
+  {id:'kne',   name:'Kneskålen',   latin:'Patella',   latinM:'«Lite fat» på latin',     bx:167, by:218, side:'L', rank:3, fact:'Kneskålen beskytter kneet og hjelper deg å sparke!',     hint:'Lite skjold foran kneet'},
+  {id:'hael',  name:'Hælen',       latin:'Calcaneus', latinM:'«Hæl» på gresk',          bx:200, by:258, side:'R', rank:3, fact:'Hælbeinet tar imot hele kroppsvekten din når du går!',   hint:'Nederst på foten, bak'},
 ];
 const DIGESTION=[
   {id:'munn',    name:'Munnen',    emoji:'👄',fact:'Tygging starter det hele!'},
@@ -1062,13 +1062,20 @@ function buildSkel(s){
     /* Label (NOT clickable — just display) */
     const lFill=done?'#166534':'#1a2540';
     const lStroke=done?'#22C55E':'#2a3a5a';
-    const lText=done?`✓ ${b.latin} = ${b.name}`:b.latin;
     const lTextFill=done?'#bbf7d0':'#a0b8d0';
-    const lFS=done?7.5:9.5;
-    labels+=`<g style="pointer-events:none">
-      <rect x="${lx}" y="${ly}" width="${lw}" height="${lh}" rx="${lr}" fill="${lFill}" stroke="${lStroke}" stroke-width="1.2"/>
-      <text x="${labelCx}" y="${labelCy+1}" text-anchor="middle" dominant-baseline="central" fill="${lTextFill}" font-size="${lFS}" font-weight="700" font-family="'Fredoka One',cursive">${lText}</text>
-    </g>`;
+    const dlh=done?38:lh;
+    if(done){
+      labels+=`<g style="pointer-events:none">
+        <rect x="${lx}" y="${ly}" width="${lw}" height="${dlh}" rx="${lr}" fill="${lFill}" stroke="${lStroke}" stroke-width="1.2"/>
+        <text x="${labelCx}" y="${ly+11}" text-anchor="middle" dominant-baseline="central" fill="${lTextFill}" font-size="7.5" font-weight="700" font-family="'Fredoka One',cursive">✓ ${b.latin} = ${b.name}</text>
+        <text x="${labelCx}" y="${ly+26}" text-anchor="middle" dominant-baseline="central" fill="#6ee7a0" font-size="6" font-weight="600" font-style="italic" font-family="system-ui,sans-serif">${b.latinM}</text>
+      </g>`;
+    } else {
+      labels+=`<g style="pointer-events:none">
+        <rect x="${lx}" y="${ly}" width="${lw}" height="${lh}" rx="${lr}" fill="${lFill}" stroke="${lStroke}" stroke-width="1.2"/>
+        <text x="${labelCx}" y="${labelCy+1}" text-anchor="middle" dominant-baseline="central" fill="${lTextFill}" font-size="9.5" font-weight="700" font-family="'Fredoka One',cursive">${b.latin}</text>
+      </g>`;
+    }
     /* Clickable dot ON the skeleton */
     const dotR=done?5:6;
     const dotFill=done?'#22C55E':'rgba(160,184,210,0.15)';
@@ -1177,12 +1184,23 @@ function buildSkel(s){
     ${clickDots}
   </svg>`;
   const promptName=hard?cur.latin:cur.name;
+  const showHintText=!!g.hintText;
+  const lastFact=g.lastCorrect;
+  const factHtml=lastFact?`<div style="background:#166534;border:1.5px solid #22C55E;border-radius:10px;padding:8px 14px;margin-top:8px;text-align:center;max-width:320px">
+    <div style="font-size:.82rem;font-weight:800;color:#bbf7d0">✓ ${lastFact.latin} = ${lastFact.name}</div>
+    <div style="font-size:.78rem;color:#86efac;margin-top:3px">🧠 ${lastFact.fact}</div>
+  </div>`:'';
+  const hintHtml=showHintText?`<div style="background:${s.color}15;border:1.5px solid ${s.color}33;border-radius:10px;padding:6px 14px;margin-top:6px;text-align:center;max-width:280px">
+    <span style="font-size:.8rem;color:${s.color};font-weight:700">💡 ${cur.hint}</span>
+  </div>`:'';
   return `<div class="skel-wrap">
     <div class="game-prompt">Finn <strong style="color:${s.color}">${promptName}</strong> på skjelettet!</div>
+    ${factHtml}
     <div class="skel-diagram">${diagram}</div>
     <div class="skel-question">
       <div class="skel-q-label">Klikk på riktig sted:</div>
       <div class="skel-q-name" style="color:${s.color}${hard?';font-style:italic':''}">${promptName}</div>
+      ${hintHtml}
       <div style="display:flex;gap:8px;justify-content:center;align-items:center;margin-top:6px;flex-wrap:wrap">
         <div class="skel-count">${g.idx+1} av ${g.order.length}</div>
         <button data-a="skelHint" style="font-size:.72rem;padding:3px 10px;border-radius:8px;border:1.5px solid ${s.color}44;background:${s.color}18;color:${s.color};font-weight:700;cursor:pointer${showHint?';opacity:.4':''}">💡 Hint</button>
@@ -1773,18 +1791,19 @@ function onClick(e){
     case 'boneClick':{
       const g=S.gs.skel; if(!g) break;
       if(el.dataset.bone===g.order[g.idx].id){
-        g.correct.push(el.dataset.bone); g.idx++; g.hint=false;
+        g.lastCorrect=g.order[g.idx];
+        g.correct.push(el.dataset.bone); g.idx++; g.hint=false; g.hintText=false;
         if(g.idx>=g.order.length){ g.done=true; SFX.complete(); } else { SFX.correct(); }
         render();
       } else {
-        SFX.wrong();
+        SFX.wrong(); g.lastCorrect=null;
         el.classList.add('wrong-flash'); setTimeout(()=>render(),350);
       }
       break;
     }
     case 'skelHint':{
       const g=S.gs.skel; if(!g) break;
-      g.hint=true; SFX.tap(); render(); break;
+      g.hint=true; g.hintText=true; g.lastCorrect=null; SFX.tap(); render(); break;
     }
     case 'skelMode':{
       const g=S.gs.skel; if(!g) break;
