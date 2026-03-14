@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hva lagres?</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background: #f0f0f0;
+      padding: 1rem;
+    }
+    .boks {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      max-width: 500px;
+      width: 100%;
+    }
+    h2 { margin-bottom: 1.2rem; }
+    h3 {
+      font-size: 1rem;
+      margin: 1.2rem 0 0.4rem;
+      color: #333;
+    }
+    ul {
+      margin: 0;
+      padding-left: 1.4rem;
+      font-size: 0.9rem;
+      color: #555;
+      line-height: 1.7;
+    }
+    .ikke {
+      margin-top: 1.5rem;
+      padding: 0.8rem 1rem;
+      background: #f0fdf4;
+      border-left: 3px solid #2ea043;
+      border-radius: 4px;
+    }
+    .ikke h3 { color: #2ea043; margin-top: 0; }
+    a {
+      display: inline-block;
+      margin-top: 1.5rem;
+      font-size: 0.9rem;
+      color: #4a90e2;
+    }
+  </style>
+</head>
+<body>
+  <div class="boks">
+    <h2>Hva lagres?</h2>
+
+    <h3>Brukerinformasjon</h3>
+    <ul>
+      <li>Brukernavn</li>
+      <li>Passord (kryptert — kan ikke leses av noen)</li>
+    </ul>
+
+    <h3>Spillaktivitet</h3>
+    <ul>
+      <li>Hvilke spill du har åpnet</li>
+      <li>Antall ganger hvert spill er åpnet</li>
+      <li>Når du først og sist åpnet et spill</li>
+    </ul>
+
+    <h3>Generell statistikk</h3>
+    <ul>
+      <li>Antall besøk per dag (ikke knyttet til deg personlig)</li>
+    </ul>
+
+    <div class="ikke">
+      <h3>Dette lagres IKKE</h3>
+      <ul>
+        <li>Score eller resultater i spillene</li>
+        <li>Hvilke oppgaver du svarer riktig eller feil på</li>
+        <li>Hvor lenge du spiller</li>
+        <li>Nettleserinfo, IP-adresse eller posisjon</li>
+      </ul>
+    </div>
+
+    <a href="/">Tilbake til forsiden</a>
+  </div>
+</body>
+</html>
