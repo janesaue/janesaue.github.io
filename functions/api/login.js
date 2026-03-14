@@ -19,10 +19,17 @@ export async function onRequestPost(context) {
     return Response.redirect(url.origin + "/login?feil=1", 302);
   }
 
-  // Slå opp bruker i KV (nøkkel: "user:brukernavn", verdi: passordet)
-  const lagretPassord = await env.PASSWORDS.get("user:" + brukernavn);
+  // Hash passordet med SHA-256
+  const encoder = new TextEncoder();
+  const data = encoder.encode(passord);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
 
-  if (lagretPassord === null || lagretPassord !== passord) {
+  // Slå opp bruker i KV (nøkkel: "user:brukernavn", verdi: hashet passord)
+  const lagretHash = await env.PASSWORDS.get("user:" + brukernavn);
+
+  if (lagretHash === null || lagretHash !== hashHex) {
     return Response.redirect(url.origin + "/login?feil=1", 302);
   }
 
