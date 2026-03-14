@@ -565,6 +565,46 @@ h1{font-family:'Fredoka One',cursive;font-size:clamp(2rem,6vw,3.2rem);text-align
   filter:drop-shadow(0 0 4px rgba(107,203,119,.6));
 }
 
+/* ── MODE OVERLAY (fullscreen intro per mode) ── */
+.mode-overlay{position:fixed;inset:0;z-index:500;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.82);backdrop-filter:blur(10px);opacity:0;pointer-events:none;transition:opacity .3s;overflow-y:auto;padding:20px}
+.mode-overlay.show{opacity:1;pointer-events:all}
+.mo-card{background:linear-gradient(145deg,#1a1a3e,#0d0d2b);border:3px solid rgba(77,150,255,.35);border-radius:32px;padding:32px 24px;text-align:center;max-width:480px;width:100%;transform:scale(.85) translateY(30px);transition:transform .4s cubic-bezier(.34,1.56,.64,1);box-shadow:0 30px 80px rgba(0,0,0,.7)}
+.mode-overlay.show .mo-card{transform:scale(1) translateY(0)}
+.mo-back{position:absolute;top:16px;left:16px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);color:#fff;border-radius:999px;padding:7px 16px;font-family:'Nunito',sans-serif;font-size:.85rem;cursor:pointer;transition:all .2s;z-index:10}
+.mo-back:hover{background:rgba(255,255,255,.16)}
+.mo-icon{font-size:4.5rem;display:block;margin-bottom:8px;animation:float 3s ease-in-out infinite}
+.mo-title{font-family:'Fredoka One',cursive;font-size:1.8rem;margin-bottom:6px;background:linear-gradient(135deg,var(--a2),var(--a1));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.mo-steps{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;text-align:left}
+.mo-step{display:flex;align-items:flex-start;gap:10px;background:rgba(255,255,255,.06);border-radius:14px;padding:10px 14px}
+.mo-step-num{font-family:'Fredoka One',cursive;font-size:1.4rem;color:var(--a2);min-width:30px;line-height:1}
+.mo-step-text{font-size:.95rem;font-weight:700;color:rgba(255,255,255,.85);line-height:1.4}
+.mo-step-text em{color:var(--a4);font-style:normal}
+.mo-divider{width:80%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);margin:4px auto 12px}
+.mo-sel-label{font-family:'Fredoka One',cursive;font-size:1.05rem;color:var(--sub);margin-bottom:12px}
+.mo-table-grid{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin-bottom:6px}
+.mo-tbtn{font-family:'Fredoka One',cursive;font-size:1.15rem;width:54px;height:54px;border:none;border-radius:13px;cursor:pointer;transition:all .2s cubic-bezier(.34,1.56,.64,1);color:#fff}
+.mo-tbtn:hover{transform:scale(1.15) rotate(-3deg)}
+.mo-tbtn:nth-child(1){background:#ff6b6b}.mo-tbtn:nth-child(2){background:#ff9f43}
+.mo-tbtn:nth-child(3){background:#ffd93d;color:#333}.mo-tbtn:nth-child(4){background:#6bcb77}
+.mo-tbtn:nth-child(5){background:#4d96ff}.mo-tbtn:nth-child(6){background:#9b59b6}
+.mo-tbtn:nth-child(7){background:#e74c3c}.mo-tbtn:nth-child(8){background:#1abc9c}
+.mo-tbtn:nth-child(9){background:#e67e22}.mo-tbtn:nth-child(10){background:#3498db}
+.mo-tbtn.mix{width:auto;padding:0 18px;background:linear-gradient(135deg,var(--a1),var(--a4));font-size:.95rem}
+.mo-step-grid{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:6px}
+.mo-stbtn{font-family:'Fredoka One',cursive;font-size:1.1rem;width:54px;height:54px;border:none;border-radius:50%;cursor:pointer;transition:all .22s cubic-bezier(.34,1.56,.64,1);color:#fff}
+.mo-stbtn:hover{transform:scale(1.18) rotate(-4deg)}
+.mo-stbtn:nth-child(1){background:radial-gradient(circle at 35% 35%,#ff8a80,#c0392b)}
+.mo-stbtn:nth-child(2){background:radial-gradient(circle at 35% 35%,#ffab40,#e65100)}
+.mo-stbtn:nth-child(3){background:radial-gradient(circle at 35% 35%,#ffee58,#f9a825);color:#333}
+.mo-stbtn:nth-child(4){background:radial-gradient(circle at 35% 35%,#66bb6a,#1b5e20)}
+.mo-stbtn:nth-child(5){background:radial-gradient(circle at 35% 35%,#42a5f5,#0d47a1)}
+.mo-stbtn:nth-child(6){background:radial-gradient(circle at 35% 35%,#ab47bc,#4a148c)}
+.mo-stbtn:nth-child(7){background:radial-gradient(circle at 35% 35%,#26c6da,#006064)}
+.mo-stbtn:nth-child(8){background:radial-gradient(circle at 35% 35%,#8d6e63,#3e2723)}
+.mo-stbtn:nth-child(9){background:radial-gradient(circle at 35% 35%,#78909c,#263238)}
+.mo-stbtn.mix{width:auto;padding:0 22px;border-radius:30px;background:linear-gradient(135deg,var(--a1),var(--a4));font-size:.95rem}
+@media(max-width:400px){.mo-card{padding:24px 16px}.mo-title{font-size:1.5rem}.mo-tbtn,.mo-stbtn{width:46px;height:46px;font-size:1rem}}
+
 /* ── RETUR TIL JORDBANE ── */
 .jordbane-btn{
   display:block;margin:14px auto 0;
@@ -587,6 +627,18 @@ input[type=number]{-moz-appearance:textfield}
 </head>
 <body>
 <div class="stars" id="stars"></div>
+<div class="mode-overlay" id="modeOverlay">
+  <div class="mo-card" style="position:relative">
+    <button class="mo-back" onclick="closeModeOverlay()">← Tilbake</button>
+    <span class="mo-icon" id="moIcon">✏️</span>
+    <div class="mo-title" id="moTitle">Klassisk modus</div>
+    <div class="mo-steps" id="moSteps"></div>
+    <div class="mo-divider"></div>
+    <div class="mo-sel-label" id="moSelLabel">Velg tabell:</div>
+    <div id="moSelectorArea"></div>
+  </div>
+</div>
+
 <div class="wrap">
   <h1>🚀 Gangeraketten</h1>
   <p class="sub" id="mainSub">Mestre gangetabellen — en planet om gangen!</p>
@@ -624,30 +676,7 @@ input[type=number]{-moz-appearance:textfield}
         <div class="mcard-desc">Trykk planetene i riktig rekkefølge og finn veien gjennom solsystemet!</div>
       </div>
     </div>
-    <!-- Mode info panel (shown after selection) -->
-    <div class="mode-info-panel hidden" id="modeInfoPanel">
-      <span class="mip-icon" id="mipIcon">✏️</span>
-      <div class="mip-body">
-        <div class="mip-title" id="mipTitle"></div>
-        <div class="mip-desc" id="mipDesc"></div>
-        <div class="mip-next" id="mipNext"></div>
-      </div>
-    </div>
-
-    <!-- Classic / Rocket / Groups / Planets table selector -->
-    <div class="btn-grid hidden" id="tableSelector">
-      <div class="sel-heading" id="tableSelHeading" style="width:100%">Velg <strong>tabell</strong> for å starte:</div>
-    </div>
-    <!-- Skip step selector -->
-    <div class="skip-selector-screen hidden" id="skipSelectorScreen">
-      <div class="skip-sel-title">🌌 Galaktisk Telletur</div>
-      <div class="skip-sel-sub">Velg hva du vil telle med:</div>
-      <div class="step-grid" id="stepGrid"></div>
-    </div>
-    <!-- Shared return button shown with any selector -->
-    <div class="hidden" id="homeReturnWrap" style="text-align:center;margin-top:4px">
-      <button class="jordbane-btn" onclick="clearModeSelection()" style="margin:0 auto">Retur til Jordbane</button>
-    </div>
+    <!-- Old selectors removed — now handled by mode overlay -->
     <div style="text-align:center;margin-top:18px;">
       <a href="/" style="font-family:'Fredoka One',cursive;font-size:.88rem;color:rgba(160,168,208,.4);text-decoration:none;transition:color .2s;letter-spacing:.3px;" onmouseover="this.style.color='#4d96ff'" onmouseout="this.style.color='rgba(160,168,208,.4)'">← Tilbake til Kodebasen</a>
     </div>
@@ -856,84 +885,100 @@ const RTTIME=8000;
 let skipStep=2,skipSeq=[],skQType='next',skipMixMode=false; // 'next' or 'missing'
 let skBlankIdx=0, skWindowStart=0;
 
-// ─── MODE INFO DATA ───
-const modeInfo={
+// ─── MODE INTRO DATA (step-by-step) ───
+const modeIntros={
   classic:{
-    icon:'✏️',
-    title:'Klassisk modus',
-    desc:'Skriv inn svaret på gangestykket og trykk "Sjekk". Du får 10 spørsmål per runde. Perfekt for å øve på en bestemt tabell til du kan den utenat – uten stress og tidspress!',
-    next:'Velg hvilken tabell du vil øve på'
+    icon:'✏️', title:'Klassisk modus',
+    steps:[
+      {num:'1️⃣',text:'Du får et gangestykke, f.eks. <em>4 × 7 = ?</em>'},
+      {num:'2️⃣',text:'<em>Skriv inn svaret</em> og trykk Sjekk!'},
+      {num:'💡',text:'10 spørsmål per runde — ingen tidspress!'},
+    ],
+    selLabel:'Velg tabell:', selType:'table'
   },
   rocket:{
-    icon:'🚀',
-    title:'Rakett-modus',
-    desc:'Raketten varmer opp motoren og teller ned! Du har bare 8 sekunder på å trykke riktig svar blant 6 valgmuligheter. Jo raskere du svarer, jo flere lynpoeng ⚡ får du. Klar for takeoff?',
-    next:'Velg tabell – raketten starter!'
+    icon:'🚀', title:'Rakett-modus',
+    steps:[
+      {num:'1️⃣',text:'Raketten teller ned — du har <em>8 sekunder</em>!'},
+      {num:'2️⃣',text:'<em>Trykk riktig svar</em> blant 6 valg'},
+      {num:'⚡',text:'Jo raskere du svarer, jo flere <em>lynpoeng</em>!'},
+    ],
+    selLabel:'Velg tabell — klar for takeoff?', selType:'table'
   },
   skip:{
-    icon:'🌌',
-    title:'Telletur gjennom galaksen',
-    desc:'Planeter i verdensrommet er nummerert i et mønster – men ett tall mangler! Se rekken nøye, finn mønsteret og trykk riktig svar. Du trener på å telle i hopp, noe som gjør ganging mye lettere.',
-    next:'Velg hva du vil telle med (f.eks. 3 = telle med 3 om gangen)'
+    icon:'🌌', title:'Galaktisk Telletur',
+    steps:[
+      {num:'1️⃣',text:'Planeter er nummerert i et <em>mønster</em>'},
+      {num:'2️⃣',text:'<em>Finn tallet som mangler</em> i rekken!'},
+      {num:'💡',text:'Telling i hopp gjør <em>ganging</em> lettere!'},
+    ],
+    selLabel:'Tell med hvor mange om gangen?', selType:'step'
   },
   groups:{
-    icon:'🌠',
-    title:'Romgrupper',
-    desc:'Her ser du faktisk HVA ganging betyr! Enten teller du opp stjerner og raketter i en rutenett-formasjon, eller du finner hvilken formasjon som passer til gangestykket. Skjønner du mønsteret forstår du ganging for alltid!',
-    next:'Velg tabell – hvilke tall vil du utforske?'
+    icon:'🌠', title:'Romgrupper',
+    steps:[
+      {num:'1️⃣',text:'Se <em>grupper av romobjekter</em> i et rutenett'},
+      {num:'2️⃣',text:'Tell rader × kolonner for å <em>forstå ganging visuelt</em>'},
+      {num:'🧠',text:'Skjønner du mønsteret = du <em>forstår ganging</em> for alltid!'},
+    ],
+    selLabel:'Velg tabell — hvilke tall vil du utforske?', selType:'table'
   },
   planets:{
-    icon:'🪐',
-    title:'Planetveien',
-    desc:'Planeter med tall flyr rundt i verdensrommet – men bare noen tilhører gangetabellen din! Trykk riktig planet i riktig rekkefølge, fra lavest til høyest. Samle alle 10 multippelene og fullfør planetveien!',
-    next:'Velg tabell – hvilke planeter vil du samle?'
+    icon:'🪐', title:'Planetveien',
+    steps:[
+      {num:'1️⃣',text:'Planeter med tall <em>flyr rundt i verdensrommet</em>'},
+      {num:'2️⃣',text:'Trykk riktig planet <em>i riktig rekkefølge</em>'},
+      {num:'🌟',text:'Samle alle 10 <em>multipler</em> og fullfør veien!'},
+    ],
+    selLabel:'Velg tabell — hvilke planeter vil du samle?', selType:'table'
   }
 };
 
-// ─── BUILD SELECTORS ───
-(function(){
-  const ts=document.getElementById('tableSelector');
-  for(let i=1;i<=10;i++){const b=document.createElement('button');b.className='tbtn';b.textContent=i;b.onclick=()=>startGame(i);ts.appendChild(b);}
-  const m=document.createElement('button');m.className='tbtn mix-btn';m.textContent='🌀 Miks!';m.onclick=()=>startGame('mix');ts.appendChild(m);
-
-  const sg=document.getElementById('stepGrid');
-  for(let i=2;i<=10;i++){const b=document.createElement('button');b.className='stbtn';b.textContent=i;b.onclick=()=>startSkipMode(i);sg.appendChild(b);}
-  const smix=document.createElement('button');smix.className='stbtn mix-step';smix.textContent='🌀 Miks!';smix.onclick=()=>startSkipMode('mix');sg.appendChild(smix);
-
-  // Nothing shown until user taps a mode card
-  // mainSub is a permanent tagline
-})();
-
-// ─── MODE SELECTION ───
+// ─── MODE SELECTION → show fullscreen overlay ───
 function selMode(m){
   sndClick();mode=m;
-  ['classic','rocket','skip','groups','planets'].forEach(x=>{const el=document.getElementById('mc-'+x);if(el)el.classList.toggle('sel',x===m);});
-  const tsSel=document.getElementById('tableSelector');
-  const skSel=document.getElementById('skipSelectorScreen');
-  const panel=document.getElementById('modeInfoPanel');
-  const retWrap=document.getElementById('homeReturnWrap');
+  const info=modeIntros[m];
+  document.getElementById('moIcon').textContent=info.icon;
+  document.getElementById('moTitle').textContent=info.title;
+  document.getElementById('moSteps').innerHTML=info.steps.map(s=>
+    `<div class="mo-step"><span class="mo-step-num">${s.num}</span><span class="mo-step-text">${s.text}</span></div>`
+  ).join('');
+  document.getElementById('moSelLabel').textContent=info.selLabel;
 
-  // Populate and show info panel
-  const info=modeInfo[m];
-  document.getElementById('mipIcon').textContent=info.icon;
-  document.getElementById('mipTitle').textContent=info.title;
-  document.getElementById('mipDesc').textContent=info.desc;
-  document.getElementById('mipNext').textContent=info.next;
-  panel.classList.remove('hidden');
-  panel.style.animation='none';
-  panel.offsetHeight;
-  panel.style.animation='fadeUp .35s ease';
-
-  // Show the right selector + return button
-  if(m==='skip'){
-    tsSel.classList.add('hidden');
-    skSel.classList.remove('hidden');
+  // Build selector buttons
+  const area=document.getElementById('moSelectorArea');
+  area.innerHTML='';
+  if(info.selType==='table'){
+    const grid=document.createElement('div');grid.className='mo-table-grid';
+    for(let i=1;i<=10;i++){
+      const b=document.createElement('button');b.className='mo-tbtn';b.textContent=i;
+      b.onclick=()=>{closeModeOverlay();startGame(i);};grid.appendChild(b);
+    }
+    const mix=document.createElement('button');mix.className='mo-tbtn mix';mix.textContent='🌀 Miks!';
+    mix.onclick=()=>{closeModeOverlay();startGame('mix');};grid.appendChild(mix);
+    area.appendChild(grid);
   } else {
-    tsSel.classList.remove('hidden');
-    skSel.classList.add('hidden');
+    const grid=document.createElement('div');grid.className='mo-step-grid';
+    for(let i=2;i<=10;i++){
+      const b=document.createElement('button');b.className='mo-stbtn';b.textContent=i;
+      b.onclick=()=>{closeModeOverlay();startSkipMode(i);};grid.appendChild(b);
+    }
+    const mix=document.createElement('button');mix.className='mo-stbtn mix';mix.textContent='🌀 Miks!';
+    mix.onclick=()=>{closeModeOverlay();startSkipMode('mix');};grid.appendChild(mix);
+    area.appendChild(grid);
   }
-  retWrap.classList.remove('hidden');
+
+  document.getElementById('modeOverlay').classList.add('show');
 }
+
+function closeModeOverlay(){
+  document.getElementById('modeOverlay').classList.remove('show');
+}
+
+// Allow clicking backdrop to close
+document.getElementById('modeOverlay').addEventListener('click',function(e){
+  if(e.target===this) closeModeOverlay();
+});
 
 // ─── QUESTION GENERATION ───
 function genQs(table){
@@ -1338,14 +1383,7 @@ function retryGame(){
   else startGame(tbl);
 }
 function clearModeSelection(){
-  // Deselect all mode cards, hide info panel and selectors
-  ['classic','rocket','skip','groups','planets'].forEach(x=>{
-    const el=document.getElementById('mc-'+x);if(el)el.classList.remove('sel');
-  });
-  document.getElementById('modeInfoPanel').classList.add('hidden');
-  document.getElementById('tableSelector').classList.add('hidden');
-  document.getElementById('skipSelectorScreen').classList.add('hidden');
-  document.getElementById('homeReturnWrap').classList.add('hidden');
+  closeModeOverlay();
 }
 
 function goHome(){
