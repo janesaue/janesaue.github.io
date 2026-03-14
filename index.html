@@ -358,6 +358,7 @@ function skipBoot(){ finishBoot(); }
 
 async function loadUser(){
   try{ const res=await fetch('/api/me'); if(res.ok){ const d=await res.json(); if(d.user) document.getElementById('user-info').textContent='// tilkoblet: '+d.user; } }catch(e){}
+  try{ const res=await fetch('/api/track'); if(res.ok){ const stats=await res.json(); const total=Object.values(stats).reduce((sum,s)=>sum+s.antall,0); if(total>0) document.getElementById('user-info').textContent+=' | spill startet: '+total; } }catch(e){}
 }
 
 async function loggUt(){
@@ -370,7 +371,7 @@ async function loadStats(){
   try{ const res=await fetch('/api/stats'); if(res.ok){ const d=await res.json(); document.getElementById('stat-online').textContent='aktive i dag: '+d.today; } else document.getElementById('stat-online').textContent='aktive i dag: –'; }catch(e){ document.getElementById('stat-online').textContent='aktive i dag: –'; }
 }
 
-function trackVisit(name){ playClick(); try{ let r=JSON.parse(localStorage.getItem('kb_recent')||'[]'); r=[name,...r.filter(n=>n!==name)].slice(0,5); localStorage.setItem('kb_recent',JSON.stringify(r)); }catch(e){} }
+function trackVisit(name){ playClick(); try{ let r=JSON.parse(localStorage.getItem('kb_recent')||'[]'); r=[name,...r.filter(n=>n!==name)].slice(0,5); localStorage.setItem('kb_recent',JSON.stringify(r)); }catch(e){} try{ fetch('/api/track',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({spill:name})}); }catch(e){} }
 function loadRecent(){
   try{ const recent=JSON.parse(localStorage.getItem('kb_recent')||'[]'); if(!recent.length)return; document.getElementById('recent-bar').classList.add('show'); const list=document.getElementById('recent-list'); recent.forEach((name,i)=>{ const span=document.createElement('span'); span.className='recent-item'; span.textContent=i<recent.length-1?name+' →':name; list.appendChild(span); }); }catch(e){}
 }
