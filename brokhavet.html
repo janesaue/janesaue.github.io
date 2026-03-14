@@ -222,7 +222,7 @@ body{font-family:'Nunito',sans-serif;background:var(--deep);min-height:100vh;ove
 .sb-bar-seg{flex:1;background:rgba(255,255,255,.08);transition:all .3s;border-right:1px solid rgba(0,0,0,.3);}
 .sb-bar-seg.filled{background:linear-gradient(180deg,#ffd700 0%,#ff8c00 100%);box-shadow:0 0 8px rgba(255,180,0,.6);}
 .sb-bar-seg:last-child{border-right:none;}
-.sb-dials{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.sb-dials{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:center;}
 .sb-dial{background:rgba(0,0,0,.4);border:2px solid rgba(255,180,60,.28);border-radius:16px;padding:16px 10px;text-align:center;}
 .sb-dial-label{font-size:.85rem;color:rgba(255,180,60,.8);margin-bottom:10px;text-transform:uppercase;letter-spacing:.8px;font-weight:800;}
 .sb-dial-val{font-family:'Bubblegum Sans',cursive;font-size:2.8rem;color:#ffba3c;margin:6px 0;}
@@ -291,7 +291,7 @@ body{font-family:'Nunito',sans-serif;background:var(--deep);min-height:100vh;ove
 .cv-grid.four-cards{grid-template-columns:repeat(2,1fr);}
 .cv-card{border-radius:18px;padding:16px 10px;text-align:center;cursor:pointer;transition:all .3s;position:relative;overflow:hidden;border:3px solid transparent;animation:enterCard .4s ease both;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;}
 .cv-card:hover{transform:scale(1.08) translateY(-4px);}
-.cv-card.selected{transform:scale(1.12) translateY(-5px);box-shadow:0 8px 30px rgba(255,255,255,.25);}
+.cv-card.selected{transform:scale(1.12) translateY(-5px);border-color:#ffd700 !important;box-shadow:0 0 20px rgba(255,215,0,.6),0 0 40px rgba(255,215,0,.3),0 8px 30px rgba(255,255,255,.25);outline:3px solid rgba(255,215,0,.8);outline-offset:2px;}
 .cv-card.matched{opacity:.5;cursor:default;transform:none;}
 .cv-card.matched::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2.2rem;color:rgba(255,255,255,.9);background:rgba(86,211,100,.3);}
 .cv-card.wrong-flash{animation:shake .35s ease;}
@@ -375,7 +375,7 @@ body{font-family:'Nunito',sans-serif;background:var(--deep);min-height:100vh;ove
 
 @media(max-width:520px){
   .cv-grid{grid-template-columns:repeat(3,1fr);}.cv-grid.four-cards{grid-template-columns:repeat(2,1fr);}
-  .sb-dials{grid-template-columns:1fr;}.sb-target-frac{font-size:2.8rem;}
+  .sb-dials{grid-template-columns:1fr;}.sb-dials>div:nth-child(2){order:-1;flex-direction:row;}.sb-target-frac{font-size:2.8rem;}
   .dk-options{grid-template-columns:1fr;} .bl-creature-emoji{font-size:2.4rem;}
 }
 </style>
@@ -827,15 +827,15 @@ const INTROS = {
     title: 'Brøklinjen!',
     steps: [
       { num: '1️⃣', text: 'Du ser en linje fra 0 til 1' },
-      { num: '2️⃣', text: '<em>Velg brøken</em> som hører hjemme på riktig plass!' },
-      { num: '💡', text: 'Tips: 1/2 er midt på linjen!' },
+      { num: '2️⃣', text: '<em>Trykk på riktig punkt</em> på tallinjen!' },
+      { num: '💡', text: 'Tips: tell strekene fra 0 — 1/2 er midt på!' },
     ]
   },
   pizza: {
     emoji: '🍕',
     title: 'Havets Pizzeria!',
     steps: [
-      { num: '1️⃣', text: 'Kunden vil ha pizzaen delt i <em>et bestemt antall biter</em>' },
+      { num: '1️⃣', text: 'Kunden bestiller en hel pizza som en <em>brøk</em> (f.eks. 6/6)' },
       { num: '2️⃣', text: 'Klikk på pizzaskivene for å legge på <em>riktig antall</em> ingredienser' },
       { num: '3️⃣', text: 'Lever pizzaen og vinn stjerner! ⭐' },
     ]
@@ -863,8 +863,8 @@ const INTROS = {
     title: 'Brøkbyggeren!',
     steps: [
       { num: '1️⃣', text: 'Du skal stille inn maskinene for å lage riktig brøk' },
-      { num: '2️⃣', text: '<em>Bunn-tall</em> = hvor mange like biter du deler i' },
-      { num: '3️⃣', text: '<em>Topp-tall</em> = hvor mange biter du vil ha — trykk AVFYR! 🚀' },
+      { num: '2️⃣', text: '<em>Nevner</em> (bunntall) = hvor mange like deler' },
+      { num: '3️⃣', text: '<em>Teller</em> (topptall) = hvor mange deler du velger — trykk AVFYR! 🚀' },
     ]
   },
   telescope: {
@@ -963,20 +963,33 @@ function checkDuell(choseA,av,bv){
 }
 
 function renderTallinja(area,d){
-  const pct=(d.num/d.den)*100;
-  area.innerHTML=`<div class="q-box"><div class="q-text">Hvor på tallinjen er <span class="frac-strong"> ${d.num}/${d.den}</span>?</div><div style="padding:6px 8px;"><div class="nl-area"><div class="nl-track"></div><div class="nl-tick" style="left:0%"></div><div class="nl-lbl" style="left:0%">0</div><div class="nl-tick" style="left:50%"></div><div class="nl-lbl" style="left:50%">½</div><div class="nl-tick" style="left:100%"></div><div class="nl-lbl" style="left:100%">1</div><div class="nl-marker" id="nlMark" style="left:${pct}%"></div></div></div><p class="q-hint">Velg riktig brøk nedenfor 👇</p></div><div class="nl-options-row">${d.opts.map((o,i)=>`<button class="nl-opt" onclick="checkTallinja(${i},${d.ci},${pct})" id="nlo${i}">${o}</button>`).join('')}</div>`;
+  const den=d.den, num=d.num;
+  let ticksHtml='<div class="nl-track"></div>';
+  for(let i=0;i<=den;i++){
+    const pct=(i/den)*100;
+    ticksHtml+=`<div class="nl-tick" style="left:${pct}%"></div>`;
+    if(i===0) ticksHtml+=`<div class="nl-lbl" style="left:0%">0</div>`;
+    else if(i===den) ticksHtml+=`<div class="nl-lbl" style="left:100%">1</div>`;
+  }
+  ticksHtml+=`<div class="nl-marker" id="nlMark"></div>`;
+  let pointsHtml='';
+  for(let i=1;i<den;i++){
+    const pct=(i/den)*100;
+    pointsHtml+=`<button class="nl-opt" id="nlo${i}" onclick="checkTallinja(${i},${num},${den})" style="position:absolute;top:calc(50% - 20px);left:${pct}%;transform:translateX(-50%);padding:8px 12px;min-width:36px;border-radius:50%;z-index:5;font-size:1.3rem;">●</button>`;
+  }
+  area.innerHTML=`<div class="q-box"><div class="q-text">Trykk på <span class="frac-strong">${num}/${den}</span> på tallinjen!</div><p class="q-hint">Linjen er delt i ${den} like deler. Tell fra 0 og finn riktig punkt!</p></div><div style="background:var(--glass);border:1px solid var(--gborder);border-radius:18px;padding:24px 16px 14px;"><div class="nl-area" style="height:80px;position:relative;">${ticksHtml}${pointsHtml}</div></div>`;
 }
-function checkTallinja(chosen,correct,pct){
+function checkTallinja(clicked,correctNum,den){
   document.querySelectorAll('.nl-opt').forEach(b=>b.onclick=null);
-  const ok=chosen===correct;
-  document.getElementById('nlo'+chosen).classList.add(ok?'correct':'wrong');
-  if(!ok) document.getElementById('nlo'+correct).classList.add('correct');
-  document.getElementById('nlMark').style.display='block';
+  const ok=clicked===correctNum;
+  document.getElementById('nlo'+clicked).classList.add(ok?'correct':'wrong');
+  if(!ok&&document.getElementById('nlo'+correctNum)) document.getElementById('nlo'+correctNum).classList.add('correct');
+  const mark=document.getElementById('nlMark');if(mark){mark.style.left=`${(correctNum/den)*100}%`;mark.style.display='block';}
   const d=DATA[game][lvl%DATA[game].length];
-  const val=pct/100;
-  const pos2=val<.5?`nærmere 0`:val>.5?`nærmere 1`:`akkurat i midten`;
+  const val=correctNum/den;
+  const pos2=val<.5?'nærmere 0':val>.5?'nærmere 1':'akkurat i midten';
   const visual=!ok?makeFracBar(d.num,d.den,'Riktig svar','#56d364'):'';
-  setTimeout(()=>showFeedback(ok,`${d.num}/${d.den} er ${pos2} på linjen.`,()=>{score+=(ok?1:0);nextQ();},visual),700);
+  setTimeout(()=>showFeedback(ok,ok?`Riktig! ${d.num}/${d.den} er punkt nummer ${correctNum} av ${den} — ${pos2} på linjen.`:`Det var punkt ${clicked} av ${den}. Riktig svar er ${d.num}/${d.den} — punkt nummer ${correctNum}.`,()=>{score+=(ok?1:0);nextQ();},visual),700);
 }
 
 function endGame(){
@@ -1023,18 +1036,18 @@ function renderPizzaPhase(){
 }
 function renderPizzaCut(wrap){
   const d=pz.roundData,pt=pz.pizzaType,cu=pz.customer;
-  wrap.appendChild(makePizzaCustomerBubble(cu,`Hei! Vil ha en <strong>${pt.name}</strong> delt i <strong>${d.sliceCount} like biter</strong>! ${pt.decor}`));
+  wrap.appendChild(makePizzaCustomerBubble(cu,`Hei! Jeg vil ha en <strong>${pt.name}</strong>! Del den slik at hele pizzaen = <strong>${d.sliceCount}/${d.sliceCount}</strong>! ${pt.decor}`));
   const stage=document.createElement('div');stage.className='pizza-stage';stage.innerHTML=`<div class="pizza-svg-wrap" id="pizzaSvgWrap">${drawWholePizza(pt)}</div>`;wrap.appendChild(stage);
   const panel=document.createElement('div');panel.className='cut-panel';
   const opts=shuffleArr([d.sliceCount,...d.fakeSlices.slice(0,3)]);
-  panel.innerHTML=`<div class="cut-title">🔪 Del pizzaen i…</div><div class="cut-options">${opts.map(n=>`<button class="cut-btn" onclick="chooseCut(${n},${d.sliceCount})"><span style="font-size:1.5rem">${pizzaIcon(n)}</span><span>${n} biter</span></button>`).join('')}</div>`;wrap.appendChild(panel);
+  panel.innerHTML=`<div class="cut-title">🔪 Hvilken brøk er en hel pizza?</div><div class="cut-options">${opts.map(n=>`<button class="cut-btn" onclick="chooseCut(${n},${d.sliceCount})"><span style="font-size:1.5rem">${pizzaIcon(n)}</span><span style="font-family:'Bubblegum Sans',cursive;font-size:1.4rem">${n}/${n}</span></button>`).join('')}</div>`;wrap.appendChild(panel);
 }
 function chooseCut(chosen,correct){
   document.querySelectorAll('.cut-btn').forEach(b=>b.onclick=null);
   document.querySelectorAll('.cut-btn').forEach(b=>{const n=parseInt(b.querySelector('span:last-child').textContent);if(n===chosen)b.classList.add(chosen===correct?'correct-cut':'wrong-cut');if(n===correct&&chosen!==correct)b.classList.add('correct-cut');});
   const ok=chosen===correct;
   if(ok){const sw=document.getElementById('pizzaSvgWrap');if(sw){sw.classList.add('spinning');setTimeout(()=>{sw.classList.remove('spinning');sw.innerHTML=drawSlicedPizza(pz.pizzaType,correct,new Set(),{},true);},500);}}
-  setTimeout(()=>showFeedback(ok,ok?`Perfekt! Delt i ${correct} like biter.`:`${chosen} biter var feil — kunden ville ha ${correct}!`,()=>{if(ok){pz.phase='topping';renderPizzaPhase();}else renderPizzaPhase();}),ok?700:400);
+  setTimeout(()=>showFeedback(ok,ok?`Perfekt! ${correct}/${correct} = en hel pizza delt i ${correct} like biter!`:`${chosen}/${chosen} var feil — kunden ville ha ${correct}/${correct}!`,()=>{if(ok){pz.phase='topping';renderPizzaPhase();}else renderPizzaPhase();}),ok?700:400);
 }
 function renderPizzaTopping(wrap){
   const d=pz.roundData,pt=pz.pizzaType,cu=pz.customer;
@@ -1254,10 +1267,9 @@ function animateDeling(d,wrap,btn){
     setTimeout(()=>{el.style.transition='all .4s';el.style.transform='scale(0) translateY(-30px)';el.style.opacity='0';},i*120);
   });
   setTimeout(()=>{
-    // Show fraction reveal
+    // Show question (without revealing the answer)
     const revDiv=document.createElement('div');revDiv.className='bl-fraction-reveal';
-    const fracText=d.num===d.den?'1 hel! 🥳':`${d.num}/${d.den}`;
-    revDiv.innerHTML=`<div style="font-size:.9rem;color:rgba(212,168,255,.8);margin-bottom:8px">Hvert dyr fikk:</div><div class="bl-frac-big">${fracText}</div>`;
+    revDiv.innerHTML=`<div style="font-size:.95rem;color:rgba(212,168,255,.8);margin-bottom:8px">${d.food} ${d.foodEmoji} delt på ${d.creatures.length} dyr =</div><div class="bl-frac-big">?</div>`;
     wrap.appendChild(revDiv);
 
     // Generate choices
@@ -1279,11 +1291,11 @@ function animateDeling(d,wrap,btn){
 
 function generateFracChoices(num,den){
   const correct=num===den?'1 hel':`${num}/${den}`;
-  const wrongs=[];
-  const candidates=[[num+1,den],[num,den+1],[num>1?num-1:2,den],[den,num]].filter(([n,d])=>n>0&&d>0&&!(n===num&&d===den)&&n<=d);
-  shuffleArr(candidates).slice(0,3).forEach(([n,d])=>{wrongs.push(n===d?'1 hel':`${n}/${d}`);});
-  while(wrongs.length<3) wrongs.push(`${Math.max(1,num-1)}/${den+1}`);
-  return shuffleArr([{label:correct,correct:true},...wrongs.slice(0,3).map(w=>({label:w,correct:false}))]);
+  const wrongSet=new Set();
+  const candidates=[[num+1,den],[num,den+1],[num>1?num-1:num+2,den],[den>1?den-1:den+2,num+1],[num,den*2],[num+1,den+1]].filter(([n,d])=>n>0&&d>0&&!(n===num&&d===den)&&n<=d);
+  shuffleArr(candidates).forEach(([n,d])=>{const label=n===d?'1 hel':`${n}/${d}`;if(label!==correct&&wrongSet.size<3)wrongSet.add(label);});
+  let extra=2;while(wrongSet.size<3){const lbl=`${Math.min(num+extra,den+extra-1)}/${den+extra}`;if(lbl!==correct)wrongSet.add(lbl);extra++;}
+  return shuffleArr([{label:correct,correct:true},...[...wrongSet].slice(0,3).map(w=>({label:w,correct:false}))]);
 }
 function checkBlAnswer(isCorrect,btn,row,d){
   row.querySelectorAll('.bl-choice').forEach(b=>b.onclick=null);
@@ -1322,12 +1334,12 @@ function buildSbBg(){
 function renderSbRound(){
   document.getElementById('sbScore').textContent=sb.score;
   const d=BUILDER_DATA[sb.round%BUILDER_DATA.length];
-  sb.target={...d};sb.curNum=1;sb.curDen=2;
+  sb.target={...d};sb.curDen=(d.den===2)?3:2;sb.curNum=1;
   const wrap=document.getElementById('sbWrap');wrap.innerHTML='';
 
   // Target display
   const targ=document.createElement('div');targ.className='sb-target-display';
-  targ.innerHTML=`<div class="sb-target-label">⚙️ LAG DENNE BRØKEN:</div><div class="sb-target-frac">${d.num}/${d.den}</div><div style="font-size:.85rem;color:rgba(255,180,60,.6);margin-top:4px">Still inn tallene og trykk AVFYR! 🚀</div>`;
+  targ.innerHTML=`<div class="sb-target-label">⚙️ LAG DENNE BRØKEN:</div><div class="sb-target-frac" style="display:inline-flex;flex-direction:column;align-items:center;line-height:1.1"><span>${d.num}</span><span style="display:block;width:60px;height:4px;background:#ffba3c;border-radius:2px;margin:4px 0"></span><span>${d.den}</span></div><div style="font-size:.85rem;color:rgba(255,180,60,.6);margin-top:4px">Still inn teller og nevner, og trykk AVFYR! 🚀</div>`;
   wrap.appendChild(targ);
 
   // Machine
@@ -1339,18 +1351,26 @@ function renderSbRound(){
     </div>
     <div class="sb-dials">
       <div class="sb-dial">
-        <div class="sb-dial-label">BUNN-TALL</div>
+        <div class="sb-dial-label">NEVNER <span style="font-size:.7rem;opacity:.7">(bunntall)</span></div>
         <div class="sb-dial-val" id="sbDen">2</div>
-        <div class="sb-dial-sub">Deler i like biter</div>
+        <div class="sb-dial-sub">Hvor mange like deler</div>
         <div class="sb-btns">
           <button class="sb-dial-btn" onclick="adjustSb('den',-1)">−</button>
           <button class="sb-dial-btn" onclick="adjustSb('den',1)">+</button>
         </div>
       </div>
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 0;">
+        <div style="font-size:.7rem;color:rgba(255,180,60,.5);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Din brøk</div>
+        <div id="sbFracDisplay" style="font-family:'Bubblegum Sans',cursive;font-size:2.6rem;color:#ffba3c;display:flex;flex-direction:column;align-items:center;line-height:1.1">
+          <span id="sbFracNum">1</span>
+          <span style="display:block;width:44px;height:3px;background:#ffba3c;border-radius:2px;margin:3px 0"></span>
+          <span id="sbFracDen">2</span>
+        </div>
+      </div>
       <div class="sb-dial">
-        <div class="sb-dial-label">TOPP-TALL</div>
+        <div class="sb-dial-label">TELLER <span style="font-size:.7rem;opacity:.7">(topptall)</span></div>
         <div class="sb-dial-val" id="sbNum">1</div>
-        <div class="sb-dial-sub">Hvor mange biter du tar</div>
+        <div class="sb-dial-sub">Hvor mange deler du velger</div>
         <div class="sb-btns">
           <button class="sb-dial-btn" onclick="adjustSb('num',-1)">−</button>
           <button class="sb-dial-btn" onclick="adjustSb('num',1)">+</button>
@@ -1378,6 +1398,8 @@ function updateSbVisual(){
   const denEl=document.getElementById('sbDen');const numEl=document.getElementById('sbNum');const barEl=document.getElementById('sbBar');const fireEl=document.getElementById('sbFireBtn');const statEl=document.getElementById('sbStatus');
   if(!denEl||!barEl) return;
   denEl.textContent=sb.curDen;numEl.textContent=sb.curNum;
+  const fracNumEl=document.getElementById('sbFracNum');const fracDenEl=document.getElementById('sbFracDen');
+  if(fracNumEl)fracNumEl.textContent=sb.curNum;if(fracDenEl)fracDenEl.textContent=sb.curDen;
   // Draw bar
   barEl.innerHTML='';
   for(let i=0;i<sb.curDen;i++){const seg=document.createElement('div');seg.className='sb-bar-seg'+(i<sb.curNum?' filled':'');barEl.appendChild(seg);}
@@ -1397,7 +1419,7 @@ function checkSbAnswer(){
   const wrap=document.getElementById('sbWrap');
   ['🐟','🐠','🐡','⭐','💥','🚀'].forEach((e,i)=>{setTimeout(()=>{const el=document.createElement('div');el.style.cssText=`position:absolute;font-size:2rem;left:${20+Math.random()*60}%;top:60%;animation:floatUp .8s ease-out forwards;z-index:50;pointer-events:none`;el.textContent=e;wrap.appendChild(el);setTimeout(()=>el.remove(),850);},i*120);});
   const t=sb.target;
-  const msg=`${t.num}/${t.den}! Bunn-tall ${t.den} deler i biter, topp-tall ${t.num} er hvor mange du tar. AVFYRT! 🚀`;
+  const msg=`${t.num}/${t.den}! Nevneren ${t.den} deler i like deler, telleren ${t.num} er hvor mange du velger. AVFYRT! 🚀`;
   setTimeout(()=>showFeedback(true,msg,()=>{
     sb.score++;sb.round++;
     if(sb.round>=LEVELS){const earned=Math.round((sb.score/LEVELS)*5);stars.builder=Math.max(stars.builder,earned);showEndScreen(earned,`${sb.score} av ${LEVELS} riktige!`);}
