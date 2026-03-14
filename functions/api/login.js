@@ -29,6 +29,9 @@ export async function onRequestPost(context) {
     return Response.redirect(url.origin + "/login?feil=1", 302);
   }
 
+  // Gjør brukernavn case insensitive
+  brukernavn = brukernavn.toLowerCase().trim();
+
   // Hash passordet med SHA-256
   const encoder = new TextEncoder();
   const data = encoder.encode(passord);
