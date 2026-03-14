@@ -86,6 +86,16 @@ canvas#particles{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;po
 .mode-name{font-weight:800;font-size:clamp(0.95rem,2.5vw,1.1rem);color:#fff;}
 .mode-desc{font-size:clamp(0.75rem,2vw,0.85rem);color:#94a3b8;margin-top:2px;}
 .mode-stars{flex-shrink:0;font-size:1.1rem;}
+.diff-selector{display:flex;gap:0.5rem;width:100%;justify-content:center;margin-bottom:0.3rem;}
+.diff-btn{
+  flex:1;max-width:140px;padding:0.55em 0.5em;border-radius:10px;
+  font-size:clamp(0.78rem,2.2vw,0.9rem);font-weight:700;
+  background:var(--glass);border:2px solid rgba(255,255,255,0.1);
+  color:#94a3b8;transition:all 0.2s;text-align:center;
+}
+.diff-btn.active{color:#fff;border-color:var(--purple);background:rgba(139,92,246,0.25);box-shadow:0 0 12px rgba(139,92,246,0.3);}
+.diff-btn:hover{border-color:rgba(139,92,246,0.5);}
+.diff-label{font-size:clamp(0.7rem,1.8vw,0.78rem);color:#64748b;text-align:center;margin-bottom:0.2rem;}
 .footer{
   text-align:center;font-size:clamp(0.7rem,1.8vw,0.8rem);color:#64748b;
   padding:1rem 0.5rem;margin-top:auto;line-height:1.6;
@@ -290,6 +300,9 @@ canvas#particles{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;po
 /* ===== GLOBALS ===== */
 var soundOn = true, audioCtx = null;
 var LS_KEY = 'hjernetrim_v1';
+var currentDiff = parseInt(localStorage.getItem('hjernetrim_diff') || '0', 10); // 0=Normal, 1=Medium, 2=Vanskelig
+var DIFF_NAMES = ['Normal','Medium','Vanskelig'];
+var DIFF_ICONS = ['\u{1f331}','\u26a1','\u{1f525}'];
 
 var MODES = [
   {id:'memory',  name:'Huskeleken',   icon:'\u{1f9e9}', desc:'Finn par som h\u00f8rer sammen!'},
@@ -321,9 +334,10 @@ function shuf(a) {
 }
 function loadData() { try { return JSON.parse(localStorage.getItem(LS_KEY)) || {}; } catch(e) { return {}; } }
 function saveData(d) { try { localStorage.setItem(LS_KEY, JSON.stringify(d)); } catch(e) {} }
-function getBest(id) { return loadData()[id] || 0; }
-function saveBest(id, stars) { var d = loadData(); if (stars > (d[id]||0)) { d[id] = stars; saveData(d); } }
-function totalStars() { var d = loadData(), s = 0; MODES.forEach(function(m){ s += (d[m.id]||0); }); return s; }
+function diffKey(id) { return id + '_' + currentDiff; }
+function getBest(id) { return loadData()[diffKey(id)] || 0; }
+function saveBest(id, stars) { var d = loadData(); var k = diffKey(id); if (stars > (d[k]||0)) { d[k] = stars; saveData(d); } }
+function totalStars() { var d = loadData(), s = 0; MODES.forEach(function(m){ s += (d[diffKey(m.id)]||0); }); return s; }
 function brainLevel(s) {
   if (s >= 15) return 'Superhirn \u{1f9e0}\u{1f451}';
   if (s >= 10) return 'Geni \u{1f31f}';
@@ -397,11 +411,30 @@ function switchScreen(id) {
   document.getElementById(id).classList.add('active');
 }
 function showMenu() { switchScreen('menu-screen'); renderMenu(); }
+function setDiff(d) {
+  currentDiff = d;
+  try { localStorage.setItem('hjernetrim_diff', String(d)); } catch(e) {}
+  renderMenu();
+}
 function renderMenu() {
   var ts = totalStars();
   document.getElementById('brain-level').textContent = brainLevel(ts) + ' \u2014 ' + ts + '/15 \u2b50';
   var grid = document.getElementById('mode-grid');
   grid.innerHTML = '';
+  // Difficulty selector
+  var dlbl = document.createElement('div'); dlbl.className = 'diff-label'; dlbl.textContent = 'Vanskelighetsgrad';
+  grid.appendChild(dlbl);
+  var dsel = document.createElement('div'); dsel.className = 'diff-selector';
+  for (var di = 0; di < 3; di++) {
+    (function(idx) {
+      var db = document.createElement('button');
+      db.className = 'diff-btn' + (currentDiff === idx ? ' active' : '');
+      db.textContent = DIFF_ICONS[idx] + ' ' + DIFF_NAMES[idx];
+      db.onclick = function() { setDiff(idx); };
+      dsel.appendChild(db);
+    })(di);
+  }
+  grid.appendChild(dsel);
   MODES.forEach(function(m) {
     var best = getBest(m.id);
     var card = document.createElement('div');
@@ -486,8 +519,9 @@ function startMemory() {
   var difficulty = 0;
 
   function playRound() {
-    var pairCounts = [4, 6, 8];
-    var nPairs = pairCounts[difficulty];
+    // Difficulty scaling: Normal 4→6→8, Medium 6→8→10, Hard 8→10→12
+    var pairSets = [[4,6,8],[6,8,10],[8,10,12]];
+    var nPairs = pairSets[currentDiff][difficulty];
     var theme = MEM_THEMES[themeKeys[difficulty % 3]];
     var picked = shuf(theme.pairs).slice(0, nPairs);
     var cards = [];
@@ -496,13 +530,14 @@ function startMemory() {
       cards.push({text: pair[1], pairId: idx});
     });
     cards = shuf(cards);
+    var cols = nPairs <= 4 ? 4 : nPairs <= 6 ? 4 : 5;
 
     var flipped = [], matched = 0, moves = 0, locked = false;
     var a = gArea();
     var label = ['Lett','Medium','Vanskelig'][difficulty];
     a.innerHTML = '<p style="text-align:center;color:#94a3b8;font-size:0.85rem;margin-bottom:0.5rem;">' +
       theme.name + ' \u2014 ' + label + '</p>' +
-      '<div class="memory-grid" style="grid-template-columns:repeat(4,1fr);"></div>';
+      '<div class="memory-grid" style="grid-template-columns:repeat(' + cols + ',1fr);"></div>';
     var grid = a.querySelector('.memory-grid');
     setScore('Trekk: 0');
 
@@ -527,12 +562,16 @@ function startMemory() {
               fb.el.classList.add('matched');
               matched++; locked = false;
               if (matched === nPairs) {
-                var thresholds = [[6,8,12],[10,14,20],[16,22,30]];
-                var t = thresholds[difficulty];
+                var allThresh = [
+                  [[6,8,12],[10,14,20],[16,22,30]],
+                  [[10,14,20],[16,22,30],[20,28,38]],
+                  [[16,22,30],[20,28,38],[24,34,46]]
+                ];
+                var t = allThresh[currentDiff][difficulty];
                 var s = moves <= t[0] ? 3 : moves <= t[1] ? 2 : 1;
                 showFeedback('\u2705');
                 if (difficulty < 2) { difficulty++; setTimeout(playRound, 800); }
-                else { setTimeout(function(){ showResult('memory', s, moves + ' trekk p\u00e5 vanskelig niv\u00e5'); }, 600); }
+                else { setTimeout(function(){ showResult('memory', s, moves + ' trekk'); }, 600); }
               }
             }, 500);
           } else {
@@ -583,11 +622,16 @@ function startSimon() {
     setTimeout(function() { btn.classList.remove('lit'); }, dur * 0.8);
   }
 
+  // Difficulty: Normal 600ms, Medium 450ms, Hard 350ms
+  var simonSpeed = [600, 450, 350][currentDiff];
+  var starThresh = [[4,6,8],[6,8,10],[8,10,12]][currentDiff];
+  var maxProg = starThresh[2];
+
   function nextRound() {
     sequence.push(COLORS[Math.floor(Math.random() * 4)]);
     document.getElementById('simon-status').textContent = 'Runde ' + sequence.length + ' \u2014 Se og husk!';
     setScore('Steg: ' + (sequence.length - 1));
-    setProgress(Math.min(sequence.length - 1, 8), 8);
+    setProgress(Math.min(sequence.length - 1, maxProg), maxProg);
     showingSeq = true; playing = false;
     var i = 0;
     var iv = setInterval(function() {
@@ -595,7 +639,7 @@ function startSimon() {
         clearInterval(iv); showingSeq = false; playing = true; playerIdx = 0;
         document.getElementById('simon-status').textContent = 'Din tur!';
       } else { lightUp(sequence[i]); i++; }
-    }, 600);
+    }, simonSpeed);
   }
 
   function playerTap(c) {
@@ -609,7 +653,7 @@ function startSimon() {
     } else {
       playing = false; sndWrong(); showFeedback('\u274c');
       var steps = sequence.length - 1;
-      var stars = steps >= 8 ? 3 : steps >= 6 ? 2 : steps >= 4 ? 1 : 0;
+      var stars = steps >= starThresh[2] ? 3 : steps >= starThresh[1] ? 2 : steps >= starThresh[0] ? 1 : 0;
       setTimeout(function() { showResult('simon', Math.max(stars, 0), 'Du husket ' + steps + ' steg!'); }, 800);
     }
   }
@@ -640,16 +684,25 @@ function startMissing() {
       return;
     }
     setProgress(round, TOTAL); setScore(score + '/' + round);
-    var nItems = round < 3 ? 4 : round < 6 ? 6 : 8;
+    // Difficulty: Normal 4→6→8, Medium 5→7→8, Hard 6→8→8 items
+    var itemSets = [[4,6,8],[5,7,8],[6,8,8]][currentDiff];
+    var nItems = round < 3 ? itemSets[0] : round < 6 ? itemSets[1] : itemSets[2];
     var setIdx = Math.floor(Math.random() * MISSING_SETS.length);
     var items = shuf(MISSING_SETS[setIdx]).slice(0, nItems);
-    var removeIdx = Math.floor(Math.random() * items.length);
-    var removed = items[removeIdx];
-    var remaining = items.slice(); remaining.splice(removeIdx, 1);
+    // Hard mode: remove 2 items in later rounds
+    var nRemove = (currentDiff === 2 && round >= 4) ? 2 : 1;
+    var removedArr = [];
+    var remaining = items.slice();
+    for (var ri = 0; ri < nRemove; ri++) {
+      var rIdx = Math.floor(Math.random() * remaining.length);
+      removedArr.push(remaining[rIdx]);
+      remaining.splice(rIdx, 1);
+    }
+    var removed = removedArr[0]; // primary for answer
 
     var a = gArea();
     a.innerHTML = '<p style="text-align:center;font-weight:700;color:var(--cyan-l);margin:0.5rem 0;">Runde ' +
-      (round+1) + '/' + TOTAL + ' \u2014 Husk disse!</p>' +
+      (round+1) + '/' + TOTAL + (nRemove > 1 ? ' \u2014 Husk disse! (2 forsvinner!)' : ' \u2014 Husk disse!') + '</p>' +
       '<div class="items-display" id="items-disp"></div>';
     var disp = document.getElementById('items-disp');
     items.forEach(function(e) {
@@ -657,7 +710,9 @@ function startMissing() {
       disp.appendChild(s);
     });
 
-    var showTime = round < 3 ? 3000 : round < 6 ? 3500 : 4000;
+    // Difficulty: Normal 3-4s, Medium 2.5-3s, Hard 2-2.5s
+    var timeSets = [[3000,3500,4000],[2500,3000,3000],[2000,2500,2500]][currentDiff];
+    var showTime = round < 3 ? timeSets[0] : round < 6 ? timeSets[1] : timeSets[2];
     setTimeout(function() {
       disp.style.opacity = '0';
       setTimeout(function() {
@@ -738,10 +793,14 @@ function startBackwards() {
       return;
     }
     setProgress(round, TOTAL); setScore(score + '/' + round);
-    var len = round < 3 ? 3 : round < 6 ? 4 : round < 8 ? 5 : 6;
+    // Difficulty: Normal 3→4→5→6, Medium 4→5→6→7, Hard 5→6→7→8
+    var lenSets = [[3,4,5,6],[4,5,6,7],[5,6,7,8]][currentDiff];
+    var len = round < 3 ? lenSets[0] : round < 6 ? lenSets[1] : round < 8 ? lenSets[2] : lenSets[3];
     var seq = genSeq(len);
     var answer = seq.slice().reverse().join('');
-    var showTime = len <= 3 ? 3000 : len <= 4 ? 4000 : 5000;
+    // Shorter display time at higher difficulty
+    var baseTime = [[3000,4000,5000],[2500,3500,4500],[2000,3000,4000]][currentDiff];
+    var showTime = len <= lenSets[0] ? baseTime[0] : len <= lenSets[1] ? baseTime[1] : baseTime[2];
 
     var a = gArea();
     a.innerHTML = '<p style="text-align:center;font-weight:700;color:var(--cyan-l);margin:0.5rem 0;">Runde ' +
@@ -810,6 +869,20 @@ var PATTERNS = [
   {seq:['\u{1f7e1}','\u{1f7e1}','\u{1f7e1}','\u{1f535}','\u{1f7e1}','\u{1f7e1}','\u{1f7e1}','\u{1f535}'],ans:'\u{1f7e1}',alts:['\u{1f535}','\u{1f534}','\u{1f7e2}'],exp:'Gruppe på fire! Tre gule + én blå: A A A B · A A A B → A'}
 ];
 
+// Extra-hard patterns for Vanskelig mode
+var PATTERNS_EXTRA = [
+  {seq:['2','3','5','7','11'],ans:'13',alts:['12','14','15'],exp:'Primtall! Tall som bare kan deles på 1 og seg selv: 2, 3, 5, 7, 11 → 13'},
+  {seq:['1','3','6','10','15'],ans:'21',alts:['18','20','24'],exp:'Trekanttall! Legg til 2, 3, 4, 5, 6: Tenk trapp — hvert steg blir bredere.'},
+  {seq:['1','3','9','27'],ans:'81',alts:['54','64','72'],exp:'Potens av 3! Hvert tall ganges med 3: ×3 hver gang.'},
+  {seq:['1','2','4','5','7','8'],ans:'10',alts:['9','11','12'],exp:'Hopp! +1, +2, +1, +2, +1 → +2. Annenhver økning veksler.'},
+  {seq:['50','49','47','44','40'],ans:'35',alts:['36','34','38'],exp:'Trekk fra mer og mer! −1, −2, −3, −4 → −5. Differansen øker.'},
+  {seq:['1','4','2','5','3','6'],ans:'4',alts:['7','5','8'],exp:'To rekker flettet! Oddetall +1: 1,2,3,4… Partall +1: 4,5,6,7…'},
+  {seq:['0','1','1','2','4','7'],ans:'13',alts:['11','12','14'],exp:'Tribonacci! Summen av de tre forrige: 1+2+4=7, 2+4+7=13'},
+  {seq:['64','32','16','8','4'],ans:'2',alts:['1','3','0'],exp:'Halvering! Hvert tall deles på 2: ÷2 hver gang.'},
+  {seq:['1','2','6','24','120'],ans:'720',alts:['240','600','360'],exp:'Fakultet! 1, 1×2, 2×3, 6×4, 24×5 → 120×6=720. Ganges med neste tall.'},
+  {seq:['3','4','7','11','18'],ans:'29',alts:['25','27','36'],exp:'Fibonacci-variant! Summen av de to forrige: 11+18=29'}
+];
+
 function startPattern() {
   showGame('M\u00f8nsteret \u{1f3af}', '');
   var round = 0, score = 0, TOTAL = 10;
@@ -817,10 +890,28 @@ function startPattern() {
   var easyIdx = [0,1,2,3,4,13,14,15];
   var medIdx  = [5,6,7,9,10,11,17,20,21,23];
   var hardIdx = [8,12,16,18,19,22];
+  // Extra patterns indexed as 24+
+  var extraIdx = [];
+  for (var ei = 0; ei < PATTERNS_EXTRA.length; ei++) extraIdx.push(24 + ei);
   var pool = [];
-  pool = pool.concat(shuf(easyIdx).slice(0, 3));
-  pool = pool.concat(shuf(medIdx).slice(0, 4));
-  pool = pool.concat(shuf(hardIdx).slice(0, 3));
+  if (currentDiff === 0) {
+    // Normal: 3 easy, 4 medium, 3 hard
+    pool = pool.concat(shuf(easyIdx).slice(0, 3));
+    pool = pool.concat(shuf(medIdx).slice(0, 4));
+    pool = pool.concat(shuf(hardIdx).slice(0, 3));
+  } else if (currentDiff === 1) {
+    // Medium: 1 easy, 3 medium, 4 hard, 2 extra
+    pool = pool.concat(shuf(easyIdx).slice(0, 1));
+    pool = pool.concat(shuf(medIdx).slice(0, 3));
+    pool = pool.concat(shuf(hardIdx).slice(0, 4));
+    pool = pool.concat(shuf(extraIdx).slice(0, 2));
+  } else {
+    // Hard: 0 easy, 2 medium, 3 hard, 5 extra
+    pool = pool.concat(shuf(medIdx).slice(0, 2));
+    pool = pool.concat(shuf(hardIdx).slice(0, 3));
+    pool = pool.concat(shuf(extraIdx).slice(0, 5));
+  }
+  pool = shuf(pool);
 
   function playRound() {
     if (round >= TOTAL) {
@@ -829,7 +920,8 @@ function startPattern() {
       return;
     }
     setProgress(round, TOTAL); setScore(score + '/' + round);
-    var p = PATTERNS[pool[round]];
+    var pidx = pool[round];
+    var p = pidx < 24 ? PATTERNS[pidx] : PATTERNS_EXTRA[pidx - 24];
     var a = gArea();
     a.innerHTML = '<p style="text-align:center;font-weight:700;color:var(--cyan-l);margin:0.5rem 0;">Runde ' +
       (round+1) + '/' + TOTAL + '</p>' +
@@ -865,7 +957,7 @@ function startPattern() {
           expDiv.innerHTML = '\ud83d\udca1 ' + p.exp;
           og.parentNode.appendChild(expDiv);
         }
-        round++; setTimeout(playRound, 2200);
+        round++; var expDelay = [2200, 2800, 3500][currentDiff]; setTimeout(playRound, expDelay);
       };
       og.appendChild(b);
     });
