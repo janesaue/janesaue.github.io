@@ -318,7 +318,7 @@ var FUN_FACTS = [
   'Du har ca. 86 milliarder nerveceller i hjernen! \u{1f92f}',
   'Hjernen bruker 20% av all energien din \u2014 selv om den bare er 2% av kroppsvekten! \u26a1',
   'N\u00e5r du sover, rydder hjernen opp og lagrer det du l\u00e6rte i dag! \u{1f634}',
-  'Hjernen din er ferdig utvokst f\u00f8rst n\u00e5r du er ca. 25 \u00e5r! \u{1f331}',
+  'Hjernen din er ferdig utviklet f\u00f8rst n\u00e5r du er ca. 25 \u00e5r! \u{1f331}',
   'Du kan ikke kile deg selv fordi hjernen vet hva som kommer! \u{1f92d}',
   'Hjernen lager nok str\u00f8m til \u00e5 lyse opp en liten lysp\u00e6re! \u{1f4a1}'
 ];
@@ -659,7 +659,7 @@ function startSimon() {
   }
 
   showInstruction('\u26a1', 'Sekvensen',
-    'Se rekkef\u00f8lgen fargene lyser opp, og gjenta den!',
+    'Se rekkef\u00f8lgen fargene lyser opp i, og gjenta den!',
     function() { buildUI(); nextRound(); });
 }
 
@@ -862,7 +862,7 @@ var PATTERNS = [
   {seq:['2','4','8','16'],ans:'32',alts:['20','24','18'],exp:'Dobling! Hvert tall er det dobbelte: 2→4→8→16→32 (×2).'},
   {seq:['\u{1f534}','\u{1f535}','\u{1f7e2}','\u{1f534}','\u{1f535}','\u{1f7e2}'],ans:'\u{1f534}',alts:['\u{1f535}','\u{1f7e2}','\u{1f7e1}'],exp:'Tre farger som gjentas! Rød, blå, grønn: A B C · A B C → A'},
   {seq:['1','4','9','16'],ans:'25',alts:['20','21','36'],exp:'Kvadrattall! 1²=1, 2²=4, 3²=9, 4²=16 → 5²=25'},
-  {seq:['\u2744\ufe0f','\u2744\ufe0f','\u2600\ufe0f','\u2600\ufe0f','\u2744\ufe0f','\u2744\ufe0f','\u2600\ufe0f','\u2600\ufe0f'],ans:'\u2744\ufe0f',alts:['\u2600\ufe0f','\u{1f319}','\u{1f308}'],exp:'Par som gjentas! To snø + to soler: A A B B · A A B B → A'},
+  {seq:['\u2744\ufe0f','\u2744\ufe0f','\u2600\ufe0f','\u2600\ufe0f','\u2744\ufe0f','\u2744\ufe0f','\u2600\ufe0f','\u2600\ufe0f'],ans:'\u2744\ufe0f',alts:['\u2600\ufe0f','\u{1f319}','\u{1f308}'],exp:'Par som gjentas! To snøfnugg + to soler: A A B B · A A B B → A'},
   {seq:['100','90','80','70'],ans:'60',alts:['65','50','75'],exp:'Teller ned med 10! Hvert tall minker med 10.'},
   {seq:['\u{1f535}','\u{1f534}','\u{1f534}','\u{1f535}','\u{1f534}','\u{1f534}'],ans:'\u{1f535}',alts:['\u{1f534}','\u{1f7e2}','\u{1f7e1}'],exp:'Gruppe på tre! Én blå + to røde: A B B · A B B → A'},
   {seq:['1','1','2','3','5'],ans:'8',alts:['6','7','10'],exp:'Fibonacci! Hvert tall er summen av de to forrige: 3+5=8'},
@@ -926,7 +926,7 @@ function startPattern() {
     a.innerHTML = '<p style="text-align:center;font-weight:700;color:var(--cyan-l);margin:0.5rem 0;">Runde ' +
       (round+1) + '/' + TOTAL + '</p>' +
       '<div class="pattern-seq" id="pat-seq"></div>' +
-      '<p style="text-align:center;font-weight:700;color:var(--purple-l);margin:0.8rem 0 0.3rem;">Hva kommer neste?</p>' +
+      '<p style="text-align:center;font-weight:700;color:var(--purple-l);margin:0.8rem 0 0.3rem;">Hva er neste?</p>' +
       '<div class="options-grid" id="pat-opts"></div>';
 
     var seqDiv = document.getElementById('pat-seq');
@@ -964,7 +964,7 @@ function startPattern() {
   }
 
   showInstruction('\u{1f3af}', 'M\u00f8nsteret',
-    'Finn ut hva som kommer neste i rekken!',
+    'Finn ut hva som er neste i rekken!',
     function() { playRound(); });
 }
 
