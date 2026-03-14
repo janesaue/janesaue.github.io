@@ -3,29 +3,32 @@ export async function onRequestPost(context) {
   const url = new URL(request.url);
 
   // Støtt både JSON og form-data
-  let passord;
+  let brukernavn, passord;
   const ct = request.headers.get("Content-Type") || "";
   if (ct.includes("application/json")) {
     const body = await request.json();
+    brukernavn = body.brukernavn;
     passord = body.passord;
   } else {
     const form = await request.formData();
+    brukernavn = form.get("brukernavn");
     passord = form.get("passord");
   }
 
-  // Sjekk om passordet finnes i KV
-  const count = await env.PASSWORDS.get(passord);
-
-  if (count === null) {
+  if (!brukernavn || !passord) {
     return Response.redirect(url.origin + "/login?feil=1", 302);
   }
 
-  // Tell opp bruken
-  await env.PASSWORDS.put(passord, String(Number(count) + 1));
+  // Slå opp bruker i KV (nøkkel: "user:brukernavn", verdi: passordet)
+  const lagretPassord = await env.PASSWORDS.get("user:" + brukernavn);
 
-  // Lagre engangs-token i KV (utløper etter 60 sek)
+  if (lagretPassord === null || lagretPassord !== passord) {
+    return Response.redirect(url.origin + "/login?feil=1", 302);
+  }
+
+  // Lagre engangs-token i KV (utløper etter 60 sek) — lagrer brukernavnet
   const token = crypto.randomUUID();
-  await env.PASSWORDS.put("_tok_" + token, passord, { expirationTtl: 60 });
+  await env.PASSWORDS.put("_tok_" + token, brukernavn, { expirationTtl: 60 });
 
   // Redirect til forsiden med token — middleware setter cookien fra GET
   return Response.redirect(url.origin + "/?tok=" + token, 302);
