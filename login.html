@@ -54,6 +54,7 @@
     </form>
     <p class="feil" id="feilmelding">Feil brukernavn eller passord – prøv igjen</p>
     <p class="feil" id="utloptmelding" style="color:orange;">Sesjonen din har utløpt – logg inn på nytt</p>
+    <p class="feil" id="blokkertmelding">For mange forsøk – prøv igjen om 15 minutter</p>
   </div>
 
   <script>
@@ -63,6 +64,9 @@
     }
     if (params.get("utlopt") === "1") {
       document.getElementById("utloptmelding").style.display = "block";
+    }
+    if (params.get("blokkert") === "1") {
+      document.getElementById("blokkertmelding").style.display = "block";
     }
   </script>
 </body>
