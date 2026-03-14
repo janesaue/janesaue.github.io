@@ -758,25 +758,25 @@ const BONES=[
   {id:'hael',  name:'Hælen',       latin:'Calcaneus', latinM:'«Hæl» på gresk',          bx:200, by:258, side:'R', rank:3, fact:'Hælbeinet tar imot hele kroppsvekten din når du går!',   hint:'Nederst på foten, bak'},
 ];
 const DIGESTION=[
-  {id:'munn',    name:'Munnen',    emoji:'👄',fact:'Tygging starter det hele!'},
-  {id:'spisero', name:'Spiserøret',emoji:'🌊',fact:'Maten glir ned hit'},
-  {id:'mage',    name:'Magesekken',emoji:'🫗',fact:'Syre moser ned maten'},
-  {id:'tynntarm',name:'Tynntarmen',emoji:'〰️',fact:'Næring tas opp i blodet'},
-  {id:'tykktarm',name:'Tykktarmen',emoji:'💧',fact:'Vann tas opp her'},
-  {id:'ende',    name:'Endetarmen',emoji:'🚪',fact:'Resten forlater kroppen'},
+  {id:'munn',    name:'Munnen',    emoji:'👄',fact:'Spytt inneholder enzymer som begynner å bryte ned maten allerede i munnen!',hint:'Her begynner reisen — du tygger maten'},
+  {id:'spisero', name:'Spiserøret',emoji:'🌊',fact:'Spiserøret bruker muskelbølger (peristaltikk) til å presse maten ned — selv om du står på hodet!',hint:'Et rør fra munnen ned til magen'},
+  {id:'mage',    name:'Magesekken',emoji:'🫗',fact:'Magesyren er så sterk at den kan løse opp metall — heldigvis beskytter slim mageveggen!',hint:'Her blandes maten med syre'},
+  {id:'tynntarm',name:'Tynntarmen',emoji:'〰️',fact:'Tynntarmen er ca. 6 meter lang og har et overflatereal som en tennisbane!',hint:'Her tas næringen opp i blodet'},
+  {id:'tykktarm',name:'Tykktarmen',emoji:'💧',fact:'Tykktarmen har milliarder av nyttige bakterier som hjelper fordøyelsen!',hint:'Vann og salter suges opp her'},
+  {id:'ende',    name:'Endetarmen',emoji:'🚪',fact:'Mat bruker 24–72 timer på hele reisen fra munn til ende!',hint:'Siste stopp — resten forlater kroppen'},
 ];
 const SENSES=[
-  {sense:'Syn',     organ:'Øyet', sEmoji:'👁️',oEmoji:'👁️'},
-  {sense:'Hørsel',  organ:'Øret', sEmoji:'👂',oEmoji:'👂'},
-  {sense:'Smak',    organ:'Tunga',sEmoji:'😋',oEmoji:'👅'},
-  {sense:'Lukt',    organ:'Nesen',sEmoji:'🌸',oEmoji:'👃'},
-  {sense:'Berøring',organ:'Huden',sEmoji:'🤚',oEmoji:'🤚'},
+  {sense:'Syn',     organ:'Øyet', sEmoji:'👁️',oEmoji:'👁️',fact:'Øyet kan skille mellom ca. 10 millioner farger!'},
+  {sense:'Hørsel',  organ:'Øret', sEmoji:'👂',oEmoji:'👂',fact:'De tre minste beina i kroppen sitter i øret!'},
+  {sense:'Smak',    organ:'Tunga',sEmoji:'😋',oEmoji:'👅',fact:'Tunga har ca. 10 000 smaksløker som skiftes ut hver 2. uke!'},
+  {sense:'Lukt',    organ:'Nesen',sEmoji:'🌸',oEmoji:'👃',fact:'Nesen kan gjenkjenne over 1 billion forskjellige lukter!'},
+  {sense:'Berøring',organ:'Huden',sEmoji:'🤚',oEmoji:'🤚',fact:'Huden er kroppens største organ — ca. 2 m² hos voksne!'},
 ];
 const MUSCLE_Qs=[
-  {emoji:'💪',scene:'Du bøyer armen!',q:'Hvilken muskel jobber?',opts:['Triceps','Biceps','Kjevemuskelen','Ryggmuskelen'],a:1},
-  {emoji:'🏃',scene:'Du løper raskt!',q:'Hva gjør musklene dine?',opts:['Slapper av','Trekker seg sammen og slapper av','Ingenting','Pumper blod'],a:1},
-  {emoji:'😊',scene:'Du smiler bredt!',q:'Ca. hvor mange muskler bruker du?',opts:['2','5','17','100'],a:2},
-  {emoji:'🫀',scene:'Hjertet slår!',q:'Hva er hjertet?',opts:['Et bein','En nerve','En spesiell muskel','Ikke en muskel'],a:2},
+  {emoji:'💪',scene:'Du bøyer armen!',q:'Hvilken muskel jobber?',opts:['Triceps','Biceps','Kjevemuskelen','Ryggmuskelen'],a:1,fact:'Biceps og triceps jobber i par — når den ene trekker seg sammen, slapper den andre av!'},
+  {emoji:'🏃',scene:'Du løper raskt!',q:'Hva gjør musklene dine?',opts:['Slapper av','Trekker seg sammen og slapper av','Ingenting','Pumper blod'],a:1,fact:'Muskler kan bare trekke, aldri dytte — derfor jobber de alltid i par!'},
+  {emoji:'😊',scene:'Du smiler bredt!',q:'Ca. hvor mange muskler bruker du?',opts:['2','5','17','100'],a:2,fact:'Det tar 43 muskler å rynke pannen, men bare 17 å smile!'},
+  {emoji:'🫀',scene:'Hjertet slår!',q:'Hva er hjertet?',opts:['Et bein','En nerve','En spesiell muskel','Ikke en muskel'],a:2,fact:'Hjertemuskelen slår ca. 100 000 ganger om dagen uten at du tenker på det!'},
 ];
 
 // ════════════════════════════════════════════
@@ -1211,8 +1211,15 @@ function buildSkel(s){
 }
 
 // HEART — rytmespill
+const HEART_FACTS=[
+  '🧠 Hjertet ditt slår ca. 100 000 ganger hver eneste dag!',
+  '🩸 Blodet reiser gjennom 96 000 km blodårer — det er over to ganger rundt jorda!',
+  '💪 Hjertet pumper ca. 7 500 liter blod om dagen!',
+  '⚡ Hjertet har sitt eget elektriske system som styrer rytmen!',
+  '🫀 Et barnehjerte slår raskere enn et voksenhjerte — ca. 80–100 slag/min!',
+];
 function buildHeart(s){
-  if(!S.gs.heart) S.gs.heart={phase:'rest',taps:0};
+  if(!S.gs.heart) S.gs.heart={phase:'rest',taps:0,factIdx:0};
   const h=S.gs.heart;
   const TAPS_NEEDED=5;
 
@@ -1244,6 +1251,10 @@ function buildHeart(s){
   const dots = Array.from({length:TAPS_NEEDED},(_,i)=>
     `<div class="heart-dot ${i<h.taps?'done':''}"></div>`).join('');
 
+  // Show a fact after every 2 taps
+  const showFact = h.taps>0 && h.taps%2===0 && h.factIdx<HEART_FACTS.length;
+  const currentFact = showFact ? HEART_FACTS[h.factIdx] : (h.lastFact||null);
+
   return `<div class="heart-game">
     <div class="heart-phase-chip" style="background:${isRun?'#FEE2E2':'#DCFCE7'};color:${isRun?'#DC2626':'#166534'}">
       ${isRun?'🏃 Etter løping':'😴 I hvile'}
@@ -1255,6 +1266,7 @@ function buildHeart(s){
     <div class="bpm-big" style="color:${s.color}">${bpm}</div>
     <div class="bpm-lbl">slag per minutt</div>
     <div class="heart-dots-row">${dots}</div>
+    ${currentFact?`<div class="fact-pop" style="background:${s.colorBg||'#FEF2F2'};color:#991B1B;margin:8px 0;padding:8px 12px;border-radius:10px;font-size:.8rem;font-weight:600;text-align:center">${currentFact}</div>`:''}
     <p class="hint-text">${isRun?'Hjertet pumper raskere — tapp i takt!':'Kjenn hjerterytmen — tapp i takt! 👆'}</p>
     <button class="heart-tap-btn" data-a="heartTap" style="background:${s.color}">
       💓 TAPP!
@@ -1268,7 +1280,7 @@ function buildLung(s){
   if(!S.gs.lung) S.gs.lung={phase:'out',count:0};
   const l=S.gs.lung;
   const isIn=l.phase==='in';
-  const facts=[null,'🌬️ Du puster inn oksygen (O₂) — det gir kroppen energi!','💨 Du puster ut karbondioksid (CO₂) — avfallsgass fra cellene!','🌳 Planter tar opp CO₂ og lager nytt oksygen til oss!',null];
+  const facts=['🫁 Lungene har over 300 millioner små luftblærer (alveoler) der oksygen byttes med CO₂!','🌬️ Du puster inn oksygen (O₂) — det gir kroppen energi!','💨 Du puster ut karbondioksid (CO₂) — avfallsgass fra cellene!','🌳 Planter tar opp CO₂ og lager nytt oksygen til oss!','🏊 Du puster ca. 20 000 ganger om dagen — helt automatisk!'];
 
   // fill % based on phase: inhale = full, exhale = empty
   const fillPct = isIn ? 90 : 10;
@@ -1411,26 +1423,32 @@ function buildLung(s){
 
 // SEQUENCE
 function buildSeq(s){
-  if(!S.gs.seq) S.gs.seq={items:shuf(DIGESTION),placed:[]};
+  if(!S.gs.seq) S.gs.seq={items:shuf(DIGESTION),placed:[],showHint:false};
   const g=S.gs.seq;
   if(g.done) return gameDone('🥗','Riktig rekkefølge!','Du kjenner matens reise!',s);
+  const nextOrgan=DIGESTION[g.placed.length];
+  const lastPlaced=g.placed.length>0?DIGESTION.find(d=>d.id===g.placed[g.placed.length-1]):null;
   return `<div>
-    <div class="game-prompt">Trykk organene i riktig rekkefølge — fra munn til ende! 👆</div>
+    <div class="game-prompt">Trykk organene i riktig rekkefølge — fra munn til ende! <strong>${g.placed.length}/${DIGESTION.length}</strong></div>
+    ${lastPlaced?`<div style="background:${s.colorBg||'#F0FDF4'};color:#166534;padding:8px 12px;border-radius:10px;font-size:.8rem;font-weight:600;text-align:center;margin:6px 0">🧠 ${lastPlaced.fact}</div>`:''}
     <div class="seq-wrap">${g.items.map(item=>{
       const pi=g.placed.indexOf(item.id),placed=pi!==-1;
       return `<div class="seq-item ${placed?'placed':''}" data-a="${placed?'':'seqClick'}" data-id="${item.id}">
         <div class="seq-num">${placed?pi+1:'?'}</div>
         <span class="seq-emoji">${item.emoji}</span>
         <span>${item.name}</span>
-        ${placed?`<span class="seq-fact">${item.fact}</span>`:''}
       </div>`;
     }).join('')}</div>
+    ${g.showHint&&nextOrgan?`<div style="color:#92400E;font-size:.8rem;font-weight:600;text-align:center;margin:8px 0">💡 ${nextOrgan.hint}</div>`:''}
+    <div style="text-align:center;margin-top:8px">
+      <button data-a="seqHint" style="background:none;border:2px solid ${s.color};color:${s.color};padding:6px 16px;border-radius:20px;font-size:.8rem;font-weight:700;cursor:pointer">💡 Hint</button>
+    </div>
   </div>`;
 }
 
 // MATCH
 function buildMatch(s){
-  if(!S.gs.match) S.gs.match={right:shuf(SENSES),selLeft:null,selRight:null,matched:[]};
+  if(!S.gs.match) S.gs.match={right:shuf(SENSES),selLeft:null,selRight:null,matched:[],lastFact:null};
   const m=S.gs.match;
   if(m.done) return gameDone('🧠','Alle sanser koblet til!','Du kjenner alle de fem sansene!',s);
   const left=SENSES.map(s2=>{
@@ -1447,6 +1465,7 @@ function buildMatch(s){
   }).join('');
   return `<div>
     <div class="game-prompt">Koble sansen til riktig organ! <strong>${m.matched.length}/5</strong></div>
+    ${m.lastFact?`<div style="background:${s.colorBg||'#EFF6FF'};color:#1E3A5F;padding:8px 12px;border-radius:10px;font-size:.8rem;font-weight:600;text-align:center;margin:6px 0">🧠 ${m.lastFact}</div>`:''}
     <div class="match-cols"><div class="match-side">${left}</div><div class="match-side">${right}</div></div>
   </div>`;
 }
@@ -1469,6 +1488,7 @@ function buildMuscle(s){
       <div class="muscle-scene-q">${q.q}</div>
     </div>
     <div class="muscle-opts">${opts}</div>
+    ${m.answered?`<div style="background:${m.chosen===q.a?'#F0FDF4':'#FEF2F2'};color:${m.chosen===q.a?'#166534':'#991B1B'};padding:8px 12px;border-radius:10px;font-size:.8rem;font-weight:600;text-align:center;margin:10px 0">${m.chosen===q.a?'🧠':'💡'} ${q.fact}</div>`:''}
     ${m.answered?`<button class="next-btn" data-a="muscleNext" style="background:${s.color}">${m.q+1<MUSCLE_Qs.length?'Neste →':'Se resultat →'}</button>`:''}
   </div>`;
 }
@@ -1814,6 +1834,11 @@ function onClick(e){
       const h=S.gs.heart; if(!h) break;
       SFX.heartbeat();
       h.taps++;
+      // Track facts: show after every 2 taps
+      if(h.taps%2===0 && h.factIdx<HEART_FACTS.length){
+        h.lastFact=HEART_FACTS[h.factIdx];
+        h.factIdx++;
+      }
       if(h.taps>=5){
         if(h.phase==='rest'){ h.phase='run'; h.taps=0; SFX.complete(); }
         else { h.phase='done'; SFX.complete(); }
@@ -1833,6 +1858,7 @@ function onClick(e){
       const g=S.gs.seq; if(!g) break;
       if(el.dataset.id===DIGESTION[g.placed.length].id){
         g.placed.push(el.dataset.id);
+        g.showHint=false;
         if(g.placed.length>=DIGESTION.length){ g.done=true; SFX.complete(); } else { SFX.correct(); }
         render();
       } else {
@@ -1840,6 +1866,10 @@ function onClick(e){
         el.classList.add('wf'); setTimeout(()=>render(),400);
       }
       break;
+    }
+    case 'seqHint':{
+      const g=S.gs.seq; if(!g) break;
+      g.showHint=true; SFX.tap(); render(); break;
     }
 
     case 'matchL':{
@@ -1852,8 +1882,12 @@ function onClick(e){
       tryMatch();
       const afterCount=S.gs.match.matched.length;
       if(afterCount>beforeCount){
+        // Find the sense that was just matched and show its fact
+        const matchedSense=el.dataset.sense;
+        const senseObj=SENSES.find(se=>se.sense===matchedSense);
+        if(senseObj) S.gs.match.lastFact=senseObj.fact;
         if(S.gs.match.done) SFX.complete(); else SFX.correct();
-      } else { SFX.wrong(); }
+      } else { SFX.wrong(); S.gs.match.lastFact=null; }
       render(); break;
     }
 
