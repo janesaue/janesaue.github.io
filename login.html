@@ -44,13 +44,15 @@
 </head>
 <body>
   <div class="boks">
-    <h2>Skriv inn passord</h2>
+    <h2>Logg inn</h2>
     <form method="POST" action="/api/login">
-      <input type="password" name="passord" placeholder="Passord" />
+      <input type="text" name="brukernavn" placeholder="Brukernavn" autocomplete="username" />
+      <br>
+      <input type="password" name="passord" placeholder="Passord" autocomplete="current-password" />
       <br>
       <button type="submit">Logg inn</button>
     </form>
-    <p class="feil" id="feilmelding">Feil passord – prøv igjen</p>
+    <p class="feil" id="feilmelding">Feil brukernavn eller passord – prøv igjen</p>
   </div>
 
   <script>
