@@ -748,14 +748,14 @@ const CASES = [
 ];
 
 const BONES=[
-  {id:'hode',  name:'Hodeskallen', bx:60, by:24,  side:'R', rank:0},
-  {id:'krave', name:'Kravebenet',  bx:38, by:54,  side:'L', rank:0},
-  {id:'ribb',  name:'Ribbeina',    bx:48, by:80,  side:'L', rank:1},
-  {id:'rygg',  name:'Ryggraden',   bx:60, by:110, side:'R', rank:1},
-  {id:'albue', name:'Albuen',      bx:99, by:89,  side:'R', rank:2},
-  {id:'lar',   name:'Lårbenet',    bx:44, by:155, side:'L', rank:2},
-  {id:'kne',   name:'Kneskålen',   bx:56, by:175, side:'L', rank:3},
-  {id:'hael',  name:'Hælen',       bx:76, by:212, side:'R', rank:3},
+  {id:'hode',  name:'Hodeskallen', latin:'Cranium',    bx:180, by:28,  side:'R', rank:0},
+  {id:'krave', name:'Kravebenet',  latin:'Clavicula',  bx:158, by:68,  side:'L', rank:0},
+  {id:'ribb',  name:'Ribbeina',    latin:'Costae',     bx:155, by:92,  side:'L', rank:1},
+  {id:'rygg',  name:'Ryggraden',   latin:'Vertebrae',  bx:180, by:125, side:'R', rank:1},
+  {id:'albue', name:'Albuen',      latin:'Ulna',       bx:218, by:120, side:'R', rank:2},
+  {id:'lar',   name:'Lårbenet',    latin:'Femur',      bx:170, by:192, side:'L', rank:2},
+  {id:'kne',   name:'Kneskålen',   latin:'Patella',    bx:167, by:218, side:'L', rank:3},
+  {id:'hael',  name:'Hælen',       latin:'Calcaneus',  bx:200, by:258, side:'R', rank:3},
 ];
 const DIGESTION=[
   {id:'munn',    name:'Munnen',    emoji:'👄',fact:'Tygging starter det hele!'},
@@ -1041,74 +1041,153 @@ function gameDone(em,title,sub,s){
 function buildSkel(s){
   if(!S.gs.skel){
     const shuffled=shuf(BONES);
-    S.gs.skel={idx:0,done:false,correct:[],order:shuffled};
+    S.gs.skel={idx:0,done:false,correct:[],order:shuffled,hard:false,hint:false};
   }
   const g=S.gs.skel;
   if(g.done) return gameDone('🦴','Alle bein funnet!','Du kjenner skjelettet!',s);
   const cur=g.order[g.idx];
-  /* Body offset: body is drawn at x=9..111, shifted right by 120 to center in 360-wide viewBox */
-  const ox=120;
-  /* Left label positions (rank 0-3), right label positions */
-  const lyMap={L:[30,80,150,195],R:[30,85,140,210]};
-  const lw=90,lh=24,lr=6;
-  /* Build labels, lines, and dots */
-  let labels='',lines='',dots='';
+  const hard=!!g.hard, showHint=!!g.hint;
+  const lyMap={L:[22,72,150,200],R:[22,77,145,205]};
+  const lw=95,lh=26,lr=7;
+  let labels='',lines='',clickDots='';
   g.order.forEach(b=>{
     const done=g.correct.includes(b.id),isCur=b.id===cur.id;
-    const fill=done?'#22C55E':isCur?'#FCD34D':'#D8C8E8';
-    const textFill=done?'#fff':isCur?'#78350F':'#4A3560';
     const ly=lyMap[b.side][b.rank];
-    const lx=b.side==='L'?5:265;
+    const lx=b.side==='L'?2:263;
     const labelCx=lx+lw/2, labelCy=ly+lh/2;
-    /* Arrow endpoint: edge of label closest to body */
     const lineStartX=b.side==='L'?lx+lw:lx;
-    const lineEndX=b.bx+ox;
-    const lineEndY=b.by;
-    /* Dot on body */
-    dots+=`<circle cx="${lineEndX}" cy="${lineEndY}" r="4" fill="${done?'#22C55E':isCur?'#FBBF24':'#C9956A'}" stroke="#fff" stroke-width="1.5" opacity="${done?1:0.8}"/>`;
+    const midX=b.side==='L'?lineStartX+10:lineStartX-10;
     /* Connecting line */
-    const midX=b.side==='L'?lineStartX+12:lineStartX-12;
-    lines+=`<path d="M${lineStartX},${labelCy} L${midX},${labelCy} L${lineEndX},${lineEndY}" fill="none" stroke="${done?'#22C55E88':isCur?'#FBBF2488':'#C9956A44'}" stroke-width="${isCur?2:1.2}" stroke-dasharray="${done?'none':'4 3'}"/>`;
-    /* Label button */
-    const glow=isCur?`<rect x="${lx-3}" y="${ly-3}" width="${lw+6}" height="${lh+6}" rx="${lr+2}" fill="none" stroke="#FBBF24" stroke-width="2" opacity=".5"/>`:'' ;
-    labels+=`<g class="bone-label${done?' done':''}" data-a="boneClick" data-bone="${b.id}" style="pointer-events:all;cursor:pointer">
-      ${glow}<rect class="bl-bg" x="${lx}" y="${ly}" width="${lw}" height="${lh}" rx="${lr}" fill="${fill}" stroke="${done?'#16A34A':isCur?'#F59E0B':'#B8A8D0'}" stroke-width="1.5"/>
-      <text x="${labelCx}" y="${labelCy+1}" text-anchor="middle" dominant-baseline="central" fill="${textFill}" font-size="9.5" font-weight="800" font-family="'Fredoka One',cursive" style="pointer-events:none">${done?'✓ '+b.name:b.name}</text>
+    lines+=`<path d="M${lineStartX},${labelCy} L${midX},${labelCy} L${b.bx},${b.by}" fill="none" stroke="${done?'rgba(74,222,128,0.5)':'rgba(160,184,210,0.25)'}" stroke-width="${done?1.5:1}" stroke-dasharray="${done?'none':'4 3'}"/>`;
+    /* Label (NOT clickable — just display) */
+    const lFill=done?'#166534':'#1a2540';
+    const lStroke=done?'#22C55E':'#2a3a5a';
+    const lText=done?`✓ ${b.latin} = ${b.name}`:b.latin;
+    const lTextFill=done?'#bbf7d0':'#a0b8d0';
+    const lFS=done?7.5:9.5;
+    labels+=`<g style="pointer-events:none">
+      <rect x="${lx}" y="${ly}" width="${lw}" height="${lh}" rx="${lr}" fill="${lFill}" stroke="${lStroke}" stroke-width="1.2"/>
+      <text x="${labelCx}" y="${labelCy+1}" text-anchor="middle" dominant-baseline="central" fill="${lTextFill}" font-size="${lFS}" font-weight="700" font-family="'Fredoka One',cursive">${lText}</text>
+    </g>`;
+    /* Clickable dot ON the skeleton */
+    const dotR=done?5:6;
+    const dotFill=done?'#22C55E':'rgba(160,184,210,0.15)';
+    const dotStroke=done?'#86efac':'rgba(160,184,210,0.35)';
+    /* Pulse only on hint for current bone */
+    const pulse=(isCur&&showHint)?`<circle cx="${b.bx}" cy="${b.by}" r="12" fill="none" stroke="#FBBF24" stroke-width="1.5" opacity="0.5"><animate attributeName="r" values="8;14;8" dur="1.5s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.6;0.1;0.6" dur="1.5s" repeatCount="indefinite"/></circle>`:'';
+    clickDots+=`${pulse}<g class="bone-label" data-a="boneClick" data-bone="${b.id}" style="pointer-events:all;cursor:pointer">
+      <circle cx="${b.bx}" cy="${b.by}" r="18" fill="transparent"/>
+      <circle cx="${b.bx}" cy="${b.by}" r="${dotR}" fill="${dotFill}" stroke="${dotStroke}" stroke-width="${done?2:1.5}"/>
+      ${done?`<text x="${b.bx}" y="${b.by+1}" text-anchor="middle" dominant-baseline="central" fill="#fff" font-size="7" font-weight="900">✓</text>`:''}
     </g>`;
   });
-  const diagram=`<svg viewBox="0 0 360 240" xmlns="http://www.w3.org/2000/svg" style="max-height:55vh">
-    <!-- Body figure -->
-    <g transform="translate(${ox},0) scale(1,0.88)">
-      <ellipse cx="60" cy="24" rx="21" ry="22" fill="#F5D5B0" stroke="#C9956A" stroke-width="1.8"/>
-      <rect x="53" y="44" width="14" height="14" rx="4" fill="#F5D5B0" stroke="#C9956A" stroke-width="1.5"/>
-      <rect x="32" y="56" width="56" height="76" rx="10" fill="#F5D5B0" stroke="#C9956A" stroke-width="1.8"/>
-      <rect x="9" y="58" width="23" height="62" rx="10" fill="#F5D5B0" stroke="#C9956A" stroke-width="1.5"/>
-      <rect x="88" y="58" width="23" height="62" rx="10" fill="#F5D5B0" stroke="#C9956A" stroke-width="1.5"/>
-      <rect x="32" y="134" width="24" height="84" rx="10" fill="#F5D5B0" stroke="#C9956A" stroke-width="1.5"/>
-      <rect x="64" y="134" width="24" height="84" rx="10" fill="#F5D5B0" stroke="#C9956A" stroke-width="1.5"/>
-      <path d="M40,72 Q60,84 80,72" fill="none" stroke="#C9956A" stroke-width="1.4"/>
-      <path d="M37,84 Q60,96 83,84" fill="none" stroke="#C9956A" stroke-width="1.4"/>
-      <path d="M37,96 Q60,108 83,96" fill="none" stroke="#C9956A" stroke-width="1.4"/>
-      <circle cx="60" cy="74" r="2.5" fill="#A06840"/>
-      <circle cx="60" cy="86" r="2.5" fill="#A06840"/>
-      <circle cx="60" cy="98" r="2.5" fill="#A06840"/>
-      <circle cx="60" cy="110" r="2.5" fill="#A06840"/>
-      <circle cx="60" cy="122" r="2.5" fill="#A06840"/>
-    </g>
-    <!-- Connecting lines -->
+  /* X-ray skeleton SVG */
+  const xray=`
+    <!-- X-ray background -->
+    <rect x="128" y="3" width="104" height="268" rx="10" fill="#0a0e1a" stroke="#1a2540" stroke-width="1.5"/>
+    <rect x="130" y="5" width="100" height="264" rx="9" fill="none" stroke="#152035" stroke-width="0.5"/>
+    <!-- Skull -->
+    <ellipse cx="180" cy="28" rx="16" ry="19" fill="#0f1525" stroke="#c8ddf0" stroke-width="1.8"/>
+    <ellipse cx="174" cy="25" rx="4.2" ry="5" fill="#0a0e1a" stroke="#8aa0b8" stroke-width="1"/>
+    <ellipse cx="186" cy="25" rx="4.2" ry="5" fill="#0a0e1a" stroke="#8aa0b8" stroke-width="1"/>
+    <path d="M178,31 L180,36 L182,31" fill="none" stroke="#8aa0b8" stroke-width="0.8"/>
+    <path d="M170,35 Q175,40 180,40 Q185,40 190,35" fill="none" stroke="#c8ddf0" stroke-width="1.2"/>
+    <line x1="173" y1="37" x2="187" y2="37" stroke="#8aa0b8" stroke-width="0.6"/>
+    <!-- Neck vertebrae -->
+    <rect x="177" y="48" width="6" height="3.5" rx="1.5" fill="#8aa0b8" stroke="#c8ddf0" stroke-width="0.7"/>
+    <rect x="177" y="53" width="6" height="3.5" rx="1.5" fill="#8aa0b8" stroke="#c8ddf0" stroke-width="0.7"/>
+    <rect x="177" y="58" width="6" height="3.5" rx="1.5" fill="#8aa0b8" stroke="#c8ddf0" stroke-width="0.7"/>
+    <!-- Clavicle -->
+    <path d="M152,68 Q166,62 180,66" fill="none" stroke="#c8ddf0" stroke-width="2" stroke-linecap="round"/>
+    <path d="M208,68 Q194,62 180,66" fill="none" stroke="#c8ddf0" stroke-width="2" stroke-linecap="round"/>
+    <!-- Scapula hints -->
+    <path d="M150,72 Q148,85 152,95" fill="none" stroke="#6a8098" stroke-width="1.2"/>
+    <path d="M210,72 Q212,85 208,95" fill="none" stroke="#6a8098" stroke-width="1.2"/>
+    <!-- Ribs (left) -->
+    <path d="M178,74 Q160,78 148,86" fill="none" stroke="#8aa0b8" stroke-width="1.3" stroke-linecap="round"/>
+    <path d="M178,80 Q158,85 147,94" fill="none" stroke="#8aa0b8" stroke-width="1.3"/>
+    <path d="M178,86 Q158,92 148,102" fill="none" stroke="#8aa0b8" stroke-width="1.3"/>
+    <path d="M178,92 Q160,98 150,108" fill="none" stroke="#8aa0b8" stroke-width="1.2"/>
+    <path d="M178,98 Q162,104 155,112" fill="none" stroke="#7a94ac" stroke-width="1.1"/>
+    <!-- Ribs (right) -->
+    <path d="M182,74 Q200,78 212,86" fill="none" stroke="#8aa0b8" stroke-width="1.3" stroke-linecap="round"/>
+    <path d="M182,80 Q202,85 213,94" fill="none" stroke="#8aa0b8" stroke-width="1.3"/>
+    <path d="M182,86 Q202,92 212,102" fill="none" stroke="#8aa0b8" stroke-width="1.3"/>
+    <path d="M182,92 Q200,98 210,108" fill="none" stroke="#8aa0b8" stroke-width="1.2"/>
+    <path d="M182,98 Q198,104 205,112" fill="none" stroke="#7a94ac" stroke-width="1.1"/>
+    <!-- Sternum -->
+    <line x1="180" y1="68" x2="180" y2="112" stroke="#c8ddf0" stroke-width="2" stroke-linecap="round"/>
+    <!-- Thoracic spine -->
+    <rect x="177.5" y="64" width="5" height="3.5" rx="1.2" fill="#7a94ac" stroke="#a0b8d0" stroke-width="0.6"/>
+    <rect x="177.5" y="70" width="5" height="3.5" rx="1.2" fill="#7a94ac" stroke="#a0b8d0" stroke-width="0.6"/>
+    <rect x="177.5" y="76" width="5" height="3.5" rx="1.2" fill="#7a94ac" stroke="#a0b8d0" stroke-width="0.6"/>
+    <rect x="177.5" y="82" width="5" height="3.5" rx="1.2" fill="#7a94ac" stroke="#a0b8d0" stroke-width="0.6"/>
+    <rect x="177.5" y="88" width="5" height="3.5" rx="1.2" fill="#7a94ac" stroke="#a0b8d0" stroke-width="0.6"/>
+    <rect x="177.5" y="94" width="5" height="3.5" rx="1.2" fill="#7a94ac" stroke="#a0b8d0" stroke-width="0.6"/>
+    <rect x="177.5" y="100" width="5" height="3.5" rx="1.2" fill="#7a94ac" stroke="#a0b8d0" stroke-width="0.6"/>
+    <!-- Lumbar spine -->
+    <rect x="176.5" y="108" width="7" height="4.5" rx="1.5" fill="#8aa0b8" stroke="#a0b8d0" stroke-width="0.7"/>
+    <rect x="176.5" y="114" width="7" height="4.5" rx="1.5" fill="#8aa0b8" stroke="#a0b8d0" stroke-width="0.7"/>
+    <rect x="176.5" y="120" width="7" height="4.5" rx="1.5" fill="#8aa0b8" stroke="#a0b8d0" stroke-width="0.7"/>
+    <rect x="176.5" y="126" width="7" height="4.5" rx="1.5" fill="#8aa0b8" stroke="#a0b8d0" stroke-width="0.7"/>
+    <rect x="176.5" y="132" width="7" height="4.5" rx="1.5" fill="#8aa0b8" stroke="#a0b8d0" stroke-width="0.7"/>
+    <!-- Sacrum -->
+    <path d="M175,139 L180,152 L185,139" fill="#6a8098" stroke="#8aa0b8" stroke-width="1"/>
+    <!-- Pelvis -->
+    <path d="M152,145 Q155,162 172,165 L180,155 L188,165 Q205,162 208,145" fill="none" stroke="#c8ddf0" stroke-width="2"/>
+    <ellipse cx="165" cy="155" rx="6" ry="8" fill="#0a0e1a" stroke="#8aa0b8" stroke-width="1"/>
+    <ellipse cx="195" cy="155" rx="6" ry="8" fill="#0a0e1a" stroke="#8aa0b8" stroke-width="1"/>
+    <!-- Humerus (upper arm) -->
+    <line x1="152" y1="70" x2="142" y2="118" stroke="#c8ddf0" stroke-width="2.8" stroke-linecap="round"/>
+    <line x1="208" y1="70" x2="218" y2="118" stroke="#c8ddf0" stroke-width="2.8" stroke-linecap="round"/>
+    <!-- Elbow joint -->
+    <ellipse cx="141" cy="120" rx="4" ry="3.5" fill="#0f1525" stroke="#8aa0b8" stroke-width="1"/>
+    <ellipse cx="219" cy="120" rx="4" ry="3.5" fill="#0f1525" stroke="#8aa0b8" stroke-width="1"/>
+    <!-- Radius & Ulna -->
+    <line x1="139" y1="123" x2="135" y2="158" stroke="#c8ddf0" stroke-width="2" stroke-linecap="round"/>
+    <line x1="143" y1="123" x2="139" y2="158" stroke="#8aa0b8" stroke-width="1.3" stroke-linecap="round"/>
+    <line x1="221" y1="123" x2="225" y2="158" stroke="#c8ddf0" stroke-width="2" stroke-linecap="round"/>
+    <line x1="217" y1="123" x2="221" y2="158" stroke="#8aa0b8" stroke-width="1.3" stroke-linecap="round"/>
+    <!-- Hands -->
+    <path d="M133,159 L130,168 M135,159 L133,168 M137,159 L136,168 M139,159 L140,165" fill="none" stroke="#8aa0b8" stroke-width="1" stroke-linecap="round"/>
+    <path d="M223,159 L220,168 M225,159 L223,168 M227,159 L228,168 M229,159 L232,165" fill="none" stroke="#8aa0b8" stroke-width="1" stroke-linecap="round"/>
+    <!-- Femur -->
+    <line x1="172" y1="165" x2="168" y2="215" stroke="#c8ddf0" stroke-width="3" stroke-linecap="round"/>
+    <line x1="188" y1="165" x2="192" y2="215" stroke="#c8ddf0" stroke-width="3" stroke-linecap="round"/>
+    <!-- Patella -->
+    <ellipse cx="167" cy="218" rx="5" ry="4.5" fill="#0f1525" stroke="#c8ddf0" stroke-width="1.3"/>
+    <ellipse cx="193" cy="218" rx="5" ry="4.5" fill="#0f1525" stroke="#c8ddf0" stroke-width="1.3"/>
+    <!-- Tibia & Fibula -->
+    <line x1="166" y1="223" x2="164" y2="252" stroke="#c8ddf0" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="169" y1="223" x2="170" y2="252" stroke="#8aa0b8" stroke-width="1.3" stroke-linecap="round"/>
+    <line x1="194" y1="223" x2="196" y2="252" stroke="#c8ddf0" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="191" y1="223" x2="190" y2="252" stroke="#8aa0b8" stroke-width="1.3" stroke-linecap="round"/>
+    <!-- Feet -->
+    <path d="M161,253 L156,260 L172,260 L170,253" fill="none" stroke="#8aa0b8" stroke-width="1.2" stroke-linejoin="round"/>
+    <path d="M193,253 L188,260 L204,260 L202,253" fill="none" stroke="#8aa0b8" stroke-width="1.2" stroke-linejoin="round"/>
+    <!-- X-ray film corner marks -->
+    <path d="M131,8 L131,14" stroke="#2a3a5a" stroke-width="0.8"/><path d="M131,8 L137,8" stroke="#2a3a5a" stroke-width="0.8"/>
+    <path d="M229,8 L229,14" stroke="#2a3a5a" stroke-width="0.8"/><path d="M229,8 L223,8" stroke="#2a3a5a" stroke-width="0.8"/>
+    <text x="133" y="267" fill="#2a3a5a" font-size="5" font-family="monospace">R</text>
+    <text x="225" y="267" fill="#2a3a5a" font-size="5" font-family="monospace">L</text>`;
+  const diagram=`<svg viewBox="0 0 360 275" xmlns="http://www.w3.org/2000/svg" style="max-height:58vh">
+    ${xray}
     ${lines}
-    <!-- Target dots on body -->
-    ${dots}
-    <!-- Clickable labels -->
     ${labels}
+    ${clickDots}
   </svg>`;
+  const promptName=hard?cur.latin:cur.name;
   return `<div class="skel-wrap">
-    <div class="game-prompt">Trykk på <strong>${cur.name}</strong>!</div>
+    <div class="game-prompt">Finn <strong style="color:${s.color}">${promptName}</strong> på skjelettet!</div>
     <div class="skel-diagram">${diagram}</div>
     <div class="skel-question">
-      <div class="skel-q-label">Finn dette beinet:</div>
-      <div class="skel-q-name" style="color:${s.color}">${cur.name}</div>
-      <div class="skel-count">${g.idx+1} av ${g.order.length}</div>
+      <div class="skel-q-label">Klikk på riktig sted:</div>
+      <div class="skel-q-name" style="color:${s.color}${hard?';font-style:italic':''}">${promptName}</div>
+      <div style="display:flex;gap:8px;justify-content:center;align-items:center;margin-top:6px;flex-wrap:wrap">
+        <div class="skel-count">${g.idx+1} av ${g.order.length}</div>
+        <button data-a="skelHint" style="font-size:.72rem;padding:3px 10px;border-radius:8px;border:1.5px solid ${s.color}44;background:${s.color}18;color:${s.color};font-weight:700;cursor:pointer${showHint?';opacity:.4':''}">💡 Hint</button>
+        <button data-a="skelMode" style="font-size:.72rem;padding:3px 10px;border-radius:8px;border:1.5px solid ${hard?'#F59E0B44':'#7C3AED44'};background:${hard?'#F59E0B18':'#7C3AED18'};color:${hard?'#F59E0B':'#7C3AED'};font-weight:700;cursor:pointer">${hard?'🔥 Latin':'📖 Norsk'}</button>
+      </div>
     </div>
   </div>`;
 }
@@ -1694,7 +1773,7 @@ function onClick(e){
     case 'boneClick':{
       const g=S.gs.skel; if(!g) break;
       if(el.dataset.bone===g.order[g.idx].id){
-        g.correct.push(el.dataset.bone); g.idx++;
+        g.correct.push(el.dataset.bone); g.idx++; g.hint=false;
         if(g.idx>=g.order.length){ g.done=true; SFX.complete(); } else { SFX.correct(); }
         render();
       } else {
@@ -1702,6 +1781,14 @@ function onClick(e){
         el.classList.add('wrong-flash'); setTimeout(()=>render(),350);
       }
       break;
+    }
+    case 'skelHint':{
+      const g=S.gs.skel; if(!g) break;
+      g.hint=true; SFX.tap(); render(); break;
+    }
+    case 'skelMode':{
+      const g=S.gs.skel; if(!g) break;
+      g.hard=!g.hard; SFX.tap(); render(); break;
     }
 
     case 'heartTap':{
